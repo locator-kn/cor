@@ -1,0 +1,22 @@
+{
+  "name": "cor",
+  "version": "1.0.0",
+  "description": "cor - colossus of rhodes. the goal to all",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/locator-kn/cor.git"
+  },
+  "keywords": [
+    "cor"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/locator-kn/cor/issues"
+  },
+  "homepage": "https://github.com/locator-kn/cor#readme"
+}
