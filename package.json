@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/locator-kn/cor/issues"
   },
-  "homepage": "https://github.com/locator-kn/cor#readme"
+  "homepage": "https://github.com/locator-kn/cor#readme",
+  "dependencies": {
+    "hapi": "^11.1.2"
+  }
 }
