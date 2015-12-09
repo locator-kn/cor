@@ -1,5 +1,8 @@
 'use strict';
 const hoek = require('hoek');
+const boom = require('boom');
+
+
 let handler = {};
 const basicPin = {
     role: 'user'
@@ -15,9 +18,10 @@ handler.postUser = (request, reply) => {
     // merge request patter with basic pin
     requestPattern = hoek.merge(requestPattern, basicPin);
 
-    request.server.pact(requestPattern, (err, data) => {
-
-            reply(data);
+    request.server.pact(requestPattern)
+        .then(reply)
+        .catch(error => {
+            reply(boom.badRequest('du depp'));
         });
 
 };
