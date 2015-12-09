@@ -6,20 +6,16 @@ const Hapi = require('hapi');
 const server = new Hapi.Server();
 
 
+// API
+const user = require('./lib/user');
+
 server.connection({
     host: 'localhost',
     port: 8000
 });
 
 // Add the route
-server.route({
-    method: 'GET',
-    path:'/hello',
-    handler: function (request, reply) {
-
-        return reply('hello world');
-    }
-});
+server.route(user.routes);
 
 // Start the server
 server.start((err) => {
