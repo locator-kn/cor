@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/locator-kn/cor#readme",
   "dependencies": {
+    "chairo": "^1.1.0",
     "hapi": "^11.1.2"
   }
 }
