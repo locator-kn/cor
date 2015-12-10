@@ -32,8 +32,8 @@ server.register({register: Chairo}, err => {
         // announce a microservice with pin and transport type the services is listening to
         .client({type: 'rabbitmq', pin: 'role:mailer,cmd:*'});
 
-    let act = Bluebird.promisify(server.seneca.act, {context: server.seneca});
-    server.decorate('server', 'pact', act);
+    let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
+    server.decorate('server', 'pact', pact);
 
 });
 
