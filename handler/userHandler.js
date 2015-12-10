@@ -5,7 +5,7 @@ const boom = require('boom');
 
 let handler = {};
 const basicPin = {
-    role: 'user'
+    role: 'mailer'
 };
 
 handler.postUser = (request, reply) => {
@@ -28,7 +28,20 @@ handler.postUser = (request, reply) => {
 
 
 handler.getHallo = (request, reply) => {
-    reply('hallo');
+    let requestPattern = {
+        cmd: 'else'
+    };
+
+    hoek.merge(requestPattern, basicPin);
+
+
+    console.info('requesting', requestPattern)
+    request.server.pact('role:mailer,cmd:else')
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            reply(boom.badRequest('du depp'));
+        });
 };
 
 
