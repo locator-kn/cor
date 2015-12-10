@@ -35,7 +35,7 @@ handler.getHallo = (request, reply) => {
     hoek.merge(requestPattern, basicPin);
 
 
-    console.info('requesting', requestPattern)
+    console.info('requesting', requestPattern);
     request.server.pact('role:mailer,cmd:else')
         .then(reply)
         .catch(error => {
