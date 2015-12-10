@@ -35,7 +35,6 @@ server.register({register: Chairo}, err => {
 
     let act = Bluebird.promisify(server.seneca.act, {context: server.seneca});
     server.decorate('server', 'pact', act);
-    console.log('Server running at:', server.info.uri);
 
 });
 
@@ -46,4 +45,5 @@ server.start((err) => {
     if (err) {
         throw err;
     }
+    console.log('Server running at:', server.info.uri);
 });
