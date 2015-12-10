@@ -24,14 +24,21 @@ server.route(user.routes);
 
 // register plugins
 
-server.register({ register: Chairo }, err => {
-    //console.log(server.seneca.act);
-    //
-    let act = Bluebird.promisify(server.seneca.act, server.seneca);
-    //server.expose('pact', act);
+server.register({register: Chairo}, err => {
 
-    server.decorate('request', 'pact', act);
+    server.seneca
+        .use('rabbitmq-transport')
+        .client({type: 'rabbitmq', pin: 'role:mailer,cmd:*'})
+        .act('role:mailer,cmd:else', (err, data) => {
+            console.log(err || data);
+        });
+
+    let act = Bluebird.promisify(server.seneca.act, {context: server.seneca});
+    server.decorate('server', 'pact', act);
+    console.log('Server running at:', server.info.uri);
+
 });
+
 
 // Start the server
 server.start((err) => {
@@ -39,5 +46,4 @@ server.start((err) => {
     if (err) {
         throw err;
     }
-    console.log('Server running at:', server.info.uri);
 });
