@@ -27,11 +27,10 @@ server.route(user.routes);
 server.register({register: Chairo}, err => {
 
     server.seneca
+        // set desired transport method
         .use('rabbitmq-transport')
-        .client({type: 'rabbitmq', pin: 'role:mailer,cmd:*'})
-        .act('role:mailer,cmd:else', (err, data) => {
-            console.log(err || data);
-        });
+        // announce a microservice with pin and transport type the services is listening to
+        .client({type: 'rabbitmq', pin: 'role:mailer,cmd:*'});
 
     let act = Bluebird.promisify(server.seneca.act, {context: server.seneca});
     server.decorate('server', 'pact', act);
