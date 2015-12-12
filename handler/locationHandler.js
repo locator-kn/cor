@@ -17,7 +17,7 @@ handler.getLocationsNearby = (request, reply) => {
     requestPattern.data = request.query;
 
     // merge request patter with basic pin
-    requestPattern = hoek.merge(requestPattern, basicPin);
+    requestPattern = hoek.merge(basicPin, requestPattern);
 
     request.server.pact(requestPattern)
         .then(reply)
