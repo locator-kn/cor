@@ -12,6 +12,7 @@ const server = new Hapi.Server();
 
 // API
 const user = require('./lib/user');
+const location = require('./lib/location');
 
 server.connection({
     host: 'localhost',
@@ -20,6 +21,7 @@ server.connection({
 
 // Add the route
 server.route(user.routes);
+server.route(location.routes);
 
 
 // register plugins
@@ -30,7 +32,8 @@ server.register({register: Chairo}, err => {
         // set desired transport method
         .use('rabbitmq-transport')
         // announce a microservice with pin and transport type the services is listening to
-        .client({type: 'rabbitmq', pin: 'role:mailer,cmd:*'});
+        .client({type: 'rabbitmq', pin: 'role:mailer,cmd:*'})
+        .client({type: 'rabbitmq', pin: 'role:location,cmd:*'});
 
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
