@@ -42,8 +42,17 @@ server.register({register: Chairo}, err => {
 
 });
 
+server.register([require('inert'), require('vision'), {register: require('hapi-swagger'), options: {
+        enableDocumentationPage: true
+}}], err => {
 
-// Start the server
+    if (err) {
+        throw err;
+    }
+
+});
+
+
 server.start((err) => {
 
     if (err) {
