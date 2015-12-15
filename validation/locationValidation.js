@@ -9,4 +9,9 @@ validations.getLocationsNearby = Joi.object().keys({
     limit: Joi.number()
 });
 
+validations.postSchoenhier = Joi.object().keys({
+    long: Joi.number().required(),
+    lat: Joi.number().required()
+});
+
 module.exports = validations;
