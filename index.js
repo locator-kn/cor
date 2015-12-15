@@ -15,6 +15,7 @@ const server = new Hapi.Server();
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
+const file = require('./lib/file');
 
 server.connection({
     host: process.env['API_HOST'] || 'localhost',
@@ -24,6 +25,7 @@ server.connection({
 // Add the routes
 server.route(user.routes);
 server.route(location.routes);
+server.route(file.routes);
 
 
 // register plugins
@@ -55,14 +57,15 @@ server.register([require('inert'), require('vision'), {register: require('hapi-s
     if (err) {
         throw err;
     }
+    server.start((err) => {
+
+        if (err) {
+            throw err;
+        }
+        console.log('Server running at:', server.info.uri);
+    });
 
 });
 
 
-server.start((err) => {
 
-    if (err) {
-        throw err;
-    }
-    console.log('Server running at:', server.info.uri);
-});
