@@ -28,6 +28,27 @@ handler.getLocationsNearby = (request, reply) => {
 };
 
 
+handler.postSchoenhier = (request, reply) => {
+    // decorate basic pin with cmd
+    let requestPattern = {cmd: 'schoenhier'};
+
+
+    // add data to request pattern
+    requestPattern.data = request.payload;
+
+    // merge request patter with basic pin
+    requestPattern = hoek.merge(basicPin, requestPattern);
+
+    request.server.pact(requestPattern)
+        .then(reply)
+        .catch(error => {
+            console.log(error)
+            reply(boom.badRequest('du depp'));
+        });
+
+};
+
+
 handler.getHallo = (request, reply) => {
     let requestPattern = {
         cmd: 'else'
