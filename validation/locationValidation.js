@@ -2,7 +2,7 @@
 const Joi = require('joi');
 let validations = {};
 
-validations.getLocationsNearby = Joi.object().keys({
+validations.nearbyQuery = Joi.object().keys({
     long: Joi.number().required(),
     lat: Joi.number().required(),
     maxDistance: Joi.number(),
