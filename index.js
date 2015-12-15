@@ -30,6 +30,10 @@ server.route(location.routes);
 
 server.register({register: Chairo}, err => {
 
+    if(err) {
+        throw err;
+    }
+
     server.seneca
         // set desired transport method
         .use('rabbitmq-transport')
