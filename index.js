@@ -36,10 +36,10 @@ server.register({register: Chairo}, err => {
 
     server.seneca
         // set desired transport method
-        .use('rabbitmq-transport')
+        .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the services is listening to
-        .client({type: 'rabbitmq', pin: 'role:mailer,cmd:*'})
-        .client({type: 'rabbitmq', pin: 'role:location,cmd:*'});
+        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:mailer,cmd:*'})
+        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
 
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
