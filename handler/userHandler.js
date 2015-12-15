@@ -44,5 +44,23 @@ handler.logout = (request, reply) => {
         });
 };
 
+handler.register = (request, reply) => {
+    // decorate basic pin with cmd
+    let requestPattern = {cmd: 'register'};
+
+    // add data to request pattern
+    requestPattern.data = request.payload;
+
+    // merge request patter with basic pin
+    requestPattern = hoek.merge(requestPattern, basicPin);
+
+    request.server.pact(requestPattern)
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            reply(boom.badRequest('du depp'));
+        });
+}
+
 
 module.exports = handler;
