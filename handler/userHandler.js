@@ -5,10 +5,10 @@ const boom = require('boom');
 
 let handler = {};
 const basicPin = {
-    role: 'mailer'
+    role: 'user'
 };
 
-handler.postUser = (request, reply) => {
+handler.login = (request, reply) => {
     // decorate basic pin with cmd
     let requestPattern = {cmd: 'login'};
 
