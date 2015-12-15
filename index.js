@@ -17,8 +17,8 @@ const user = require('./lib/user');
 const location = require('./lib/location');
 
 server.connection({
-    host: 'localhost',
-    port: 8000
+    host: process.env['API_HOST'] || 'localhost',
+    port: process.env['API_PORT'] || 8000
 });
 
 // Add the routes
