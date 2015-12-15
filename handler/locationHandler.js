@@ -12,36 +12,54 @@ handler.getLocationsNearby = (request, reply) => {
     // decorate basic pin with cmd
     let requestPattern = {cmd: 'nearby'};
 
-
     // add data to request pattern
     requestPattern.data = request.query;
 
     // merge request patter with basic pin
-    requestPattern = hoek.merge(basicPin, requestPattern);
+    requestPattern = hoek.merge(requestPattern, basicPin);
 
     request.server.pact(requestPattern)
         .then(reply)
         .catch(error => {
-            reply(boom.badRequest('du depp'));
+            reply(boom.badRequest(error));
         });
 
 };
 
 
-handler.getHallo = (request, reply) => {
-    let requestPattern = {
-        cmd: 'else'
-    };
-
-    hoek.merge(requestPattern, basicPin);
+handler.postSchoenhier = (request, reply) => {
+    // decorate basic pin with cmd
+    let requestPattern = {cmd: 'addschoenhier'};
 
 
-    console.info('requesting', requestPattern);
-    request.server.pact('role:mailer,cmd:else')
+    // add data to request pattern
+    requestPattern.data = request.payload;
+
+    // merge request patter with basic pin
+    requestPattern = hoek.merge(requestPattern, basicPin);
+
+    console.log('postSchoenhier', requestPattern)
+    request.server.pact(requestPattern)
         .then(reply)
         .catch(error => {
-            console.log(error);
-            reply(boom.badRequest('du depp'));
+            reply(boom.badRequest(error));
+        });
+
+};
+
+
+handler.getSchoenhierNearby = (request, reply) => {
+    let requestPattern = {
+        cmd: 'nearbyschoenhier'
+    };
+
+    requestPattern.data = request.query;
+    hoek.merge(requestPattern, basicPin);
+
+    request.server.pact(requestPattern)
+        .then(reply)
+        .catch(error => {
+            reply(boom.badRequest(error));
         });
 };
 
