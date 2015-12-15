@@ -27,16 +27,16 @@ handler.login = (request, reply) => {
 };
 
 
-handler.getHallo = (request, reply) => {
-    let requestPattern = {
-        cmd: 'else'
-    };
+handler.logout = (request, reply) => {
+    // decorate basic pin with cmd
+    let requestPattern = {cmd: 'login'};
 
-    hoek.merge(requestPattern, basicPin);
+    // add data to request pattern
+    requestPattern.data = request.payload;
 
-
-    console.info('requesting', requestPattern);
-    request.server.pact('role:mailer,cmd:else')
+    // merge request patter with basic pin
+    requestPattern = hoek.merge(requestPattern, basicPin);
+    request.server.pact(requestPattern)
         .then(reply)
         .catch(error => {
             console.log(error);
