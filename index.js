@@ -21,7 +21,7 @@ server.connection({
     port: 8000
 });
 
-// Add the route
+// Add the routes
 server.route(user.routes);
 server.route(location.routes);
 
