@@ -40,7 +40,7 @@ server.register({register: Chairo}, err => {
         // set desired transport method
         .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the services is listening to
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:mailer,cmd:*'})
+        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
         .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
 
     // promisify seneca.act

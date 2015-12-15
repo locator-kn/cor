@@ -5,10 +5,10 @@ const boom = require('boom');
 
 let handler = {};
 const basicPin = {
-    role: 'mailer'
+    role: 'user'
 };
 
-handler.postUser = (request, reply) => {
+handler.login = (request, reply) => {
     // decorate basic pin with cmd
     let requestPattern = {cmd: 'login'};
 
@@ -27,22 +27,40 @@ handler.postUser = (request, reply) => {
 };
 
 
-handler.getHallo = (request, reply) => {
-    let requestPattern = {
-        cmd: 'else'
-    };
+handler.logout = (request, reply) => {
+    // decorate basic pin with cmd
+    let requestPattern = {cmd: 'login'};
 
-    hoek.merge(requestPattern, basicPin);
+    // add data to request pattern
+    requestPattern.data = request.payload;
 
-
-    console.info('requesting', requestPattern);
-    request.server.pact('role:mailer,cmd:else')
+    // merge request patter with basic pin
+    requestPattern = hoek.merge(requestPattern, basicPin);
+    request.server.pact(requestPattern)
         .then(reply)
         .catch(error => {
             console.log(error);
             reply(boom.badRequest('du depp'));
         });
 };
+
+handler.register = (request, reply) => {
+    // decorate basic pin with cmd
+    let requestPattern = {cmd: 'register'};
+
+    // add data to request pattern
+    requestPattern.data = request.payload;
+
+    // merge request patter with basic pin
+    requestPattern = hoek.merge(requestPattern, basicPin);
+
+    request.server.pact(requestPattern)
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            reply(boom.badRequest('du depp'));
+        });
+}
 
 
 module.exports = handler;
