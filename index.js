@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config({path: '../.env'});
+
 const Hapi = require('hapi');
 const Bluebird = require('bluebird');
 
