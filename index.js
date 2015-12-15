@@ -18,7 +18,7 @@ const location = require('./lib/location');
 const file = require('./lib/file');
 
 server.connection({
-    host: process.env['API_HOST'] || 'localhost',
+    //host: process.env['API_HOST'] || 'localhost',
     port: process.env['API_PORT'] || 8000
 });
 
