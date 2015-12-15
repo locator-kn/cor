@@ -38,7 +38,6 @@ handler.postSchoenhier = (request, reply) => {
     // merge request patter with basic pin
     requestPattern = hoek.merge(requestPattern, basicPin);
 
-    console.log('postSchoenhier', requestPattern)
     request.server.pact(requestPattern)
         .then(reply)
         .catch(error => {
