@@ -1,8 +1,8 @@
 'use strict';
 
 const path = require('path');
-const pwd = path.join(__dirname, '..');
-require('dotenv').config({path: pwd + '/.env'});
+const pwd = path.join(__dirname, '..', '/.env');
+require('dotenv').config({path: pwd});
 
 const Hapi = require('hapi');
 const Bluebird = require('bluebird');
