@@ -11,16 +11,10 @@ const basicPin = {
 };
 
 handler.getLocationById = (request, reply) => {
-    // decorate basic pin with cmd
-    let requestPattern = {cmd: 'locationById'};
 
-    // add data to request pattern
-    requestPattern.data = request.params;
+    let senecaAct = util.setupSenecaPattern('locationById', request.params, basicPin);
 
-    // merge request patter with basic pin
-    hoek.merge(requestPattern, basicPin);
-
-    request.server.pact(requestPattern)
+    request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             reply(boom.badRequest(error));
@@ -29,16 +23,10 @@ handler.getLocationById = (request, reply) => {
 };
 
 handler.getLocationsNearby = (request, reply) => {
-    // decorate basic pin with cmd
-    let requestPattern = {cmd: 'nearby'};
 
-    // add data to request pattern
-    requestPattern.data = request.query;
+    let senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
 
-    // merge request patter with basic pin
-    requestPattern = hoek.merge(requestPattern, basicPin);
-
-    request.server.pact(requestPattern)
+    request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             reply(boom.badRequest(error));
@@ -48,17 +36,10 @@ handler.getLocationsNearby = (request, reply) => {
 
 
 handler.postSchoenhier = (request, reply) => {
-    // decorate basic pin with cmd
-    let requestPattern = {cmd: 'addschoenhier'};
 
+    let senecaAct = util.setupSenecaPattern('addschoenhier', request.payload, basicPin);
 
-    // add data to request pattern
-    requestPattern.data = request.payload;
-
-    // merge request patter with basic pin
-    requestPattern = hoek.merge(requestPattern, basicPin);
-
-    request.server.pact(requestPattern)
+    request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             reply(boom.badRequest(error));
