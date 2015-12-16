@@ -25,7 +25,6 @@ server.connection({
 });
 
 // Add the routes
-server.route(user.routes);
 server.route(location.routes);
 server.route(file.routes);
 
@@ -68,6 +67,25 @@ server.register([require('inert'), require('vision'), {register: require('hapi-s
     });
 
 });
+
+server.register(require('hapi-auth-cookie'), err => {
+
+    if (err) {
+        throw err;
+    }
+
+    server.auth.strategy('session', 'cookie', {
+        password: 'secret',
+        ttl: this.ttl || 600000,
+        keepAlive: true,
+        cookie: 'locator_session',
+        isSecure: false,
+        clearInvalid: true
+    });
+    server.route(user.routes);
+});
+
+
 
 
 
