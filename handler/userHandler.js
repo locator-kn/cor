@@ -26,15 +26,10 @@ handler.login = (request, reply) => {
 
 
 handler.logout = (request, reply) => {
-    // TODO implement
-    let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
-
-    request.server.pact(senecaAct)
-        .then(reply)
-        .catch(error => {
-            console.log(error);
-            reply(boom.badRequest('du depp'));
-        });
+    request.auth.session.clear();
+    reply({
+        message: 'You are logged out'
+    });
 };
 
 handler.register = (request, reply) => {
