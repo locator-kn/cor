@@ -37,7 +37,10 @@ handler.register = (request, reply) => {
     let senecaAct = util.setupSenecaPattern('register', request.payload, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(result => {
+            request.auth.session.set(result);
+            reply();
+        })
         .catch(error => {
             console.log(error);
             reply(boom.badRequest('du depp'));
