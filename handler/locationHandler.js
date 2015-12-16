@@ -13,7 +13,7 @@ handler.getLocationById = (request, reply) => {
     let requestPattern = {cmd: 'locationById'};
 
     // add data to request pattern
-    requestPattern.data = request.query;
+    requestPattern.data = request.params;
 
     // merge request patter with basic pin
     hoek.merge(requestPattern, basicPin);
