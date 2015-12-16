@@ -60,4 +60,10 @@ handler.getSchoenhierNearby = (request, reply) => {
 };
 
 
+handler.getLocationsStream = (request, reply) => {
+
+    return reply(boom.notImplemented('still todo'));
+};
+
+
 module.exports = handler;
