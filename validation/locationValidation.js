@@ -14,7 +14,7 @@ validations.postSchoenhier = Joi.object().keys({
     lat: Joi.number().required().default(47.66868204997508)
 });
 
-validations.getLocationById = Joi.object().keys({
+validations.locationId = Joi.object().keys({
     locationId: Joi.string().required()
 });
 
