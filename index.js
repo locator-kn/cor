@@ -4,40 +4,52 @@ const path = require('path');
 const pwd = path.join(__dirname, '..', '/.env');
 require('dotenv').config({path: pwd});
 
-const Hapi = require('hapi');
 const Bluebird = require('bluebird');
-
-// plugins
-const Chairo = require('chairo');
-
-// Create a server with a host and port
-const server = new Hapi.Server();
-
+const Glue = require('glue');
 
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
 const file = require('./lib/file');
 
-server.connection({
-    //host: process.env['API_HOST'] || 'localhost',
-    port: process.env['API_PORT'] || 8000
-});
 
-// Add the routes
-server.route(user.routes);
-server.route(location.routes);
-server.route(file.routes);
+// declare  plugins
+var manifest = {
+    connections: [{
+        //host: process.env['API_HOST'] || 'localhost',
+        port: process.env['API_PORT'] || 8000
+    }],
+    plugins: [{
+        'chairo': {}
+    }, {
+        'inert': {}
+    }, {
+        'vision': {}
+    }, {
+        'hapi-swagger': {}
+    }, {
+        'hapi-auth-cookie': {}
+    }, {
+        'good': [{
+            options: {
+                requestPayload: true,
+                reporters: [{
+                    reporter: require('good-console'),
+                    events: {log: '*', response: '*', request: '*'}
+                }]
+            }
+        }]
+    }]
+};
 
+// compose Server with plugins
+Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
-// register plugins
-
-server.register({register: Chairo}, err => {
-
-    if(err) {
+    if (err) {
         throw err;
     }
 
+    // configure seneca
     server.seneca
         // set desired transport method
         .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
@@ -50,15 +62,24 @@ server.register({register: Chairo}, err => {
     // decorate server object with promisified seneca.act
     server.decorate('server', 'pact', pact);
 
-});
 
-server.register([require('inert'), require('vision'), {register: require('hapi-swagger'), options: {
-        enableDocumentationPage: true
-}}], err => {
+    // configure auth strategy
+    server.auth.strategy('session', 'cookie', {
+        password: 'secret',
+        ttl: this.ttl || 600000,
+        keepAlive: true,
+        cookie: 'locator_session',
+        isSecure: false,
+        clearInvalid: true
+    });
 
-    if (err) {
-        throw err;
-    }
+    // Add the API routes
+    server.route(user.routes);
+    server.route(location.routes);
+    server.route(file.routes);
+
+
+    // start the server
     server.start((err) => {
 
         if (err) {
@@ -67,7 +88,5 @@ server.register([require('inert'), require('vision'), {register: require('hapi-s
         console.log('Server running at:', server.info.uri);
     });
 
+
 });
-
-
-

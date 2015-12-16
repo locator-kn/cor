@@ -14,7 +14,10 @@ handler.login = (request, reply) => {
     let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(result => {
+            request.auth.session.set(result);
+            reply(result);
+        })
         .catch(error => {
             reply(boom.badRequest('du depp'));
         });
@@ -23,15 +26,10 @@ handler.login = (request, reply) => {
 
 
 handler.logout = (request, reply) => {
-    // TODO implement
-    let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
-
-    request.server.pact(senecaAct)
-        .then(reply)
-        .catch(error => {
-            console.log(error);
-            reply(boom.badRequest('du depp'));
-        });
+    request.auth.session.clear();
+    reply({
+        message: 'You are logged out'
+    });
 };
 
 handler.register = (request, reply) => {
@@ -39,11 +37,18 @@ handler.register = (request, reply) => {
     let senecaAct = util.setupSenecaPattern('register', request.payload, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(result => {
+            request.auth.session.set(result);
+            reply();
+        })
         .catch(error => {
             console.log(error);
             reply(boom.badRequest('du depp'));
         });
+}
+
+handler.protected = (request, reply) => {
+    reply('YOU CAN SEE THIS');
 }
 
 
