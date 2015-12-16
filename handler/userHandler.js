@@ -2,6 +2,7 @@
 const hoek = require('hoek');
 const boom = require('boom');
 
+const util = require('../lib/util');
 
 let handler = {};
 const basicPin = {
@@ -9,16 +10,10 @@ const basicPin = {
 };
 
 handler.login = (request, reply) => {
-    // decorate basic pin with cmd
-    let requestPattern = {cmd: 'login'};
 
-    // add data to request pattern
-    requestPattern.data = request.payload;
+    let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
 
-    // merge request patter with basic pin
-    requestPattern = hoek.merge(requestPattern, basicPin);
-
-    request.server.pact(requestPattern)
+    request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             reply(boom.badRequest('du depp'));
@@ -28,15 +23,10 @@ handler.login = (request, reply) => {
 
 
 handler.logout = (request, reply) => {
-    // decorate basic pin with cmd
-    let requestPattern = {cmd: 'login'};
+    // TODO implement
+    let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
 
-    // add data to request pattern
-    requestPattern.data = request.payload;
-
-    // merge request patter with basic pin
-    requestPattern = hoek.merge(requestPattern, basicPin);
-    request.server.pact(requestPattern)
+    request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             console.log(error);
@@ -45,16 +35,10 @@ handler.logout = (request, reply) => {
 };
 
 handler.register = (request, reply) => {
-    // decorate basic pin with cmd
-    let requestPattern = {cmd: 'register'};
 
-    // add data to request pattern
-    requestPattern.data = request.payload;
+    let senecaAct = util.setupSenecaPattern('register', request.payload, basicPin);
 
-    // merge request patter with basic pin
-    requestPattern = hoek.merge(requestPattern, basicPin);
-
-    request.server.pact(requestPattern)
+    request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             console.log(error);
