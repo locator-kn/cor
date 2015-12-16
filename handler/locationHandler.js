@@ -1,5 +1,4 @@
 'use strict';
-const hoek = require('hoek');
 const boom = require('boom');
 
 const util = require('../lib/util');
