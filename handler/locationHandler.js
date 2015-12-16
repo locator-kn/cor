@@ -2,6 +2,8 @@
 const hoek = require('hoek');
 const boom = require('boom');
 
+const util = require('../lib/util');
+
 
 let handler = {};
 const basicPin = {
@@ -66,14 +68,10 @@ handler.postSchoenhier = (request, reply) => {
 
 
 handler.getSchoenhierNearby = (request, reply) => {
-    let requestPattern = {
-        cmd: 'nearbyschoenhier'
-    };
 
-    requestPattern.data = request.query;
-    hoek.merge(requestPattern, basicPin);
+    let senecaAct = util.setupSenecaPattern('nearbyschoenhier', request.query, basicPin);
 
-    request.server.pact(requestPattern)
+    request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             reply(boom.badRequest(error));
