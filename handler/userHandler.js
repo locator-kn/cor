@@ -49,5 +49,9 @@ handler.register = (request, reply) => {
         });
 }
 
+handler.protected = (request, reply) => {
+    reply('YOU CAN SEE THIS');
+}
+
 
 module.exports = handler;
