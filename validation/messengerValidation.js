@@ -17,7 +17,7 @@ validations.message = Joi.object().keys({
     conversation_id: mongoIdField,
     location_id: mongoIdField,
     message: Joi.string()
-});
+}).xor('message', 'location_id');
 
 validations.dataPaged = Joi.object().keys({
     page: Joi.number().default(0),
