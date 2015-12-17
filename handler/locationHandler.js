@@ -33,6 +33,18 @@ handler.getLocationsNearby = (request, reply) => {
 
 };
 
+handler.postNewLocation = (request, reply) => {
+
+    let senecaAct = util.setupSenecaPattern('addnewlocation', request.payload, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            reply(boom.badRequest(error));
+        });
+
+};
+
 
 handler.postSchoenhier = (request, reply) => {
 
@@ -62,6 +74,11 @@ handler.getSchoenhierNearby = (request, reply) => {
 handler.getLocationsStream = (request, reply) => {
 
     return reply(boom.notImplemented('still todo'));
+};
+
+handler.getMyFavoriteLocations = (request, reply) => {
+
+    return reply(boom.notImplemented('todo'));
 };
 
 handler.getMyFavoriteLocations = (request, reply) => {
