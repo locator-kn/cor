@@ -11,6 +11,7 @@ const Glue = require('glue');
 const user = require('./lib/user');
 const location = require('./lib/location');
 const file = require('./lib/file');
+const messenger = require('./lib/messenger');
 
 
 // declare  plugins
@@ -49,6 +50,12 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         throw err;
     }
 
+    // Add the API routes
+    server.route(user.routes);
+    server.route(location.routes);
+    server.route(file.routes);
+    server.route(messenger.routes);
+
     // configure seneca
     server.seneca
         // set desired transport method
@@ -73,10 +80,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         clearInvalid: true
     });
 
-    // Add the API routes
-    server.route(user.routes);
-    server.route(location.routes);
-    server.route(file.routes);
 
 
     // start the server
