@@ -9,7 +9,7 @@ const basicPin = {
     role: 'messenger'
 };
 
-handler.getLocationsStream = (request, reply) => {
+handler.getConversationById = (request, reply) => {
 
     return reply(boom.notImplemented('still todo'));
 };
