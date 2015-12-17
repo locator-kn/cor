@@ -50,6 +50,16 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         throw err;
     }
 
+    // configure auth strategy
+    server.auth.strategy('session', 'cookie', {
+        password: 'secret',
+        ttl: this.ttl || 600000,
+        keepAlive: true,
+        cookie: 'locator_session',
+        isSecure: false,
+        clearInvalid: true
+    });
+
     // Add the API routes
     server.route(user.routes);
     server.route(location.routes);
@@ -68,18 +78,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
     // decorate server object with promisified seneca.act
     server.decorate('server', 'pact', pact);
-
-
-    // configure auth strategy
-    server.auth.strategy('session', 'cookie', {
-        password: 'secret',
-        ttl: this.ttl || 600000,
-        keepAlive: true,
-        cookie: 'locator_session',
-        isSecure: false,
-        clearInvalid: true
-    });
-
 
 
     // start the server
