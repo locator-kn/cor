@@ -65,4 +65,10 @@ handler.getLocationsStream = (request, reply) => {
 };
 
 
+handler.getMyFavoriteLocations = (request, reply) => {
+
+    return reply(boom.notImplemented('todo'));
+};
+
+
 module.exports = handler;
