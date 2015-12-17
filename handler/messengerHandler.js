@@ -14,9 +14,12 @@ handler.getConversationById = (request, reply) => {
     return reply(boom.notImplemented('todo'));
 };
 
-
-
 handler.getMyConversations = (request, reply) => {
+
+    return reply(boom.notImplemented('todo'));
+};
+
+handler.getMessagesByConversationId = (request, reply) => {
 
     return reply(boom.notImplemented('todo'));
 };
