@@ -11,7 +11,14 @@ const basicPin = {
 
 handler.getConversationById = (request, reply) => {
 
-    return reply(boom.notImplemented('still todo'));
+    return reply(boom.notImplemented('todo'));
+};
+
+
+
+handler.getMyConversations = (request, reply) => {
+
+    return reply(boom.notImplemented('todo'));
 };
 
 
