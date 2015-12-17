@@ -3,9 +3,20 @@ const Joi = require('joi');
 
 let validations = {};
 
+let mongoIdField = Joi.string().required();
 
 validations.conversationId = Joi.object().keys({
-    conversationId: Joi.string().required()
+    conversationId: mongoIdField
+});
+
+validations.messageType = Joi.object().keys({
+    messageType: Joi.string().allow('text', 'location').required()
+});
+
+validations.message = Joi.object().keys({
+    conversation_id: mongoIdField,
+    location_id: mongoIdField,
+    message: Joi.string()
 });
 
 validations.dataPaged = Joi.object().keys({
