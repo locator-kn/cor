@@ -24,5 +24,10 @@ handler.getMessagesByConversationId = (request, reply) => {
     return reply(boom.notImplemented('todo'));
 };
 
+handler.postMessage = (request, reply) => {
+
+    return reply(boom.notImplemented('todo'));
+};
+
 
 module.exports = handler;
