@@ -11,6 +11,7 @@ const Glue = require('glue');
 const user = require('./lib/user');
 const location = require('./lib/location');
 const file = require('./lib/file');
+const messenger = require('./lib/messenger');
 
 
 // declare  plugins
@@ -49,20 +50,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         throw err;
     }
 
-    // configure seneca
-    server.seneca
-        // set desired transport method
-        .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
-        // announce a microservice with pin and transport type the services is listening to
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
-
-    // promisify seneca.act
-    let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
-    // decorate server object with promisified seneca.act
-    server.decorate('server', 'pact', pact);
-
-
     // configure auth strategy
     server.auth.strategy('session', 'cookie', {
         password: 'secret',
@@ -77,6 +64,20 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(user.routes);
     server.route(location.routes);
     server.route(file.routes);
+    server.route(messenger.routes);
+
+    // configure seneca
+    server.seneca
+        // set desired transport method
+        .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
+        // announce a microservice with pin and transport type the services is listening to
+        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
+        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
+
+    // promisify seneca.act
+    let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
+    // decorate server object with promisified seneca.act
+    server.decorate('server', 'pact', pact);
 
 
     // start the server
