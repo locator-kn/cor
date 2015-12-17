@@ -11,6 +11,6 @@ validations.conversationId = Joi.object().keys({
 validations.dataPaged = Joi.object().keys({
     page: Joi.number().default(0),
     elements: Joi.number().default(20)
-});
+}).and('page', 'elements');
 
 module.exports = validations;
