@@ -3,10 +3,11 @@ const Joi = require('joi');
 
 let validations = {};
 
-let mongoIdField = Joi.string().required();
+let mongoIdField = Joi.string().optional();
+let mongoIdFieldRequired = mongoIdField.required();
 
 validations.conversationId = Joi.object().keys({
-    conversationId: mongoIdField
+    conversationId: mongoIdFieldRequired
 });
 
 validations.messageType = Joi.object().keys({
@@ -14,7 +15,7 @@ validations.messageType = Joi.object().keys({
 });
 
 validations.message = Joi.object().keys({
-    conversation_id: mongoIdField,
+    conversation_id: mongoIdFieldRequired,
     location_id: mongoIdField,
     message: Joi.string()
 }).xor('message', 'location_id');
