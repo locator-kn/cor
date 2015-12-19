@@ -11,7 +11,7 @@ validations.login = Joi.object().keys({
 validations.register = Joi.object().keys({
     mail: Joi.string().email().min(3).max(60).required()
         .description('Mail address'),
-    password: Joi.string().regex(/[a-zA-Z0-9@#$%_&!"ง\/\(\)=\?\^]{3,30}/).required()
+    password: Joi.string().regex(/[a-zA-Z0-9@#$%_&!"ยง\/\(\)=\?\^]{3,30}/).required()
         .description('User set password')
 });
 
