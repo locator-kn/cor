@@ -71,6 +71,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         // set desired transport method
         .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the services is listening to
+        .client({type: process.env['SENECA_TRANSPORT_METHOD']})
         .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
         .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
 
