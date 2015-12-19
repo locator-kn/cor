@@ -26,7 +26,25 @@ handler.getMessagesByConversationId = (request, reply) => {
 
 handler.postMessage = (request, reply) => {
 
-    return reply(boom.notImplemented('todo'));
+    let messageData = request.payload;
+    messageData.timestamp = Date.now();
+    messageData.from = util.getUserId(request.auth);
+
+    let senecaAct = util.setupSenecaPattern({
+        cmd: 'newmessage',
+        message_type: request.params.messageType
+    }, messageData, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            if (error.cause.name === 'ValidationError') {
+                return reply(boom.badRequest(error.details.message));
+            }
+            console.log(JSON.stringify(error));
+            return reply(boom.badRequest(error.details.message));
+
+        });
 };
 
 
