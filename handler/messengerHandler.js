@@ -10,13 +10,38 @@ const basicPin = {
 };
 
 handler.getConversationById = (request, reply) => {
+    let conID = request.params.conversationId;
+    let senecaAct = util.setupSenecaPattern({
+        cmd: 'getconversationbyid'
+    }, {conversation_id: conID}, basicPin);
 
-    return reply(boom.notImplemented('todo'));
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            if (error.cause.name === 'ValidationError') {
+                return reply(boom.badRequest(error.details.message));
+            }
+            return reply(boom.badRequest(error.details.message));
+
+        });
 };
 
 handler.getMyConversations = (request, reply) => {
 
-    return reply(boom.notImplemented('todo'));
+
+    let senecaAct = util.setupSenecaPattern({
+        cmd: 'getconversationsbyuser'
+    }, {user_id: util.getUserId(request.auth)}, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            if (error.cause.name === 'ValidationError') {
+                return reply(boom.badRequest(error.details.message));
+            }
+            return reply(boom.badRequest(error.details.message));
+
+        });
 };
 
 handler.getMessagesByConversationId = (request, reply) => {
