@@ -25,4 +25,13 @@ validations.dataPaged = Joi.object().keys({
     elements: Joi.number().default(20)
 }).and('page', 'elements');
 
+
+let participant = Joi.object().keys({
+    user_id: Joi.string().required()
+});
+
+validations.postConversation = Joi.object().keys({
+    participants: Joi.array().items(participant).min(1)
+});
+
 module.exports = validations;
