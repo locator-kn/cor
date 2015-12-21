@@ -66,13 +66,63 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(file.routes);
     server.route(messenger.routes);
 
+    server.route({
+        method: 'GET',
+        path: '/my/bubblescreen',
+        handler: (request, reply) => {
+
+            let senecaActMessages = {
+                role: 'messenger',
+                cmd: 'latestmessages',
+                distict: 'conversation',
+                data: {
+                    'user_id': '567857f5de1d4c5a4fd81d03',
+                    'query': {
+                        count: 3
+                    }
+                }
+            };
+
+            let senecaActLocations = { cmd: 'nearby',
+                data:
+                { long: 9.169753789901733,
+                    lat: 47.66868204997508,
+                    maxDistance: 2,
+                    limit: 3 },
+                role: 'location' }
+
+            let messages = request.server.pact(senecaActMessages);
+            let locations = request.server.pact(senecaActLocations);
+
+            Promise.all([messages, locations])
+                .then(results => {
+                    return {
+                        messages: results[0],
+                        locations: results[1].results
+                    };
+                })
+                .then(reply)
+                .catch(reply);
+        },
+        config: {
+            description: 'Send new message',
+            notes: 'returns _id of created message, currently supported message types are text and location',
+            tags: ['api', 'messenger', 'conversation'],
+
+            auth: {
+                mode: 'optional',
+                strategy: 'session'
+            }
+        }
+    });
+
     // configure seneca
     server.seneca
         // set desired transport method
         .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the services is listening to
-        .client({type: process.env['SENECA_TRANSPORT_METHOD']})
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
+        .client({type: 'tcp', port: 4050, pin: 'role:messenger,cmd:*'})
+        .client({type: 'tcp', port: 4444, pin: 'role:user,cmd:*'})
         .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
 
     // promisify seneca.act
