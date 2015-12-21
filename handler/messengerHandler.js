@@ -45,8 +45,24 @@ handler.getMyConversations = (request, reply) => {
 };
 
 handler.getMessagesByConversationId = (request, reply) => {
+    let conversationId = request.params.conversationId;
+    let query = request.query;
 
-    return reply(boom.notImplemented('todo'));
+    let senecaAct = util.setupSenecaPattern('getmessagesbyconversationid', {
+        conversation_id: conversationId,
+        query: query
+    }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            if (error.cause.name === 'ValidationError') {
+                return reply(boom.badRequest(error.details.message));
+            }
+            console.log(JSON.stringify(error));
+            return reply(boom.badRequest(error.details.message));
+
+        });
 };
 
 
