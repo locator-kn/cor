@@ -121,8 +121,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         // set desired transport method
         .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the services is listening to
-        .client({type: 'tcp', port: 4050, pin: 'role:messenger,cmd:*'})
-        .client({type: 'tcp', port: 4444, pin: 'role:user,cmd:*'})
+        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:messenger,cmd:*'})
+        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
         .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
 
     // promisify seneca.act
