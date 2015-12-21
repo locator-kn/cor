@@ -76,7 +76,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 cmd: 'latestmessages',
                 distict: 'conversation',
                 data: {
-                    'user_id': '567857f5de1d4c5a4fd81d03',
+                    'user_id': '56786bfa8251633f31e41319',
                     'query': {
                         count: 3
                     }
