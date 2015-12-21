@@ -105,9 +105,9 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 .catch(reply);
         },
         config: {
-            description: 'Send new message',
-            notes: 'returns _id of created message, currently supported message types are text and location',
-            tags: ['api', 'messenger', 'conversation'],
+            description: 'Get data for bubblescreen',
+            notes: 'returns object with two arrays: messages and locations',
+            tags: ['api', 'bubblescreen', 'messages', 'locations'],
 
             auth: {
                 mode: 'optional',
