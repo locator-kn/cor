@@ -68,14 +68,65 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(file.routes);
     server.route(messenger.routes);
 
+    server.route({
+        method: 'GET',
+        path: '/my/bubblescreen',
+        handler: (request, reply) => {
+
+            let senecaActMessages = {
+                role: 'messenger',
+                cmd: 'latestmessages',
+                distict: 'conversation',
+                data: {
+                    'user_id': '56786fe3522786413366397a',
+                    'query': {
+                        count: 3
+                    }
+                }
+            };
+
+            let senecaActLocations = { cmd: 'nearby',
+                data:
+                { long: 9.169753789901733,
+                    lat: 47.66868204997508,
+                    maxDistance: 2,
+                    limit: 3 },
+                role: 'location' }
+
+            let messages = request.server.pact(senecaActMessages);
+            let locations = request.server.pact(senecaActLocations);
+
+            Promise.all([messages, locations])
+                .then(results => {
+                    return {
+                        messages: results[0],
+                        locations: results[1].results
+                    };
+                })
+                .then(reply)
+                .catch(reply);
+        },
+        config: {
+            description: 'Get data for bubblescreen',
+            notes: 'returns object with two arrays: messages and locations',
+            tags: ['api', 'bubblescreen', 'messages', 'locations'],
+
+            auth: {
+                mode: 'optional',
+                strategy: 'session'
+            }
+        }
+    });
+
     // configure seneca
     server.seneca
         // set desired transport method
-        .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
+        //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the services is listening to
-        .client({type: process.env['SENECA_TRANSPORT_METHOD']})
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
+        .client({type: 'tcp', port: 7003, pin: 'role:messenger,cmd:*'})
+        .client({type: 'tcp', port: 7002, pin: 'role:user,cmd:*'})
+        .client({type: 'tcp', port: 7001, pin: 'role:location,cmd:*'});
+
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
     // decorate server object with promisified seneca.act
