@@ -23,7 +23,7 @@ handler.login = (request, reply) => {
             reply(result);
         })
         .catch(error => {
-            reply(boom.badRequest('du depp'));
+            reply(boom.unauthorized());
         });
 
 };
