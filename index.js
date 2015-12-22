@@ -31,6 +31,8 @@ var manifest = {
     }, {
         'hapi-auth-cookie': {}
     }, {
+        'h2o2': {}
+    }, {
         'good': [{
             options: {
                 requestPayload: true,
@@ -74,7 +76,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         .client({type: process.env['SENECA_TRANSPORT_METHOD']})
         .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
         .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
-
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
     // decorate server object with promisified seneca.act
