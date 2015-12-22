@@ -119,11 +119,11 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     // configure seneca
     server.seneca
         // set desired transport method
-        .use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
+        //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the services is listening to
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:messenger,cmd:*'})
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:user,cmd:*'})
-        .client({type: process.env['SENECA_TRANSPORT_METHOD'], pin: 'role:location,cmd:*'});
+        .client({type: 'tcp', port: 7003, pin: 'role:messenger,cmd:*'})
+        .client({type: 'tcp', port: 7002, pin: 'role:user,cmd:*'})
+        .client({type: 'tcp', port: 7001, pin: 'role:location,cmd:*'});
 
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
