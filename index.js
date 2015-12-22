@@ -31,6 +31,8 @@ var manifest = {
     }, {
         'hapi-auth-cookie': {}
     }, {
+        'h2o2': {}
+    }, {
         'good': [{
             options: {
                 requestPayload: true,
