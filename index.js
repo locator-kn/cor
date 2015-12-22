@@ -89,7 +89,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                     lat: 47.66868204997508,
                     maxDistance: 2,
                     limit: 3 },
-                role: 'location' }
+                role: 'location' };
 
             let messages = request.server.pact(senecaActMessages);
             let locations = request.server.pact(senecaActLocations);
