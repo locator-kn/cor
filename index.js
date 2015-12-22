@@ -60,6 +60,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         clearInvalid: true
     });
 
+    server.auth.default('session');
+
     // Add the API routes
     server.route(user.routes);
     server.route(location.routes);
