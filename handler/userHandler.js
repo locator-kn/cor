@@ -15,7 +15,11 @@ handler.login = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(result => {
-            request.auth.session.set(result);
+
+            request.auth.session.set({
+                _id: result._id,
+                mail: result.mail
+            });
             reply(result);
         })
         .catch(error => {
