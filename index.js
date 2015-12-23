@@ -122,7 +122,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.seneca
         // set desired transport method
         //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
-        // announce a microservice with pin and transport type the services is listening to
+        // announce a microservice with pin and transport type the service is listening to
         .client({type: 'tcp', port: 7003, pin: 'role:messenger,cmd:*'})
         .client({type: 'tcp', port: 7002, pin: 'role:user,cmd:*'})
         .client({type: 'tcp', port: 7001, pin: 'role:location,cmd:*'});
