@@ -18,12 +18,18 @@ validations.locationId = Joi.object().keys({
     locationId: Joi.string().required()
 });
 
+validations.locationName = Joi.object().keys({
+    locationName: Joi.string().required()
+});
+
+
 validations.newLocation = Joi.object().keys({
-    title: Joi.string().alphanum().min(3). max(50).required(),
+    title: Joi.string().min(3).max(50).required(),
     long: Joi.number().required(),
     lat: Joi.number().required(),
-    description: Joi.string().alphanum().max(140).default(" "),
+    description: Joi.string().max(140).default(" "),
     categories: Joi.array().items(Joi.string()).max(3)
 });
+
 
 module.exports = validations;

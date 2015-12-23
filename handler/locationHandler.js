@@ -81,9 +81,20 @@ handler.getMyFavoriteLocations = (request, reply) => {
     return reply(boom.notImplemented('todo'));
 };
 
-handler.getMyFavoriteLocations = (request, reply) => {
+handler.getLocationByName = (request,reply) =>{
 
-    return reply(boom.notImplemented('todo'));
+    let senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            reply(boom.badRequest(error));
+        });
 };
+
+handler.postUpdateLocation = (request,reply) =>{
+    return reply(boom.notImplemented ('todo'));
+};
+
 
 module.exports = handler;
