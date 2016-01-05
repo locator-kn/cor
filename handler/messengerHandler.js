@@ -114,5 +114,29 @@ handler.postMessage = (request, reply) => {
         });
 };
 
+handler.ackConversation = (request, reply) => {
+    let time = request.payload.last_read;
+    let conversationId = request.params.conversationId;
+    let userId = util.getUserId(request.auth);
+    let senecaAct = util.setupSenecaPattern({
+            cmd: 'ackConverstaion'
+        }, {
+            user_id: userId,
+            conversation_id: conversationId,
+            last_read: time
+        }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(() => reply())
+        .catch(error => {
+            if (error.cause.name === 'not found') {
+                return reply(boom.notFound(error.details.message));
+            }
+            console.log(JSON.stringify(error));
+            return reply(boom.badRequest(error.details.message));
+
+        });
+};
+
 
 module.exports = handler;
