@@ -34,4 +34,9 @@ validations.postConversation = Joi.object().keys({
     participants: Joi.array().items(participant).min(1)
 });
 
+
+validations.ackPayload = Joi.object().keys({
+    last_read: Joi.number().min(1)
+});
+
 module.exports = validations;
