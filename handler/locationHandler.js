@@ -73,7 +73,23 @@ handler.getSchoenhierNearby = (request, reply) => {
 
 handler.getLocationsStream = (request, reply) => {
 
-    return reply(boom.notImplemented('still todo'));
+    //return reply(boom.notImplemented('still todo'));
+    return reply([{
+        user: '5677fdec53f5beead532b1e3',
+        date: '2015-07-27T07:24:06.381Z',
+        type: 'audio',
+        path: '/audio/pipapoid/file.mp3'
+    },{
+        user: '5677fdec53f5beead532b1e3',
+        date: '2015-07-26T07:24:06.381Z',
+        type: 'video',
+        path: '/video/pipapoid2/file.mpg'
+    },{
+        user: '5677fdec53f5beead532b1e3',
+        date: '2015-07-26T06:24:06.381Z',
+        type: 'video',
+        path: '/video/pipapoid3/file2.mpg'
+    }]);
 };
 
 handler.getMyFavoriteLocations = (request, reply) => {
