@@ -97,6 +97,22 @@ handler.getMyFavoriteLocations = (request, reply) => {
     return reply(boom.notImplemented('todo'));
 };
 
+handler.postToggleFavorLocation = (request, reply) => {
+
+    let userId = util.getUserId(request.auth);
+    let senecaAct = util.setupSenecaPattern('toggleFavor', {location_id: request.params.locationId, user_id: userId}, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            if (error.cause.details.message && error.cause.details.message === 'Invalid id') {
+                return reply(boom.notFound());
+            }
+            reply(boom.badImplementation(error));
+        });
+};
+
 handler.getLocationByName = (request,reply) =>{
 
     let senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
