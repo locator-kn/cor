@@ -79,12 +79,12 @@ handler.getLocationsStream = (request, reply) => {
         date: '2015-07-27T07:24:06.381Z',
         type: 'audio',
         path: '/audio/pipapoid/file.mp3'
-    },{
+    }, {
         user: '5677fdec53f5beead532b1e3',
         date: '2015-07-26T07:24:06.381Z',
         type: 'video',
         path: '/video/pipapoid2/file.mpg'
-    },{
+    }, {
         user: '5677fdec53f5beead532b1e3',
         date: '2015-07-26T06:24:06.381Z',
         type: 'video',
@@ -100,7 +100,10 @@ handler.getMyFavoriteLocations = (request, reply) => {
 handler.postToggleFavorLocation = (request, reply) => {
 
     let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern('toggleFavor', {location_id: request.params.locationId, user_id: userId}, basicPin);
+    let senecaAct = util.setupSenecaPattern('toggleFavor', {
+        location_id: request.params.locationId,
+        user_id: userId
+    }, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -113,7 +116,7 @@ handler.postToggleFavorLocation = (request, reply) => {
         });
 };
 
-handler.getLocationByName = (request,reply) =>{
+handler.getLocationByName = (request, reply) => {
 
     let senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
 
@@ -124,7 +127,7 @@ handler.getLocationByName = (request,reply) =>{
         });
 };
 
-handler.postUpdateLocation = (request,reply) =>{
+handler.postUpdateLocation = (request, reply) => {
     return reply(boom.notImplemented ('todo'));
 };
 
