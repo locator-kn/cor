@@ -65,8 +65,8 @@ handler.follow = (request, reply) => {
     request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
-            console.log(error);
-            reply(boom.badRequest(error));
+            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
+            reply(boom.badRequest(errorMsg));
         });
 
 };
