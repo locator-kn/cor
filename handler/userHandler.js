@@ -42,7 +42,7 @@ handler.register = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(result => {
-            if(result.hasOwnProperty('error')) {
+            if (result.hasOwnProperty('error')) {
                 reply(boom.conflict(result.msg));
             } else {
                 request.auth.session.set(result);
@@ -54,6 +54,22 @@ handler.register = (request, reply) => {
             reply(boom.badRequest('du depp'));
         });
 }
+
+handler.follow = (request, reply) => {
+    let userID = util.getUserId(request.auth);
+    let senecaAct = util.setupSenecaPattern('follow', {
+        to_follow: request.params.toFollow,
+        user_id: userID
+    }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            reply(boom.badRequest(error));
+        });
+
+};
 
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
