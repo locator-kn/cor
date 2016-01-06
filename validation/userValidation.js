@@ -2,6 +2,9 @@
 const Joi = require('joi');
 let validations = {};
 
+let mongoIdField = Joi.string().optional();
+let mongoIdFieldRequired = mongoIdField.required();
+
 validations.login = Joi.object().keys({
     mail: Joi.string().email().min(3).max(60).required()
         .description('Mail address'),
@@ -15,6 +18,10 @@ validations.register = Joi.object().keys({
         .description('User set password'),
     name: Joi.string().required().description('User name'),
     residence: Joi.string().required().description('User residence')
+});
+
+validations.follow = Joi.object().keys({
+    toFollow: mongoIdFieldRequired
 });
 
 module.exports = validations;
