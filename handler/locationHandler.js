@@ -76,7 +76,7 @@ handler.getLocationsStream = (request, reply) => {
     //return reply(boom.notImplemented('still todo'));
     return reply([{
         user: '5677fdec53f5beead532b1e3',
-        date: '2015-07-27T07:24:06.381Z',
+        date: '2015-07-27T07:29:06.381Z',
         type: 'text',
         data: 'pimaling ding ding'
     },{
