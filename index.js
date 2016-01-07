@@ -75,12 +75,18 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         path: '/my/bubblescreen',
         handler: (request, reply) => {
 
+            // temp hack begin
+            const util = require('./lib/util');
+            let userId = util.getUserId(request.auth);
+            userId = userId !== 'unknown' ? userId : '56786fe3522786413366397a';
+            // temp hack end
+
             let senecaActMessages = {
                 role: 'messenger',
                 cmd: 'latestmessages',
                 distict: 'conversation',
                 data: {
-                    'user_id': '56786fe3522786413366397a',
+                    'user_id': userId,
                     'query': {
                         count: 3
                     }
