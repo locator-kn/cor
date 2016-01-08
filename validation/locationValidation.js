@@ -31,5 +31,9 @@ validations.newLocation = Joi.object().keys({
     categories: Joi.array().items(Joi.string()).max(3)
 });
 
+validations.textImpression = Joi.object().keys({
+    data: Joi.string().min(3).required()
+});
+
 
 module.exports = validations;
