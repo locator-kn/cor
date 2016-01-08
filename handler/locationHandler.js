@@ -97,6 +97,12 @@ handler.getLocationsStream = (request, reply) => {
     }]);
 };
 
+handler.postTextImpression = (request, reply) => {
+    return reply(boom.notImplemented('todo'));
+
+};
+
+
 handler.getMyFavoriteLocations = (request, reply) => {
 
     return reply(boom.notImplemented('todo'));
