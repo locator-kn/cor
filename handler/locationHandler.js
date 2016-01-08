@@ -102,7 +102,23 @@ handler.getLocationsStream = (request, reply) => {
 };
 
 handler.postTextImpression = (request, reply) => {
-    return reply(boom.notImplemented('todo'));
+
+    let userId = util.getUserId(request.auth);
+    let senecaAct = util.setupSenecaPattern({cmd:'addimpression', type:'text'}, {
+        location_id: request.params.locationId,
+        user_id: userId,
+        message: request.payload.data
+    }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            if (error.cause.details.message && error.cause.details.message === 'invalid location_id') {
+                return reply(boom.notFound());
+            }
+            reply(boom.badImplementation(error));
+        });
 
 };
 
