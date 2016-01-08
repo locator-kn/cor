@@ -78,24 +78,28 @@ handler.getLocationsStream = (request, reply) => {
         user_id: '5677fdec53f5beead532b1e3',
         create_date: '2015-07-27T07:29:06.381Z',
         modified_date: '2015-07-27T07:29:06.381Z',
+        location_id: '567a96f3990007900125f52e',
         type: 'text',
         data: 'pimaling ding ding'
     },{
         user_id: '5677fdec53f5beead532b1e3',
         create_date: '2015-07-27T07:24:06.381Z',
         modified_date: '2015-07-27T07:24:06.381Z',
+        location_id: '567a96f3990007900125f52e',
         type: 'audio',
         data: '/audio/pipapoid/file.mp3'
     }, {
         user_id: '5677fdec53f5beead532b1e3',
         create_date: '2015-07-26T07:24:06.381Z',
         modified_date: '2015-07-26T07:24:06.381Z',
+        location_id: '567a96f3990007900125f52e',
         type: 'video',
         data: '/video/pipapoid2/file.mpg'
     }, {
         user_id: '5677fdec53f5beead532b1e3',
         create_date: '2015-07-26T06:24:06.381Z',
         modified_date: '2015-07-26T06:24:06.381Z',
+        location_id: '567a96f3990007900125f52e',
         type: 'video',
         data: '/video/pipapoid3/file2.mpg'
     }]);
