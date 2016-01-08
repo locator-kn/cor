@@ -105,7 +105,7 @@ handler.getLocationsStream = (request, reply) => {
     //}]);
 
     let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern(getlocationstream, {
+    let senecaAct = util.setupSenecaPattern('getlocationstream', {
         location_id: request.params.locationId,
         user_id: userId,
     }, basicPin);
