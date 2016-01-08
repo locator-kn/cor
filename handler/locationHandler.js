@@ -113,9 +113,8 @@ handler.postTextImpression = (request, reply) => {
     request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
-            console.log(error);
-            if (error.cause.details.message && error.cause.details.message === 'invalid location_id') {
-                return reply(boom.notFound());
+            if (error.message.includes('Invalid id.')) {
+                return reply(boom.notFound('location_id'));
             }
             reply(boom.badImplementation(error));
         });
