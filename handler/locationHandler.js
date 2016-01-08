@@ -107,13 +107,13 @@ handler.getLocationsStream = (request, reply) => {
     let userId = util.getUserId(request.auth);
     let senecaAct = util.setupSenecaPattern('getlocationstream', {
         location_id: request.params.locationId,
-        user_id: userId,
+        user_id: userId
     }, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
-            if (error.message.includes('Invalid id.')) {
+            if (error.message.includes('Invalid id.') || error.message.includes('invalid location_id')) {
                 return reply(boom.notFound('location_id'));
             }
             reply(boom.badImplementation(error));
