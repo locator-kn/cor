@@ -90,6 +90,12 @@ handler.getMyFollowing = (request, reply) => {
 
 };
 
+handler.getFollowingByUserId = (request, reply) => {
+
+    getFollowingUsersByUserId(request, reply, request.params.userId);
+
+};
+
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
 }
