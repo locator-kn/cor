@@ -24,4 +24,8 @@ validations.follow = Joi.object().keys({
     toFollow: mongoIdFieldRequired
 });
 
+validations.userId = Joi.object().keys({
+    userId: mongoIdFieldRequired
+});
+
 module.exports = validations;
