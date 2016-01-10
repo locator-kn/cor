@@ -7,6 +7,8 @@ require('dotenv').config({path: pwd});
 const Bluebird = require('bluebird');
 const Glue = require('glue');
 
+const util = require('./lib/util');
+
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
