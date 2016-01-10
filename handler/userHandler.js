@@ -71,6 +71,22 @@ handler.follow = (request, reply) => {
 
 };
 
+handler.getMyFollowing = (request, reply) => {
+
+    let senecaAct = util.setupSenecaPattern('getfollowing', {
+        user_id: request.requestingUserId
+    }, basicPin);
+
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
+            reply(boom.badRequest(errorMsg));
+        });
+
+};
+
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
 }
