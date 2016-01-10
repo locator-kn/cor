@@ -71,12 +71,10 @@ handler.follow = (request, reply) => {
 
 };
 
-handler.getMyFollowing = (request, reply) => {
-
+let getFollowingUsersByUserId = (request, reply, userId) => {
     let senecaAct = util.setupSenecaPattern('getfollowing', {
-        user_id: request.requestingUserId
+        user_id: userId || request.requestingUserId
     }, basicPin);
-
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -84,6 +82,11 @@ handler.getMyFollowing = (request, reply) => {
             let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
             reply(boom.badRequest(errorMsg));
         });
+};
+
+handler.getMyFollowing = (request, reply) => {
+
+    getFollowingUsersByUserId(request, reply, request.requestingUserId);
 
 };
 
