@@ -96,6 +96,31 @@ handler.getFollowingByUserId = (request, reply) => {
 
 };
 
+
+let getFollowerByUserId = (request, reply, userId) => {
+    let senecaAct = util.setupSenecaPattern('getfollowers', {
+        user_id: userId || request.requestingUserId
+    }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
+            reply(boom.badRequest(errorMsg));
+        });
+};
+
+handler.getMyFollower = (request, reply) => {
+
+    getFollowerByUserId(request, reply, request.requestingUserId);
+
+};
+handler.getFollowerByUser = (request, reply) => {
+
+    getFollowerByUserId(request, reply, request.params.userId);
+
+};
+
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
 }
