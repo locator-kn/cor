@@ -181,9 +181,5 @@ handler.postUpdateLocation = (request, reply) => {
     return reply(boom.notImplemented ('todo'));
 };
 
-handler.addImageToLocation = (request, reply) => {
-    return reply(boom.notImplemented ('todo'));
-};
-
 
 module.exports = handler;
