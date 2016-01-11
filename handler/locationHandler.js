@@ -124,7 +124,7 @@ handler.getLocationsStream = (request, reply) => {
 handler.postTextImpression = (request, reply) => {
 
     let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern({cmd:'addimpression', type:'text'}, {
+    let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: 'text'}, {
         location_id: request.params.locationId,
         user_id: userId,
         message: request.payload.data
@@ -178,6 +178,10 @@ handler.getLocationByName = (request, reply) => {
 };
 
 handler.postUpdateLocation = (request, reply) => {
+    return reply(boom.notImplemented ('todo'));
+};
+
+handler.addImageToLocation = (request, reply) => {
     return reply(boom.notImplemented ('todo'));
 };
 
