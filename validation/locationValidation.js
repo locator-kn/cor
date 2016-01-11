@@ -35,5 +35,9 @@ validations.textImpression = Joi.object().keys({
     data: Joi.string().min(3).required()
 });
 
+validations.image = Joi.object().keys({
+   file: Joi.any().required().meta({swaggerType: 'file'})
+});
+
 
 module.exports = validations;
