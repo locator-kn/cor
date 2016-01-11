@@ -1,5 +1,7 @@
 'use strict';
 const boom = require('boom');
+const Wreck = require('wreck');
+
 
 const util = require('../lib/util');
 
@@ -179,6 +181,16 @@ handler.getLocationByName = (request, reply) => {
 
 handler.postUpdateLocation = (request, reply) => {
     return reply(boom.notImplemented ('todo'));
+};
+
+handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
+
+    console.log('receiving the response from the upstream.');
+    wreck.read(res, {json: true}, (err, payload) => {
+
+        console.log('some payload manipulation if you want to.');
+        reply(payload);
+    });
 };
 
 
