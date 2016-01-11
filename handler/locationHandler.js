@@ -186,7 +186,7 @@ handler.postUpdateLocation = (request, reply) => {
 handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
 
     console.log('receiving the response from the upstream.');
-    wreck.read(res, {json: true}, (err, payload) => {
+    Wreck.read(res, {json: true}, (err, payload) => {
 
         console.log('some payload manipulation if you want to.');
         reply(payload);
