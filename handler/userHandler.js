@@ -53,10 +53,11 @@ handler.register = (request, reply) => {
             console.log(error);
             reply(boom.badRequest('du depp'));
         });
-}
+};
 
 handler.follow = (request, reply) => {
     let userID = util.getUserId(request.auth);
+
     let senecaAct = util.setupSenecaPattern('follow', {
         to_follow: request.params.toFollow,
         user_id: userID
@@ -123,7 +124,7 @@ handler.getFollowerByUser = (request, reply) => {
 
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
-}
+};
 
 
 module.exports = handler;
