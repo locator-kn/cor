@@ -37,6 +37,7 @@
     "seneca": "^0.9.3",
     "seneca-rabbitmq-transport": "^0.2.1",
     "tv": "^5.0.2",
-    "vision": "^4.0.1"
+    "vision": "^4.0.1",
+    "wreck": "^7.0.0"
   }
 }
