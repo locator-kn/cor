@@ -58,7 +58,9 @@ handler.register = (request, reply) => {
 handler.follow = (request, reply) => {
     let userID = util.getUserId(request.auth);
 
-    let senecaAct = util.setupSenecaPattern('follow', {
+    request.basicSenecaPattern.cmd = 'follow';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         to_follow: request.params.toFollow,
         user_id: userID
     }, basicPin);
@@ -73,8 +75,10 @@ handler.follow = (request, reply) => {
 };
 
 let getFollowingUsersByUserId = (request, reply, userId) => {
-    let senecaAct = util.setupSenecaPattern('getfollowing', {
-        user_id: userId || request.requestingUserId
+    request.basicSenecaPattern.cmd = 'getfollowing';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
+        user_id: userId
     }, basicPin);
 
     request.server.pact(senecaAct)
