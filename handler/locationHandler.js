@@ -192,22 +192,22 @@ handler.postUpdateLocation = (request, reply) => {
 handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
 
     if (err) {
-        return reply(Boom.badRequest(err));
+        return reply(boom.badRequest(err));
     }
 
     // read response
     Wreck.read(res, {json: true}, (err, response) => {
-
         if (err) {
-            return reply(Boom.badRequest(err));
+            return reply(boom.badRequest(err));
         }
 
-        if (response.isBoom) {
+        if (response.statusCode >= 400) {
             return reply(response)
         }
 
-        console.log(payload);
-        reply(payload);
+
+        // update location
+        reply(response);
     });
 };
 
