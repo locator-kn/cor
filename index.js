@@ -59,11 +59,11 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     // configure auth strategy
     server.auth.strategy('session', 'cookie', 'optional', {
-        password: 'secret',
+        password: process.env['COOKIE_SECRET'],
         ttl: 3600000,
         keepAlive: true,
         cookie: 'locator_session',
-        isSecure: false,
+        isSecure: false, //TODO
         clearInvalid: true
     });
 
