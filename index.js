@@ -59,11 +59,11 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     // configure auth strategy
     server.auth.strategy('session', 'cookie', 'optional', {
-        password: 'secret',
+        password: process.env['COOKIE_SECRET'],
         ttl: 3600000,
         keepAlive: true,
         cookie: 'locator_session',
-        isSecure: false,
+        isSecure: false, //TODO
         clearInvalid: true
     });
 
@@ -143,10 +143,10 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         // set desired transport method
         //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the service is listening to
-        .client({type: 'tcp', port: 7003, pin: 'role:messenger,cmd:*'})
-        .client({type: 'tcp', port: 7002, pin: 'role:user,cmd:*'})
-        .client({type: 'tcp', port: 7001, pin: 'role:location,cmd:*'})
-        .client({type: 'tcp', port: 7010, pin: 'role:reporter,cmd:*'});
+        .client({type: 'tcp', port: 7003, host:'localhost', pin: 'role:messenger,cmd:*'})
+        .client({type: 'tcp', port: 7002, host:'localhost', pin: 'role:user,cmd:*'})
+        .client({type: 'tcp', port: 7001, host:'localhost', pin: 'role:location,cmd:*'})
+        .client({type: 'tcp', port: 7010, host:'localhost', pin: 'role:reporter,cmd:*'});
 
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
