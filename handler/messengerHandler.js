@@ -100,7 +100,7 @@ handler.postMessage = (request, reply) => {
     messageData.timestamp = Date.now();
     messageData.from = util.getUserId(request.auth);
 
-    request.basicSenecaPattern.cmd = 'newconversation';
+    request.basicSenecaPattern.cmd = 'newmessage';
     request.basicSenecaPattern.message_type = request.params.messageType;
 
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, messageData, basicPin);
