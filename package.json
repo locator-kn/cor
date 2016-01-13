@@ -34,7 +34,7 @@
     "hoek": "^3.0.4",
     "inert": "^3.2.0",
     "joi": "^7.1.0",
-    "seneca": "^0.9.3",
+    "seneca": "^1.0.0",
     "seneca-rabbitmq-transport": "^0.2.1",
     "tv": "^5.0.2",
     "vision": "^4.0.1",

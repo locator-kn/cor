@@ -12,9 +12,9 @@ const basicPin = {
 
 handler.getRecByUserId = (request, reply) => {
     let userId = request.params.userId;
-    let senecaAct = util.setupSenecaPattern({
-        cmd: 'recommendationForPerson'
-    }, {
+    request.basicSenecaPattern.cmd = 'recommendationForPerson';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         user_id: userId,
         namespace: 'locations',
         actions: {
