@@ -99,7 +99,10 @@ handler.getFollowingByUserId = (request, reply) => {
 
 
 let getFollowerByUserId = (request, reply, userId) => {
-    let senecaAct = util.setupSenecaPattern('getfollowers', {
+
+    request.basicSenecaPattern.cmd = 'getfollowers';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         user_id: userId || request.requestingUserId
     }, basicPin);
 
