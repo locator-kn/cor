@@ -68,7 +68,10 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
     server.ext('onPostAuth', (request, reply) => {
-        request.requestingUserId = util.getUserId(request.auth);
+        request.basicSenecaPattern = {
+            requesting_user_id: util.getUserId(request.auth),
+            cmd: ''
+        };
         reply.continue();
     });
 
