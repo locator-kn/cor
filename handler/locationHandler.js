@@ -13,7 +13,9 @@ const basicPin = {
 
 handler.getLocationById = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('locationById', request.params, basicPin);
+    request.basicSenecaPattern.cmd = 'locationById';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -25,7 +27,9 @@ handler.getLocationById = (request, reply) => {
 
 handler.getLocationsNearby = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
+    request.basicSenecaPattern.cmd = 'nearby';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -37,7 +41,9 @@ handler.getLocationsNearby = (request, reply) => {
 
 handler.postNewLocation = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('addnewlocation', request.payload, basicPin);
+    request.basicSenecaPattern.cmd = 'addnewlocation';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.payload, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)

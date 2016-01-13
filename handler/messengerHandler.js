@@ -11,9 +11,10 @@ const basicPin = {
 
 handler.getConversationById = (request, reply) => {
     let conID = request.params.conversationId;
-    let senecaAct = util.setupSenecaPattern({
-        cmd: 'getconversationbyid'
-    }, {conversation_id: conID}, basicPin);
+
+    request.basicSenecaPattern.cmd = 'getconversationbyid';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {conversation_id: conID}, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -28,10 +29,9 @@ handler.getConversationById = (request, reply) => {
 
 handler.getMyConversations = (request, reply) => {
 
+    request.basicSenecaPattern.cmd = 'getconversationsbyuser';
 
-    let senecaAct = util.setupSenecaPattern({
-        cmd: 'getconversationsbyuser'
-    }, {user_id: util.getUserId(request.auth)}, basicPin);
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {user_id: util.getUserId(request.auth)}, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -48,7 +48,10 @@ handler.getMessagesByConversationId = (request, reply) => {
     let conversationId = request.params.conversationId;
     let query = request.query;
 
-    let senecaAct = util.setupSenecaPattern('getmessagesbyconversationid', {
+
+    request.basicSenecaPattern.cmd = 'getmessagesbyconversationid';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         conversation_id: conversationId,
         query: query
     }, basicPin);
@@ -75,9 +78,9 @@ handler.postConversation = (request, reply) => {
         last_read: Date.now()
     });
 
-    let senecaAct = util.setupSenecaPattern({
-        cmd: 'newconversation'
-    }, conversationData, basicPin);
+    request.basicSenecaPattern.cmd = 'newconversation';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, conversationData, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -97,10 +100,10 @@ handler.postMessage = (request, reply) => {
     messageData.timestamp = Date.now();
     messageData.from = util.getUserId(request.auth);
 
-    let senecaAct = util.setupSenecaPattern({
-        cmd: 'newmessage',
-        message_type: request.params.messageType
-    }, messageData, basicPin);
+    request.basicSenecaPattern.cmd = 'newconversation';
+    request.basicSenecaPattern.message_type = request.params.messageType;
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, messageData, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
@@ -118,9 +121,10 @@ handler.ackConversation = (request, reply) => {
     let time = request.payload.last_read;
     let conversationId = request.params.conversationId;
     let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern({
-            cmd: 'ackConverstaion'
-        }, {
+
+    request.basicSenecaPattern.cmd = 'ackConverstaion';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
             user_id: userId,
             conversation_id: conversationId,
             last_read: time
