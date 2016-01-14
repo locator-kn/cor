@@ -45,8 +45,8 @@ handler.register = (request, reply) => {
             if (result.hasOwnProperty('exists')) {
                 reply(boom.conflict('user with this mail already exists'));
             } else {
-                request.auth.session.set(result);
-                reply('user created').code(201);
+                request.auth.session.set(result.sessionData);
+                reply(result.user).code(201);
             }
 
         })
