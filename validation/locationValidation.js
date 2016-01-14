@@ -23,7 +23,7 @@ validations.locationName = Joi.object().keys({
 });
 
 validations.userIDLocations = Joi.object().keys({
-    locationId: Joi.string().required()
+    userId: Joi.string().required()
 });
 
 validations.newLocation = Joi.object().keys({
