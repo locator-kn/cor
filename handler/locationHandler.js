@@ -204,10 +204,23 @@ handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
         if (response.statusCode >= 400) {
             return reply(response)
         }
+        
+        let userId = util.getUserId(request.auth);
+        let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: 'image'}, {
+            location_id: request.params.locationId,
+            user_id: userId,
+            message: response
+        }, basicPin);
 
+        request.server.pact(senecaAct)
+            .then(reply)
+            .catch(error => {
+                if (error.message.includes('Invalid id.')) {
+                    return reply(boom.notFound('location_id'));
+                }
+                reply(boom.badImplementation(error));
+            });
 
-        // update location
-        reply(response);
     });
 };
 
