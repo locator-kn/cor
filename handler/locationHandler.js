@@ -215,8 +215,11 @@ handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
         request.server.pact(senecaAct)
             .then(reply)
             .catch(error => {
-                if (error.message.includes('Invalid id.')) {
+                if (error.message.includes('Invalid id')) {
                     return reply(boom.notFound('location_id'));
+
+                    // remove the uploaded image again
+
                 }
                 reply(boom.badImplementation(error));
             });
