@@ -22,6 +22,9 @@ validations.locationName = Joi.object().keys({
     locationName: Joi.string().required()
 });
 
+validations.userIDLocations = Joi.object().keys({
+    locationId: Joi.string().required()
+});
 
 validations.newLocation = Joi.object().keys({
     title: Joi.string().min(3).max(50).required(),
