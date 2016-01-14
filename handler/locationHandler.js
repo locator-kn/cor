@@ -1,6 +1,7 @@
 'use strict';
 const boom = require('boom');
 const Wreck = require('wreck');
+const slack = require('ms-utilities').slack;
 
 
 const util = require('../lib/util');
@@ -9,6 +10,49 @@ const util = require('../lib/util');
 let handler = {};
 const basicPin = {
     role: 'location'
+};
+
+let genericFileResponseHandler = (err, res, request, reply, type) => {
+
+    if (err) {
+        return reply(boom.badRequest(err));
+    }
+
+    // read response
+    Wreck.read(res, {json: true}, (err, response) => {
+        if (err) {
+            return reply(boom.badRequest(err));
+        }
+
+        if (response.statusCode >= 400) {
+            return reply(boom.create(response.statusCode, response.message, response.error));
+        }
+
+        let userId = util.getUserId(request.auth);
+        let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: type}, {
+            location_id: request.params.locationId,
+            user_id: userId,
+            message: response
+        }, basicPin);
+
+        request.server.pact(senecaAct)
+            .then(reply)
+            .catch(error => {
+                if (error.message.includes('Invalid id')) {
+
+                    // remove the uploaded image again by making an internal DELETE request
+                    Wreck.delete('http://localhost:3453/stream/' + type + '/' + response._id, (err) => {
+                        if (err) {
+                            // send slack error TODO
+                            slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'],
+                                'Error Deleting file type ' + type + '. Because of: ' + err);
+                        }
+                    });
+                    return reply(boom.notFound('location_id'));
+                }
+                reply(boom.badImplementation(error));
+            });
+    });
 };
 
 handler.getLocationById = (request, reply) => {
@@ -201,46 +245,15 @@ handler.postUpdateLocation = (request, reply) => {
     return reply(boom.notImplemented ('todo'));
 };
 
-handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
+handler.imageUploadRespone = (err, res, request, reply) => {
 
-    if (err) {
-        return reply(boom.badRequest(err));
-    }
+    genericFileResponseHandler(err, res, request, reply, 'image');
+};
 
-    // read response
-    Wreck.read(res, {json: true}, (err, response) => {
-        if (err) {
-            return reply(boom.badRequest(err));
-        }
 
-        if (response.statusCode >= 400) {
-            return reply(response)
-        }
+handler.videoUploadRespone = (err, res, request, reply) => {
 
-        let userId = util.getUserId(request.auth);
-        let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: 'image'}, {
-            location_id: request.params.locationId,
-            user_id: userId,
-            message: response
-        }, basicPin);
-
-        request.server.pact(senecaAct)
-            .then(reply)
-            .catch(error => {
-                if (error.message.includes('Invalid id')) {
-
-                    // remove the uploaded image again by making an internal DELETE request
-                    Wreck.delete('http://localhost:3453/stream/image/' + response._id, (err) => {
-                        if (err) {
-                            // send slack error TODO
-
-                        }
-                    });
-                    return reply(boom.notFound('location_id'));
-                }
-                reply(boom.badImplementation(error));
-            });
-    });
+    genericFileResponseHandler(err, res, request, reply, 'video');
 };
 
 
