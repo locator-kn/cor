@@ -39,5 +39,8 @@ validations.textImpression = Joi.object().keys({
     data: Joi.string().min(3).required()
 });
 
+validations.deleteLocation = Joi.object.keys({
+    locationId: Joi.string.required()
+});
 
 module.exports = validations;
