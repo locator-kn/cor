@@ -53,6 +53,18 @@ handler.postNewLocation = (request, reply) => {
 
 };
 
+handler.getAllLocationsByUserId = (request, reply) =>{
+    request.basicSenecaPattern.cmd = 'getlocbyuserid';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            reply(boom.badRequest(error));
+        });
+}
+
 
 handler.postSchoenhier = (request, reply) => {
 
