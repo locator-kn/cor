@@ -100,7 +100,7 @@ handler.postNewLocation = (request, reply) => {
 handler.getAllLocationsByUserId = (request, reply) =>{
     request.basicSenecaPattern.cmd = 'getlocbyuserid';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
