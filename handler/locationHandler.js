@@ -204,7 +204,7 @@ handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
         if (response.statusCode >= 400) {
             return reply(response)
         }
-        
+
         let userId = util.getUserId(request.auth);
         let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: 'image'}, {
             location_id: request.params.locationId,
@@ -216,14 +216,18 @@ handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
             .then(reply)
             .catch(error => {
                 if (error.message.includes('Invalid id')) {
+
+                    // remove the uploaded image again by making an internal DELETE request
+                    Wreck.delete('http://localhost:3453/stream/image/' + response._id, (err) => {
+                        if (err) {
+                            // send slack error TODO
+
+                        }
+                    });
                     return reply(boom.notFound('location_id'));
-
-                    // remove the uploaded image again
-
                 }
                 reply(boom.badImplementation(error));
             });
-
     });
 };
 
