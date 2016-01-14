@@ -42,16 +42,17 @@ handler.register = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(result => {
-            if (result.hasOwnProperty('error')) {
-                reply(boom.conflict(result.msg));
+            if (result.hasOwnProperty('exists')) {
+                reply(boom.conflict('user with this mail already exists'));
             } else {
                 request.auth.session.set(result);
                 reply('user created').code(201);
             }
+
         })
         .catch(error => {
             console.log(error);
-            reply(boom.badRequest('du depp'));
+            reply(boom.badRequest());
         });
 };
 
