@@ -202,7 +202,7 @@ handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
         }
 
         if (response.statusCode >= 400) {
-            return reply(response)
+            return reply(boom.create(response.statusCode, response.error, response.message));
         }
 
         let userId = util.getUserId(request.auth);
