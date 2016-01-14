@@ -192,22 +192,35 @@ handler.postUpdateLocation = (request, reply) => {
 handler.imageUploadRespone = (err, res, request, reply, settings, ttl) => {
 
     if (err) {
-        return reply(Boom.badRequest(err));
+        return reply(boom.badRequest(err));
     }
 
     // read response
     Wreck.read(res, {json: true}, (err, response) => {
-
         if (err) {
-            return reply(Boom.badRequest(err));
+            return reply(boom.badRequest(err));
         }
 
-        if (response.isBoom) {
+        if (response.statusCode >= 400) {
             return reply(response)
         }
+        
+        let userId = util.getUserId(request.auth);
+        let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: 'image'}, {
+            location_id: request.params.locationId,
+            user_id: userId,
+            message: response
+        }, basicPin);
 
-        console.log(payload);
-        reply(payload);
+        request.server.pact(senecaAct)
+            .then(reply)
+            .catch(error => {
+                if (error.message.includes('Invalid id.')) {
+                    return reply(boom.notFound('location_id'));
+                }
+                reply(boom.badImplementation(error));
+            });
+
     });
 };
 
