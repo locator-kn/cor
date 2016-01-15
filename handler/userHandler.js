@@ -139,14 +139,13 @@ handler.getUserById = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(result => {
-            console.log(result);
             result ? reply(result) : reply(boom.notFound());
         })
         .catch(error => {
             let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
             reply(boom.badRequest(errorMsg));
         });
-}
+};
 
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
