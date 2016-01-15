@@ -145,7 +145,7 @@ handler.getUserById = (request, reply) => {
             let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
             reply(boom.badRequest(errorMsg));
         });
-}
+};
 
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
