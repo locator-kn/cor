@@ -103,6 +103,20 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 }
             };
 
+            let senecaActRecommendations = {
+                role: 'reporter',
+                cmd: 'recommendationForPerson',
+                data: {
+                    namespace: 'locations',
+                    user_id: userId,
+                    actions: {
+                        views: 1,
+                        likes: 1,
+                        addimpression: 1
+                    }
+                }
+            };
+
             let senecaActLocations = {
                 cmd: 'nearby',
                 data: {
@@ -116,9 +130,11 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
             let messages = request.server.pact(senecaActMessages);
             let locations = request.server.pact(senecaActLocations);
+            let recommendations = request.server.pact(senecaActRecommendations);
 
-            Promise.all([messages, locations])
+            Promise.all([messages, locations, recommendations])
                 .then(results => {
+                    console.log('recommendations:', results[2]);
                     return {
                         messages: results[0],
                         locations: results[1].results
@@ -131,7 +147,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             description: 'Get data for bubblescreen',
             notes: 'returns object with two arrays: messages and locations',
             tags: ['api', 'bubblescreen', 'messages', 'locations'],
-
             auth: {
                 mode: 'optional',
                 strategy: 'session'
