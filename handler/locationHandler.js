@@ -175,9 +175,29 @@ handler.postTextImpression = (request, reply) => {
 };
 
 
+handler.getFavoriteLocationsByUserId = (request, reply, optionalUserId) => {
+    let userId = optionalUserId || request.params.userId;
+
+    let senecaAct = util.setupSenecaPattern('getfavoritelocationbyuserid', {
+        user_id: userId
+    }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            if (error.cause.details.message && error.cause.details.message === 'Invalid id') {
+                return reply(boom.notFound());
+            }
+            reply(boom.badImplementation(error));
+        });
+
+};
+
+
 handler.getMyFavoriteLocations = (request, reply) => {
 
-    return reply(boom.notImplemented('todo'));
+    handler.getFavoriteLocationsByUserId(request, reply, request.basicSenecaPattern.requesting_user_id);
 };
 
 handler.postToggleFavorLocation = (request, reply) => {
