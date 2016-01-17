@@ -201,9 +201,10 @@ handler.getMyFavoriteLocations = (request, reply) => {
 };
 
 handler.postToggleFavorLocation = (request, reply) => {
+    request.basicSenecaPattern.cmd = 'toggleFavor';
+    let userId = request.basicSenecaPattern.requesting_user_id;
 
-    let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern('toggleFavor', {
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         location_id: request.params.locationId,
         user_id: userId
     }, basicPin);
