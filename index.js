@@ -134,7 +134,25 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
             Promise.all([messages, locations, recommendations])
                 .then(results => {
-                    console.log('recommendations:', results[2]);
+
+                    let promises = [];
+                    for (let i = 0; i < 3; i++) {
+                        if(results[2].recommendations[i]) {
+                            let senecaActLocationById =  {
+                                cmd: 'locationById',
+                                role: 'location',
+                                requesting_user_id: userId,
+                                data: {
+                                    locationId: results[2].recommendations[i].thing
+                                }
+                            };
+                            promises.push(request.server.pact(senecaActLocationById));
+
+                            console.log(results[2].recommendations[i].thing);
+                        }
+                    }
+                    Promise.all(promises).then(res => console.log(res));
+
                     return {
                         messages: results[0],
                         locations: results[1].results
