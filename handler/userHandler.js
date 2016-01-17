@@ -121,7 +121,7 @@ let getFollowerByUserId = (request, reply, userId) => {
 
 handler.getMyFollower = (request, reply) => {
 
-    getFollowerByUserId(request, reply, request.requestingUserId);
+    getFollowerByUserId(request, reply, request.basicSenecaPattern.requesting_user_id);
 
 };
 handler.getFollowerByUser = (request, reply) => {
