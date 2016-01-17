@@ -156,8 +156,13 @@ handler.getLocationsStream = (request, reply) => {
 
 handler.postTextImpression = (request, reply) => {
 
-    let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: 'text'}, {
+    let userId = request.basicSenecaPattern.requesting_user_id;
+
+    request.basicSenecaPattern.cmd = 'addimpression';
+    request.basicSenecaPattern.type = 'text';
+
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         location_id: request.params.locationId,
         user_id: userId,
         message: request.payload.data
