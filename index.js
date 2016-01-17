@@ -16,6 +16,9 @@ const file = require('./lib/file');
 const messenger = require('./lib/messenger');
 const reporter = require('./lib/reporter');
 
+// TEMP
+const locationValidation = require('./validation/locationValidation');
+
 
 // declare  plugins
 var manifest = {
@@ -172,6 +175,9 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             auth: {
                 mode: 'optional',
                 strategy: 'session'
+            },
+            validate: {
+                query: locationValidation.nearbyQuery
             }
         }
     });
