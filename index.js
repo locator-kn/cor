@@ -177,7 +177,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 strategy: 'session'
             },
             validate: {
-                query: locationValidation.nearbyQuery
+                query: locationValidation.nearbyQueryOptional
             }
         }
     });
