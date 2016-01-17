@@ -88,9 +88,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         handler: (request, reply) => {
 
             // temp hack begin
-            const util = require('./lib/util');
-            let userId = util.getUserId(request.auth);
-            userId = userId !== 'unknown' ? userId : '56786fe3522786413366397a';
+            let userId = request.basicSenecaPattern.requesting_user_id !== 'unknown' ? request.basicSenecaPattern.requesting_user_id : '56786fe3522786413366397a';
             // temp hack end
 
             let senecaActMessages = {
@@ -108,8 +106,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             let senecaActLocations = {
                 cmd: 'nearby',
                 data: {
-                    long: 9.169753789901733,
-                    lat: 47.66868204997508,
+                    long: 9.173626899719238,
+                    lat: 47.66972243634168,
                     maxDistance: 2,
                     limit: 3
                 },
