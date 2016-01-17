@@ -151,12 +151,16 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                             console.log(results[2].recommendations[i].thing);
                         }
                     }
-                    Promise.all(promises).then(res => console.log(res));
+                    return Promise.all(promises).then(res => {
+                        console.log(res);
+                        return {
+                            messages: results[0],
+                            locations: results[1].results,
+                            recommendations: res
+                        };
+                    });
 
-                    return {
-                        messages: results[0],
-                        locations: results[1].results
-                    };
+
                 })
                 .then(reply)
                 .catch(reply);
