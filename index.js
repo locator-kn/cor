@@ -123,10 +123,10 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             let senecaActLocations = {
                 cmd: 'nearby',
                 data: {
-                    long: 9.173626899719238,
-                    lat: 47.66972243634168,
-                    maxDistance: 2,
-                    limit: 3
+                    long: request.query.long || 9.173626899719238,
+                    lat: request.query.lat || 47.66972243634168,
+                    maxDistance: request.query.maxDistance || 2,
+                    limit: request.query.limit || 3
                 },
                 role: 'location'
             };
