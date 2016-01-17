@@ -107,7 +107,7 @@ handler.getAllLocationsByUserId = (request, reply) =>{
         .catch(error => {
             reply(boom.badRequest(error));
         });
-}
+};
 
 
 handler.postSchoenhier = (request, reply) => {
