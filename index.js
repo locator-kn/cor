@@ -153,7 +153,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                             };
                             promises.push(request.server.pact(senecaActLocationById));
 
-                            console.log(results[2].recommendations[i].thing);
+                            console.log('[', userId, ']: recommended location_id:', results[2].recommendations[i].thing);
                         }
                     }
                     return Promise.all(promises).then(res => {
