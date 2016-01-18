@@ -41,7 +41,7 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
                 if (error.message.includes('Invalid id')) {
 
                     // remove the uploaded image again by making an internal DELETE request
-                    Wreck.delete('http://localhost:3453/stream/' + type + '/' + response._id, (err) => {
+                    Wreck.delete('http://localhost:3453/file/' + response._id, (err) => {
                         if (err) {
                             // send slack error TODO
                             slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'],
@@ -97,7 +97,7 @@ handler.postNewLocation = (request, reply) => {
 
 };
 
-handler.getAllLocationsByUserId = (request, reply) =>{
+handler.getAllLocationsByUserId = (request, reply) => {
     request.basicSenecaPattern.cmd = 'getlocbyuserid';
 
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
