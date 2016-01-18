@@ -173,8 +173,6 @@ handler.getUserById = (request, reply) => {
         followersCountPromise = request.server.pact(senecaActFollowerCount);
     }
 
-    console.log('options', options);
-
     Promise.all([request.server.pact(senecaActUser), locationCountPromise, followersCountPromise])
         .then(result => {
             let reponse = result[0];
