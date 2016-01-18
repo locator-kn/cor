@@ -22,7 +22,7 @@
   "dependencies": {
     "bluebird": "^3.1.1",
     "boom": "^3.1.1",
-    "chairo": "^1.1.0",
+    "chairo": "^1.3.0",
     "dotenv": "^1.2.0",
     "glue": "^2.4.0",
     "good": "^6.4.0",
@@ -33,7 +33,7 @@
     "hapi-swagger": "^2.2.4",
     "hoek": "^3.0.4",
     "inert": "^3.2.0",
-    "joi": "^7.1.0",
+    "joi": "^7.2.0",
     "ms-utilities": "^2.1.2",
     "seneca": "^1.0.0",
     "seneca-rabbitmq-transport": "^0.2.1",

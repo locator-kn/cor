@@ -19,7 +19,8 @@ handler.getRecByUserId = (request, reply) => {
         namespace: 'locations',
         actions: {
             view: 1,
-            likes: 2
+            likes: 2,
+            addimpression: 1
         }
 
     }, basicPin);

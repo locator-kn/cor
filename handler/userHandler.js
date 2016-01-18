@@ -92,7 +92,7 @@ let getFollowingUsersByUserId = (request, reply, userId) => {
 
 handler.getMyFollowing = (request, reply) => {
 
-    getFollowingUsersByUserId(request, reply, request.requestingUserId);
+    getFollowingUsersByUserId(request, reply, request.basicSenecaPattern.requesting_user_id);
 
 };
 
@@ -121,7 +121,7 @@ let getFollowerByUserId = (request, reply, userId) => {
 
 handler.getMyFollower = (request, reply) => {
 
-    getFollowerByUserId(request, reply, request.requestingUserId);
+    getFollowerByUserId(request, reply, request.basicSenecaPattern.requesting_user_id);
 
 };
 handler.getFollowerByUser = (request, reply) => {
@@ -131,22 +131,66 @@ handler.getFollowerByUser = (request, reply) => {
 };
 
 handler.getUserById = (request, reply) => {
-    request.basicSenecaPattern.cmd = 'getUserById';
+    let options = {};
+    if(typeof request.query.count === 'string') {
+        options.countFollowers = request.query.count.includes('followers');
+        options.countLocations = request.query.count.includes('locations');
+    }
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
+    let locationCountPromise = true;
+    let followersCountPromise = true;
+
+    let basicUser = util.clone(request.basicSenecaPattern);
+    let basicLocation = util.clone(request.basicSenecaPattern);
+    let basicFollower = util.clone(request.basicSenecaPattern);
+
+    basicUser.cmd = 'getUserById';
+
+    basicLocation.cmd = 'count';
+    basicLocation.entity = 'location';
+    basicLocation.by = 'userId';
+
+    basicFollower.cmd = 'count';
+    basicFollower.entity = 'follower';
+    basicFollower.by = 'userId';
+
+    let senecaActUser = util.setupSenecaPattern(basicUser, {
         user_id: request.params.userId
     }, basicPin);
 
-    request.server.pact(senecaAct)
+    let senecaActLocationCount = util.setupSenecaPattern(basicLocation, {
+        user_id: request.params.userId
+    }, {role: 'location'});
+
+    let senecaActFollowerCount = util.setupSenecaPattern(basicFollower, {
+        user_id: request.params.userId
+    }, basicPin);
+
+    if(options.countLocations) {
+        locationCountPromise = request.server.pact(senecaActLocationCount);
+    }
+    if(options.countFollowers) {
+        followersCountPromise = request.server.pact(senecaActFollowerCount);
+    }
+
+    Promise.all([request.server.pact(senecaActUser), locationCountPromise, followersCountPromise])
         .then(result => {
-            console.log(result);
-            result ? reply(result) : reply(boom.notFound());
+            let reponse = result[0];
+            if (reponse) {
+                if(options.countLocations) {
+                    reponse.location_count = result[1].count || 0;
+                }
+                if(options.countFollowers) {
+                    reponse.follower_count = result[2].count || 0;
+                }
+            }
+            reponse ? reply(reponse) : reply(boom.notFound());
         })
         .catch(error => {
             let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
             reply(boom.badRequest(errorMsg));
         });
-}
+};
 
 handler.protected = (request, reply) => {
     reply('YOU CAN SEE THIS');
