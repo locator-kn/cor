@@ -45,5 +45,14 @@ validations.textImpression = Joi.object().keys({
     data: Joi.string().min(3).required()
 });
 
+validations.videoImpressionId = Joi.object().keys({
+    videoId: Joi.string().required()
+});
+
+
+validations.imageImpressionId = Joi.object().keys({
+    imageId: Joi.string().required()
+});
+
 
 module.exports = validations;
