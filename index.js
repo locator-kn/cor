@@ -131,14 +131,16 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 role: 'location'
             };
 
+            console.time('retrieving messages, locations and recommendations(ids):');
             let messages = request.server.pact(senecaActMessages);
             let locations = request.server.pact(senecaActLocations);
             let recommendations = request.server.pact(senecaActRecommendations);
 
             Promise.all([messages, locations, recommendations])
                 .then(results => {
-
+                    console.timeEnd('retrieving messages, locations and recommendations(ids):');
                     let promises = [];
+                    console.time('retrieving recommendations:');
                     for (let i = 0; i < 3; i++) {
                         if(results[2].recommendations[i]) {
                             let senecaActLocationById =  {
@@ -155,7 +157,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                         }
                     }
                     return Promise.all(promises).then(res => {
-                        console.log(res);
+
+                        console.timeEnd('retrieving recommendations:');
                         return {
                             messages: results[0],
                             locations: results[1].results,
