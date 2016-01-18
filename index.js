@@ -168,7 +168,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
 
                 })
-                .then(reply)
+                .then(data => reply(data).ttl(30000))
                 .catch(reply);
         },
         config: {
