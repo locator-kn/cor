@@ -251,5 +251,10 @@ handler.videoUploadRespone = (err, res, request, reply) => {
     genericFileResponseHandler(err, res, request, reply, 'video');
 };
 
+handler.audioUploadRespone = (err, res, request, reply) => {
+
+    genericFileResponseHandler(err, res, request, reply, 'audio');
+};
+
 
 module.exports = handler;
