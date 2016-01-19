@@ -36,7 +36,7 @@ validations.newLocation = Joi.object().keys({
     title: Joi.string().min(3).max(50).required(),
     long: Joi.number().required(),
     lat: Joi.number().required(),
-    description: Joi.string().max(140).default(" "),
+    description: Joi.string().max(140).default(' '),
  //   categories: Joi.array().items(Joi.string()).max(3).default(""),
     userId: Joi.string().required()
 });
