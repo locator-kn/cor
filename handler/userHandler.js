@@ -1,5 +1,4 @@
 'use strict';
-const hoek = require('hoek');
 const boom = require('boom');
 
 const util = require('../lib/util');
@@ -22,7 +21,7 @@ handler.login = (request, reply) => {
             });
             reply(result);
         })
-        .catch(error => {
+        .catch(() => {
             reply(boom.unauthorized());
         });
 
@@ -184,7 +183,10 @@ handler.getUserById = (request, reply) => {
                     reponse.follower_count = result[2].count || 0;
                 }
             }
-            reponse ? reply(reponse) : reply(boom.notFound());
+            if(!reponse) {
+                reponse = boom.notFound();
+            }
+            reply(reponse);
         })
         .catch(error => {
             let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
