@@ -96,6 +96,20 @@ handler.postNewLocation = (request, reply) => {
 
 };
 
+
+handler.deleteLocation = (request, reply) =>{
+    request.basicSenecaPattern.cmd = 'deletelocation';
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            reply(boom.badRequest(error));
+        });
+
+};
+
 handler.getAllLocationsByUserId = (request, reply) => {
     request.basicSenecaPattern.cmd = 'getlocbyuserid';
 
@@ -226,7 +240,7 @@ handler.postToggleFavorLocation = (request, reply) => {
 
 handler.getLocationByName = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
+    let senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)

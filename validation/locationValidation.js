@@ -45,6 +45,10 @@ validations.textImpression = Joi.object().keys({
     data: Joi.string().min(3).required()
 });
 
+
+validations.deleteLocation = Joi.object().keys({
+    locationId: Joi.string().required()
+});
 validations.videoImpressionId = Joi.object().keys({
     videoId: Joi.string().required()
 });
@@ -52,6 +56,7 @@ validations.videoImpressionId = Joi.object().keys({
 
 validations.imageImpressionId = Joi.object().keys({
     imageId: Joi.string().required()
+
 });
 
 
