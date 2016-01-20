@@ -240,7 +240,7 @@ handler.postToggleFavorLocation = (request, reply) => {
 
 handler.getLocationByName = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
+    let senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
 
     request.server.pact(senecaAct)
         .then(reply)
