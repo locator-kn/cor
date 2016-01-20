@@ -32,7 +32,7 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
         let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: type}, {
             location_id: request.params.locationId,
             user_id: userId,
-            message: response
+            message: response // response from db after file upload
         }, basicPin);
 
         request.server.pact(senecaAct)
@@ -43,7 +43,6 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
                     // remove the uploaded image again by making an internal DELETE request
                     Wreck.delete('http://localhost:3453/file/' + response._id, (err) => {
                         if (err) {
-                            // send slack error TODO
                             slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'],
                                 'Error Deleting file type ' + type + '. Because of: ' + err);
                         }
