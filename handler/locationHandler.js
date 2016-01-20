@@ -32,7 +32,7 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
         let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: type}, {
             location_id: request.params.locationId,
             user_id: userId,
-            message: response
+            message: response // response from db after file upload
         }, basicPin);
 
         request.server.pact(senecaAct)
@@ -41,9 +41,8 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
                 if (error.message.includes('Invalid id')) {
 
                     // remove the uploaded image again by making an internal DELETE request
-                    Wreck.delete('http://localhost:3453/stream/' + type + '/' + response._id, (err) => {
+                    Wreck.delete('http://localhost:3453/file/' + response._id, (err) => {
                         if (err) {
-                            // send slack error TODO
                             slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'],
                                 'Error Deleting file type ' + type + '. Because of: ' + err);
                         }
@@ -97,6 +96,7 @@ handler.postNewLocation = (request, reply) => {
 
 };
 
+
 handler.deleteLocation = (request, reply) =>{
     request.basicSenecaPattern.cmd = 'deletelocation';
 
@@ -110,7 +110,7 @@ handler.deleteLocation = (request, reply) =>{
 
 };
 
-handler.getAllLocationsByUserId = (request, reply) =>{
+handler.getAllLocationsByUserId = (request, reply) => {
     request.basicSenecaPattern.cmd = 'getlocbyuserid';
 
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
@@ -120,7 +120,7 @@ handler.getAllLocationsByUserId = (request, reply) =>{
         .catch(error => {
             reply(boom.badRequest(error));
         });
-}
+};
 
 
 handler.postSchoenhier = (request, reply) => {
@@ -150,37 +150,6 @@ handler.getSchoenhierNearby = (request, reply) => {
 
 handler.getLocationsStream = (request, reply) => {
 
-    //return reply(boom.notImplemented('still todo'));
-    //return reply([{
-    //    user_id: '5677fdec53f5beead532b1e3',
-    //    create_date: '2015-07-27T07:29:06.381Z',
-    //    modified_date: '2015-07-27T07:29:06.381Z',
-    //    location_id: '567a96f3990007900125f52e',
-    //    type: 'text',
-    //    data: 'pimaling ding ding'
-    //},{
-    //    user_id: '5677fdec53f5beead532b1e3',
-    //    create_date: '2015-07-27T07:24:06.381Z',
-    //    modified_date: '2015-07-27T07:24:06.381Z',
-    //    location_id: '567a96f3990007900125f52e',
-    //    type: 'audio',
-    //    data: '/audio/pipapoid/file.mp3'
-    //}, {
-    //    user_id: '5677fdec53f5beead532b1e3',
-    //    create_date: '2015-07-26T07:24:06.381Z',
-    //    modified_date: '2015-07-26T07:24:06.381Z',
-    //    location_id: '567a96f3990007900125f52e',
-    //    type: 'video',
-    //    data: '/video/pipapoid2/file.mpg'
-    //}, {
-    //    user_id: '5677fdec53f5beead532b1e3',
-    //    create_date: '2015-07-26T06:24:06.381Z',
-    //    modified_date: '2015-07-26T06:24:06.381Z',
-    //    location_id: '567a96f3990007900125f52e',
-    //    type: 'video',
-    //    data: '/video/pipapoid3/file2.mpg'
-    //}]);
-
     let userId = util.getUserId(request.auth);
     let senecaAct = util.setupSenecaPattern('getlocationstream', {
         location_id: request.params.locationId,
@@ -200,8 +169,13 @@ handler.getLocationsStream = (request, reply) => {
 
 handler.postTextImpression = (request, reply) => {
 
-    let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: 'text'}, {
+    let userId = request.basicSenecaPattern.requesting_user_id;
+
+    request.basicSenecaPattern.cmd = 'addimpression';
+    request.basicSenecaPattern.type = 'text';
+
+
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         location_id: request.params.locationId,
         user_id: userId,
         message: request.payload.data
@@ -219,15 +193,36 @@ handler.postTextImpression = (request, reply) => {
 };
 
 
+handler.getFavoriteLocationsByUserId = (request, reply, optionalUserId) => {
+    let userId = optionalUserId || request.params.userId;
+
+    let senecaAct = util.setupSenecaPattern('getfavoritelocationbyuserid', {
+        user_id: userId
+    }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(reply)
+        .catch(error => {
+            console.log(error);
+            if (error.cause.details.message && error.cause.details.message === 'Invalid id') {
+                return reply(boom.notFound());
+            }
+            reply(boom.badImplementation(error));
+        });
+
+};
+
+
 handler.getMyFavoriteLocations = (request, reply) => {
 
-    return reply(boom.notImplemented('todo'));
+    handler.getFavoriteLocationsByUserId(request, reply, request.basicSenecaPattern.requesting_user_id);
 };
 
 handler.postToggleFavorLocation = (request, reply) => {
+    request.basicSenecaPattern.cmd = 'toggleFavor';
+    let userId = request.basicSenecaPattern.requesting_user_id;
 
-    let userId = util.getUserId(request.auth);
-    let senecaAct = util.setupSenecaPattern('toggleFavor', {
+    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
         location_id: request.params.locationId,
         user_id: userId
     }, basicPin);
@@ -267,6 +262,11 @@ handler.imageUploadRespone = (err, res, request, reply) => {
 handler.videoUploadRespone = (err, res, request, reply) => {
 
     genericFileResponseHandler(err, res, request, reply, 'video');
+};
+
+handler.audioUploadRespone = (err, res, request, reply) => {
+
+    genericFileResponseHandler(err, res, request, reply, 'audio');
 };
 
 

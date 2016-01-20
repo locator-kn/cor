@@ -28,4 +28,8 @@ validations.userId = Joi.object().keys({
     userId: mongoIdFieldRequired
 });
 
+validations.count = Joi.object().keys({
+    count: Joi.string().valid(['locations', 'followers', 'locations,followers', 'followers,locations'])
+});
+
 module.exports = validations;

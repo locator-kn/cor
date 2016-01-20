@@ -16,6 +16,9 @@ const file = require('./lib/file');
 const messenger = require('./lib/messenger');
 const reporter = require('./lib/reporter');
 
+// TEMP
+const locationValidation = require('./validation/locationValidation');
+
 
 // declare  plugins
 var manifest = {
@@ -88,9 +91,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         handler: (request, reply) => {
 
             // temp hack begin
-            const util = require('./lib/util');
-            let userId = util.getUserId(request.auth);
-            userId = userId !== 'unknown' ? userId : '56786fe3522786413366397a';
+            let userId = request.basicSenecaPattern.requesting_user_id !== 'unknown' ? request.basicSenecaPattern.requesting_user_id : '56786fe3522786413366397a';
             // temp hack end
 
             let senecaActMessages = {
@@ -105,35 +106,81 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 }
             };
 
-            let senecaActLocations = { cmd: 'nearby',
-                data:
-                { long: 9.169753789901733,
-                    lat: 47.66868204997508,
-                    maxDistance: 2,
-                    limit: 3 },
-                role: 'location' };
+            let senecaActRecommendations = {
+                role: 'reporter',
+                cmd: 'recommendationForPerson',
+                data: {
+                    namespace: 'locations',
+                    user_id: userId,
+                    actions: {
+                        views: 1,
+                        likes: 1,
+                        addimpression: 1
+                    }
+                }
+            };
 
+            let senecaActLocations = {
+                cmd: 'nearby',
+                data: {
+                    long: request.query.long || 9.173626899719238,
+                    lat: request.query.lat || 47.66972243634168,
+                    maxDistance: request.query.maxDistance || 2,
+                    limit: request.query.limit || 3
+                },
+                role: 'location'
+            };
+
+            console.time('retrieving messages, locations and recommendations(ids)');
             let messages = request.server.pact(senecaActMessages);
             let locations = request.server.pact(senecaActLocations);
+            let recommendations = request.server.pact(senecaActRecommendations);
 
-            Promise.all([messages, locations])
+            Promise.all([messages, locations, recommendations])
                 .then(results => {
-                    return {
-                        messages: results[0],
-                        locations: results[1].results
-                    };
+                    console.timeEnd('retrieving messages, locations and recommendations(ids)');
+                    let promises = [];
+                    console.time('retrieving recommendations');
+                    for (let i = 0; i < 3; i++) {
+                        if(results[2].recommendations[i]) {
+                            let senecaActLocationById =  {
+                                cmd: 'locationById',
+                                role: 'location',
+                                requesting_user_id: userId,
+                                data: {
+                                    locationId: results[2].recommendations[i].thing
+                                }
+                            };
+                            promises.push(request.server.pact(senecaActLocationById));
+
+                            console.log('[', userId, ']: recommended location_id', results[2].recommendations[i].thing);
+                        }
+                    }
+                    return Promise.all(promises).then(res => {
+
+                        console.timeEnd('retrieving recommendations');
+                        return {
+                            messages: results[0],
+                            locations: results[1].results,
+                            recommendations: res
+                        };
+                    });
+
+
                 })
-                .then(reply)
+                .then(data => reply(data).ttl(30000))
                 .catch(reply);
         },
         config: {
             description: 'Get data for bubblescreen',
             notes: 'returns object with two arrays: messages and locations',
             tags: ['api', 'bubblescreen', 'messages', 'locations'],
-
             auth: {
                 mode: 'optional',
                 strategy: 'session'
+            },
+            validate: {
+                query: locationValidation.nearbyQueryOptional
             }
         }
     });
@@ -143,10 +190,10 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         // set desired transport method
         //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the service is listening to
-        .client({type: 'tcp', port: 7003, host:'localhost', pin: 'role:messenger,cmd:*'})
-        .client({type: 'tcp', port: 7002, host:'localhost', pin: 'role:user,cmd:*'})
-        .client({type: 'tcp', port: 7001, host:'localhost', pin: 'role:location,cmd:*'})
-        .client({type: 'tcp', port: 7010, host:'localhost', pin: 'role:reporter,cmd:*'});
+        .client({type: 'tcp', port: 7003, host: 'localhost', pin: 'role:messenger,cmd:*'})
+        .client({type: 'tcp', port: 7002, host: 'localhost', pin: 'role:user,cmd:*'})
+        .client({type: 'tcp', port: 7001, host: 'localhost', pin: 'role:location,cmd:*'})
+        .client({type: 'tcp', port: 7010, host: 'localhost', pin: 'role:reporter,cmd:*'});
 
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});

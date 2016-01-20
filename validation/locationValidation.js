@@ -8,6 +8,12 @@ validations.nearbyQuery = Joi.object().keys({
     maxDistance: Joi.number().default(2),
     limit: Joi.number().default(20)
 });
+validations.nearbyQueryOptional = Joi.object().keys({
+    long: Joi.number().default(9.169753789901733),
+    lat: Joi.number().default(47.66868204997508),
+    maxDistance: Joi.number().default(2),
+    limit: Joi.number().default(20)
+});
 
 validations.postSchoenhier = Joi.object().keys({
     long: Joi.number().required().default(9.169753789901733),
@@ -30,7 +36,7 @@ validations.newLocation = Joi.object().keys({
     title: Joi.string().min(3).max(50).required(),
     long: Joi.number().required(),
     lat: Joi.number().required(),
-    description: Joi.string().max(140).default(" "),
+    description: Joi.string().max(140).default(' '),
  //   categories: Joi.array().items(Joi.string()).max(3).default(""),
     userId: Joi.string().required()
 });
@@ -39,8 +45,18 @@ validations.textImpression = Joi.object().keys({
     data: Joi.string().min(3).required()
 });
 
+
 validations.deleteLocation = Joi.object().keys({
     locationId: Joi.string().required()
+});
+validations.videoImpressionId = Joi.object().keys({
+    videoId: Joi.string().required()
+});
+
+
+validations.imageImpressionId = Joi.object().keys({
+    imageId: Joi.string().required()
+
 });
 
 
