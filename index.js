@@ -91,7 +91,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         handler: (request, reply) => {
 
             // temp hack begin
-            let userId = request.basicSenecaPattern.requesting_user_id !== 'unknown' ? request.basicSenecaPattern.requesting_user_id : '56786fe3522786413366397a';
+            let userId = request.basicSenecaPattern.requesting_user_id !== 'unknown' ? request.basicSenecaPattern.requesting_user_id : '569e4a83a6e5bb503b838308';
             // temp hack end
 
             let senecaActMessages = {
