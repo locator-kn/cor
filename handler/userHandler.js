@@ -129,11 +129,16 @@ handler.getFollowerByUser = (request, reply) => {
 
 };
 
-handler.getUserById = (request, reply) => {
+handler.getUserById = (request, reply, useRequestingUser) => {
     let options = {};
+    let userId = request.params.userId;
     if(typeof request.query.count === 'string') {
         options.countFollowers = request.query.count.includes('followers');
         options.countLocations = request.query.count.includes('locations');
+    }
+
+    if(useRequestingUser) {
+        userId = request.basicSenecaPattern.requesting_user_id;
     }
 
     let locationCountPromise = true;
@@ -154,15 +159,15 @@ handler.getUserById = (request, reply) => {
     basicFollower.by = 'userId';
 
     let senecaActUser = util.setupSenecaPattern(basicUser, {
-        user_id: request.params.userId
+        user_id: userId
     }, basicPin);
 
     let senecaActLocationCount = util.setupSenecaPattern(basicLocation, {
-        user_id: request.params.userId
+        user_id: userId
     }, {role: 'location'});
 
     let senecaActFollowerCount = util.setupSenecaPattern(basicFollower, {
-        user_id: request.params.userId
+        user_id: userId
     }, basicPin);
 
     if(options.countLocations) {
@@ -195,7 +200,7 @@ handler.getUserById = (request, reply) => {
 };
 
 handler.protected = (request, reply) => {
-    reply('YOU CAN SEE THIS');
+    handler.getUserById(request, reply, true);
 };
 
 
