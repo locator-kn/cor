@@ -71,6 +71,15 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         clearInvalid: true
     });
 
+    // configure locator cookie
+    server.state('locator_device', {
+        ttl: 3600000, // 356 * 24 * 60 * 60 * 1000,     // One year
+        isSecure: false,
+        encoding: 'base64json',
+        clearInvalid: true
+    });
+
+    // decorate request object with user id
     server.ext('onPostAuth', (request, reply) => {
         request.basicSenecaPattern = {
             requesting_user_id: util.getUserId(request.auth),
