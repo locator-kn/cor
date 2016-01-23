@@ -132,12 +132,12 @@ handler.getFollowerByUser = (request, reply) => {
 handler.getUserById = (request, reply, useRequestingUser) => {
     let options = {};
     let userId = request.params.userId;
-    if(typeof request.query.count === 'string') {
+    if (typeof request.query.count === 'string') {
         options.countFollowers = request.query.count.includes('followers');
         options.countLocations = request.query.count.includes('locations');
     }
 
-    if(useRequestingUser) {
+    if (useRequestingUser) {
         userId = request.basicSenecaPattern.requesting_user_id;
     }
 
@@ -170,10 +170,10 @@ handler.getUserById = (request, reply, useRequestingUser) => {
         user_id: userId
     }, basicPin);
 
-    if(options.countLocations) {
+    if (options.countLocations) {
         locationCountPromise = request.server.pact(senecaActLocationCount);
     }
-    if(options.countFollowers) {
+    if (options.countFollowers) {
         followersCountPromise = request.server.pact(senecaActFollowerCount);
     }
 
@@ -181,14 +181,14 @@ handler.getUserById = (request, reply, useRequestingUser) => {
         .then(result => {
             let reponse = result[0];
             if (reponse) {
-                if(options.countLocations) {
+                if (options.countLocations) {
                     reponse.location_count = result[1].count || 0;
                 }
-                if(options.countFollowers) {
+                if (options.countFollowers) {
                     reponse.follower_count = result[2].count || 0;
                 }
             }
-            if(!reponse) {
+            if (!reponse) {
                 reponse = boom.notFound();
             }
             reply(reponse);
