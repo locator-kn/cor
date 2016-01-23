@@ -6,13 +6,20 @@ const slack = require('ms-utilities').slack;
 
 let handler = {};
 const basicPin = {
-    role: 'device'
+    role: 'user'
 };
 
 handler.register = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('register', request.payload, basicPin);
+    // setup pattern
+    let pattern = util.clone(request.basicSenecaPattern);
 
+    pattern.cmd = 'register';
+    pattern.entity = 'device';
+
+    let senecaAct = util.setupSenecaPattern(pattern, request.payload, basicPin);
+
+    // call microservice with pattern
     request.server.pact(senecaAct)
         .then(result => {
 
