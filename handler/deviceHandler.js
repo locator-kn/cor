@@ -12,3 +12,4 @@ handler.register = (request, reply) => {
     return reply(boom.notImplemented('Wait for it'));
 };
 
+module.exports = handler;
