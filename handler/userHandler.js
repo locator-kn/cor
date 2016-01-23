@@ -204,4 +204,9 @@ handler.protected = (request, reply) => {
 };
 
 
+handler.userImageUploadRespone = (err, res, request, reply) => {
+    reply(boom.notImplemented('Wait for it'));
+};
+
+
 module.exports = handler;
