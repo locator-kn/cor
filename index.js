@@ -15,6 +15,7 @@ const location = require('./lib/location');
 const file = require('./lib/file');
 const messenger = require('./lib/messenger');
 const reporter = require('./lib/reporter');
+const device = require('./lib/device');
 
 // TEMP
 const locationValidation = require('./validation/locationValidation');
@@ -84,6 +85,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(file.routes);
     server.route(messenger.routes);
     server.route(reporter.routes);
+    server.route(device.routes);
 
     server.route({
         method: 'GET',
