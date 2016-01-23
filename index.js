@@ -144,8 +144,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                     let promises = [];
                     console.time('retrieving recommendations');
                     for (let i = 0; i < 3; i++) {
-                        if(results[2].recommendations[i]) {
-                            let senecaActLocationById =  {
+                        if (results[2].recommendations[i]) {
+                            let senecaActLocationById = {
                                 cmd: 'locationById',
                                 role: 'location',
                                 requesting_user_id: userId,
