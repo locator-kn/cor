@@ -36,4 +36,10 @@ handler.register = (request, reply) => {
 
 };
 
+handler.pushInfo = (request, reply) => {
+
+    return reply(boom.notImplemented('WAIT FOR IT'));
+
+};
+
 module.exports = handler;
