@@ -40,7 +40,7 @@ handler.register = (request, reply) => {
     let pattern = util.clone(request.basicSenecaPattern);
 
     if (pattern.requesting_device_id === 'unknown') {
-        return boom.unauthorized('Register your device!');
+        return boom.preconditionFailed('Register your device!');
     }
 
     pattern.cmd = 'register';
