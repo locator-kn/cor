@@ -38,22 +38,29 @@ handler.logout = (request, reply) => {
 handler.register = (request, reply) => {
 
     let pattern = util.clone(request.basicSenecaPattern);
+    let user = request.payload;
 
     if (pattern.requesting_device_id === 'unknown') {
         return boom.preconditionFailed('Register your device!');
+    } else {
+        user.deviceId = pattern.requesting_device_id;
     }
 
     pattern.cmd = 'register';
     pattern.entity = 'user';
 
-    let senecaAct = util.setupSenecaPattern(pattern, request.payload, basicPin);
+    let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
         .then(result => {
             if (result.hasOwnProperty('exists')) {
                 reply(boom.conflict('user with this mail already exists'));
             } else {
-                request.auth.session.set(result.sessionData);
+
+                let cookie = result.sessionData;
+                cookie.device_id = pattern.requesting_device_id;
+
+                request.auth.session.set(cookie);
                 reply(result.user).code(201);
             }
 
