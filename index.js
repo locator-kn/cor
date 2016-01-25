@@ -79,7 +79,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         clearInvalid: true
     });
 
-    // decorate request object with user id
+    // decorate request object with user id and device id
     server.ext('onPostAuth', (request, reply) => {
         request.basicSenecaPattern = {
             requesting_user_id: util.getUserId(request.auth),
@@ -196,6 +196,40 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             }
         }
     });
+
+
+    server.route({
+        method: 'POST',
+        path: '/dev/login',
+        handler: (request, reply) => {
+            request.auth.session.set({
+                _id: '1a21603a300ae7e4b0d63f9c1780166c',
+                mail: 'SteffenGorenflo@gmail.com'
+            });
+            reply('authenticated');
+        },
+        config: {
+            auth: {
+                mode: 'try',
+                strategy: 'session'
+            },
+            tags: ['api']
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/dev/logout',
+        handler: (request, reply) => {
+            request.auth.session.clear();
+            reply('bye bye');
+        },
+        config: {
+            auth: false,
+            tags: ['api']
+        }
+    });
+
 
     // configure seneca
     server.seneca

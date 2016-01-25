@@ -37,7 +37,16 @@ handler.logout = (request, reply) => {
 
 handler.register = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('register', request.payload, basicPin);
+    let pattern = util.clone(request.basicSenecaPattern);
+
+    if (pattern.requesting_device_id === 'unknown') {
+        return boom.unauthorized('Register your device!');
+    }
+
+    pattern.cmd = 'register';
+    pattern.entity = 'user';
+
+    let senecaAct = util.setupSenecaPattern(pattern, request.payload, basicPin);
 
     request.server.pact(senecaAct)
         .then(result => {
