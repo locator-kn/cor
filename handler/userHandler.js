@@ -148,6 +148,13 @@ handler.getFollowerByUser = (request, reply) => {
 handler.getUserById = (request, reply, useRequestingUser) => {
     let options = {};
     let userId = request.params.userId;
+    let basicLocation;
+    let basicFollower;
+    let senecaActLocationCount;
+    let senecaActFollowerCount;
+
+    let basicUser = util.clone(request.basicSenecaPattern);
+
     if (typeof request.query.count === 'string') {
         options.countFollowers = request.query.count.includes('followers');
         options.countLocations = request.query.count.includes('locations');
@@ -160,36 +167,40 @@ handler.getUserById = (request, reply, useRequestingUser) => {
     let locationCountPromise = true;
     let followersCountPromise = true;
 
-    let basicUser = util.clone(request.basicSenecaPattern);
-    let basicLocation = util.clone(request.basicSenecaPattern);
-    let basicFollower = util.clone(request.basicSenecaPattern);
-
     basicUser.cmd = 'getUserById';
-
-    basicLocation.cmd = 'count';
-    basicLocation.entity = 'location';
-    basicLocation.by = 'userId';
-
-    basicFollower.cmd = 'count';
-    basicFollower.entity = 'follower';
-    basicFollower.by = 'userId';
 
     let senecaActUser = util.setupSenecaPattern(basicUser, {
         user_id: userId
     }, basicPin);
 
-    let senecaActLocationCount = util.setupSenecaPattern(basicLocation, {
-        user_id: userId
-    }, {role: 'location'});
-
-    let senecaActFollowerCount = util.setupSenecaPattern(basicFollower, {
-        user_id: userId
-    }, basicPin);
 
     if (options.countLocations) {
+        basicLocation = util.clone(request.basicSenecaPattern);
+
+        basicLocation.cmd = 'count';
+        basicLocation.entity = 'location';
+        basicLocation.by = 'userId';
+
+        senecaActLocationCount = util.setupSenecaPattern(basicLocation, {
+            user_id: userId
+        }, {role: 'location'});
+
+        // override bool with promise
         locationCountPromise = request.server.pact(senecaActLocationCount);
     }
+
     if (options.countFollowers) {
+        basicFollower = util.clone(request.basicSenecaPattern);
+
+        basicFollower.cmd = 'count';
+        basicFollower.entity = 'follower';
+        basicFollower.by = 'userId';
+
+        senecaActFollowerCount = util.setupSenecaPattern(basicFollower, {
+            user_id: userId
+        }, basicPin);
+
+        // override bool with promise
         followersCountPromise = request.server.pact(senecaActFollowerCount);
     }
 
