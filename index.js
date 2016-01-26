@@ -71,12 +71,12 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         clearInvalid: true
     });
 
-    // configure locator cookie
-    server.state('locator_device', {
-        ttl: 3600000, // 356 * 24 * 60 * 60 * 1000,     // One year
+
+    server.state('locator', {
+        ttl: 24 * 60 * 60 * 1000,     // One day
         isSecure: false,
-        encoding: 'base64json',
-        clearInvalid: true
+        path: '/',
+        encoding: 'base64json'
     });
 
     // decorate request object with user id and device id
