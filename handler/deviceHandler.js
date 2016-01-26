@@ -22,9 +22,9 @@ handler.register = (request, reply) => {
     // call microservice with pattern
     request.server.pact(senecaAct)
         .then(result => {
-
+            
             return reply({message: 'device registered, locator-cookie was set'})
-                .state('locator_device', result.sessionData).code(201);
+                .state('locator', result.sessionData).code(201);
         })
         .catch(err => {
 
