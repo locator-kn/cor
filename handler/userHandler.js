@@ -37,6 +37,10 @@ handler.logout = (request, reply) => {
 
 handler.register = (request, reply) => {
 
+    if (request.auth.isAuthenticated) {
+        return reply('Dude, you are already registered and authenticated!');
+    }
+
     let pattern = util.clone(request.basicSenecaPattern);
     let user = request.payload;
 
