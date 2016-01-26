@@ -29,16 +29,17 @@ handler.login = (request, reply) => {
 
 
 handler.logout = (request, reply) => {
+    let deviceId = request.auth.credentials.device_id;
     request.auth.session.clear();
     reply({
         message: 'You are logged out'
-    });
+    }).state('locator', {device_id: deviceId});
 };
 
 handler.register = (request, reply) => {
 
     if (request.auth.isAuthenticated) {
-        return reply('Dude, you are already registered and authenticated!');
+        return reply({message: 'Dude, you are already registered and authenticated!'});
     }
 
     let pattern = util.clone(request.basicSenecaPattern);
@@ -64,7 +65,7 @@ handler.register = (request, reply) => {
                 let cookie = result.sessionData;
                 cookie.device_id = user.requesting_device_id;
 
-                request.auth.session.set(result);
+                request.auth.session.set(cookie);
                 reply(result.user).code(201).unstate('locator');
             }
 
