@@ -41,7 +41,7 @@ handler.register = (request, reply) => {
     let user = request.payload;
 
     if (pattern.requesting_device_id === 'unknown') {
-        return boom.preconditionFailed('Register your device!');
+        return reply(boom.preconditionFailed('Register your device!'));
     } else {
         user.deviceId = pattern.requesting_device_id;
     }
@@ -60,8 +60,8 @@ handler.register = (request, reply) => {
                 let cookie = result.sessionData;
                 cookie.device_id = pattern.requesting_device_id;
 
-                request.auth.session.set(cookie);
-                reply(result.user).code(201);
+                request.auth.session.set(result);
+                reply(result.user).code(201).unstate('locator');
             }
 
         })
