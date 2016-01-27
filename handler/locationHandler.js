@@ -63,7 +63,10 @@ handler.getLocationById = (request, reply) => {
     request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
-            reply(boom.badRequest(error));
+            if (error.message.includes('not found')){
+                reply(boom.notFound(error));
+            }
+            else reply(boom.badRequest(error));
         });
 
 };
