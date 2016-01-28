@@ -82,22 +82,61 @@ handler.getLocationsNearby = (request, reply) => {
 
 };
 
-handler.postNewLocation = (request, reply) => {
+handler.createLocationAferImageUpload = (err, res, request, reply) => {
 
-    request.basicSenecaPattern.cmd = 'addnewlocation';
+    if (err) {
+        return reply(boom.badRequest(err));
+    }
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.payload, basicPin);
+    // read response
+    Wreck.read(res, {json: true}, (err, response) => {
 
-    request.server.pact(senecaAct)
-        .then(reply)
-        .catch(error => {
-            reply(boom.badRequest(error));
-        });
+        if (err) {
+            return reply(boom.badRequest(err));
+        }
+
+        if (response.statusCode >= 400) {
+            return reply(boom.create(response.statusCode, response.message, response.error));
+        }
+
+
+        let pattern = util.clone(request.basicSenecaPattern);
+        pattern.cmd = 'addnewlocation';
+
+        let location = {
+            user_id: request.basicSenecaPattern.requesting_user_id,
+            title: response.location.title,
+            categories: response.location.categories || [], // TODO
+            favorites: [],
+            public: true,
+            geotag: {
+                type: 'Point',
+                coordinates: [response.location.long, response.location.lat]
+            },
+            images: {
+                xlarge: '/api/v2/locations/impression/image/' + response.images.xlarge + '/' + response.images.name,
+                large: '/api/v2/locations/impression/image/' + response.images.large + '/' + response.images.name,
+                normal: '/api/v2/locations/impression/image/' + response.images.normal + '/' + response.images.name,
+                small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
+            }
+        };
+
+
+
+        let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
+
+        request.server.pact(senecaAct)
+            .then(reply)
+            .catch(error => {
+                reply(boom.badRequest(error));
+            });
+
+    });
 
 };
 
 
-handler.deleteLocation = (request, reply) =>{
+handler.deleteLocation = (request, reply) => {
     request.basicSenecaPattern.cmd = 'deletelocation';
 
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
