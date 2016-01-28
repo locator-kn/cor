@@ -63,7 +63,7 @@ handler.getLocationById = (request, reply) => {
     request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
-            if (error.message.includes('not found')){
+            if (error.message.includes('not found')) {
                 reply(boom.notFound(error));
             }
             else {
@@ -125,9 +125,7 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             }
         };
-
-
-
+        
         let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
 
         request.server.pact(senecaAct)
