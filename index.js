@@ -8,6 +8,7 @@ const Bluebird = require('bluebird');
 const Glue = require('glue');
 
 const util = require('./lib/util');
+const google = require ('./lib/googleutil');
 
 // API
 const user = require('./lib/user');
@@ -16,6 +17,7 @@ const file = require('./lib/file');
 const messenger = require('./lib/messenger');
 const reporter = require('./lib/reporter');
 const device = require('./lib/device');
+
 
 // TEMP
 const locationValidation = require('./validation/locationValidation');
