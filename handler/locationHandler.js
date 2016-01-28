@@ -66,7 +66,9 @@ handler.getLocationById = (request, reply) => {
             if (error.message.includes('not found')){
                 reply(boom.notFound(error));
             }
-            else reply(boom.badRequest(error));
+            else {
+                reply(boom.badRequest(error));
+            }
         });
 
 };
