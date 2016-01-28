@@ -7,7 +7,6 @@ const slack = require('ms-utilities').slack;
 const util = require('../lib/util');
 const google = require('../lib/googleutil');
 
-
 let handler = {};
 const basicPin = {
     role: 'location'
@@ -284,6 +283,13 @@ handler.postToggleFavorLocation = (request, reply) => {
 };
 
 handler.getLocationByName = (request, reply) => {
+
+    //google search for locations
+    let searchResults = google.findByTitle(request);
+
+    //this would be the final return. merging it with reply from ms-location but where to put this???
+    //let res = JSON.parse('{"locator" : '+reply+', "google:" '+searchResults+'}');
+
 
     let senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
 
