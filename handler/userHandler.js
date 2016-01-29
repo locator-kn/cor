@@ -60,11 +60,15 @@ handler.register = (request, reply) => {
                 reply(boom.conflict('user with this mail already exists'));
             } else {
 
-                let cookie = result.sessionData;
-                cookie.device_id = user.requesting_device_id;
+                let cookie = {
+                    mail: result.mail,
+                    _id: result._id,
+                    name: result.name,
+                    device_id: user.requesting_device_id
+                };
 
                 request.auth.session.set(cookie);
-                reply(result.user).code(201).unstate('locator');
+                return reply(result.user).code(201).unstate('locator');
             }
 
         })
