@@ -24,7 +24,7 @@ handler.register = (request, reply) => {
         .then(result => {
 
             return reply({message: 'device registered, locator-cookie was set'})
-                .state('locator', {deviceId: result.deviceId}).code(201);
+                .state('locator', {device_id: result.deviceId}).code(201);
         })
         .catch(err => {
 
