@@ -88,7 +88,7 @@ handler.register = (request, reply) => {
                 };
 
                 request.auth.session.set(cookie);
-                return reply(result.user).code(201).unstate('locator');
+                return reply(user).code(201).unstate('locator');
             }
 
         })
