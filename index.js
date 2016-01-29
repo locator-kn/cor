@@ -71,12 +71,12 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         clearInvalid: true
     });
 
-    // configure locator cookie
-    server.state('locator_device', {
-        ttl: 3600000, // 356 * 24 * 60 * 60 * 1000,     // One year
+
+    server.state('locator', {
+        ttl: 24 * 60 * 60 * 1000,     // One day
         isSecure: false,
-        encoding: 'base64json',
-        clearInvalid: true
+        path: '/',
+        encoding: 'base64json'
     });
 
     // decorate request object with user id and device id
@@ -198,37 +198,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
-    server.route({
-        method: 'POST',
-        path: '/dev/login',
-        handler: (request, reply) => {
-            request.auth.session.set({
-                _id: '1a21603a300ae7e4b0d63f9c1780166c',
-                mail: 'SteffenGorenflo@gmail.com'
-            });
-            reply('authenticated');
-        },
-        config: {
-            auth: {
-                mode: 'try',
-                strategy: 'session'
-            },
-            tags: ['api']
-        }
-    });
 
-    server.route({
-        method: 'GET',
-        path: '/dev/logout',
-        handler: (request, reply) => {
-            request.auth.session.clear();
-            reply('bye bye');
-        },
-        config: {
-            auth: false,
-            tags: ['api']
-        }
-    });
 
 
     // configure seneca
@@ -245,7 +215,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
     // decorate server object with promisified seneca.act
     server.decorate('server', 'pact', pact);
-
 
     // start the server
     server.start((err) => {

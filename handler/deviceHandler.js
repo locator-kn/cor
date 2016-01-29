@@ -24,7 +24,7 @@ handler.register = (request, reply) => {
         .then(result => {
 
             return reply({message: 'device registered, locator-cookie was set'})
-                .state('locator_device', result.sessionData).code(201);
+                .state('locator', {device_id: result.deviceId}).code(201);
         })
         .catch(err => {
 
@@ -33,12 +33,6 @@ handler.register = (request, reply) => {
             slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'], 'Error registering device:');
             slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'], err);
         });
-
-};
-
-handler.pushInfo = (request, reply) => {
-
-    return reply(boom.notImplemented('WAIT FOR IT'));
 
 };
 

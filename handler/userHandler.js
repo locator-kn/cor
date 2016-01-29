@@ -10,16 +10,36 @@ const basicPin = {
 
 handler.login = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
+    let pattern = util.clone(request.basicSenecaPattern);
+    let user = request.payload;
+
+    if (request.auth.isAuthenticated) {
+        return reply({message: 'Dude, you are already registered and authenticated!'});
+    }
+
+
+    if (pattern.requesting_device_id === 'unknown') {
+        return reply(boom.preconditionFailed('Register your device!'));
+    } else {
+        user.requesting_device_id = pattern.requesting_device_id;
+    }
+
+    pattern.cmd = 'login';
+
+    let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
         .then(result => {
 
-            request.auth.session.set({
+            let cookie = {
                 _id: result._id,
-                mail: result.mail
-            });
-            reply(result);
+                mail: result.mail,
+                name: result.name,
+                device_id: user.requesting_device_id
+            };
+
+            request.auth.session.set(cookie);
+            return reply(result).unstate('locator');
         })
         .catch(() => {
             reply(boom.unauthorized());
@@ -29,21 +49,38 @@ handler.login = (request, reply) => {
 
 
 handler.logout = (request, reply) => {
+    let deviceId = request.auth.credentials.device_id;
     request.auth.session.clear();
-    reply({
-        message: 'You are logged out'
-    });
+
+    reply({message: 'You are logged out'}).state('locator', {device_id: deviceId});
+
+    // set device to inactive
+    let pattern = util.clone(request.basicSenecaPattern);
+
+    pattern.cmd = 'unregister';
+    pattern.entity = 'device';
+
+    let senecaAct = util.setupSenecaPattern(pattern, {deviceId: deviceId}, basicPin);
+
+    request.server.pact(senecaAct)
+        .catch(err => {
+            console.log(err);
+        });
 };
 
 handler.register = (request, reply) => {
+
+    if (request.auth.isAuthenticated) {
+        return reply({message: 'Dude, you are already registered and authenticated!'});
+    }
 
     let pattern = util.clone(request.basicSenecaPattern);
     let user = request.payload;
 
     if (pattern.requesting_device_id === 'unknown') {
-        return boom.preconditionFailed('Register your device!');
+        return reply(boom.preconditionFailed('Register your device!'));
     } else {
-        user.deviceId = pattern.requesting_device_id;
+        user.requesting_device_id = pattern.requesting_device_id;
     }
 
     pattern.cmd = 'register';
@@ -57,11 +94,15 @@ handler.register = (request, reply) => {
                 reply(boom.conflict('user with this mail already exists'));
             } else {
 
-                let cookie = result.sessionData;
-                cookie.device_id = pattern.requesting_device_id;
+                let cookie = {
+                    mail: result.mail,
+                    _id: result._id,
+                    name: result.name,
+                    device_id: user.requesting_device_id
+                };
 
                 request.auth.session.set(cookie);
-                reply(result.user).code(201);
+                return reply(result).code(201).unstate('locator');
             }
 
         })
