@@ -31,9 +31,7 @@ handler.login = (request, reply) => {
 handler.logout = (request, reply) => {
     let deviceId = request.auth.credentials.device_id;
     request.auth.session.clear();
-    reply({
-        message: 'You are logged out'
-    }).state('locator', {device_id: deviceId});
+    reply({message: 'You are logged out'}).state('locator', {device_id: deviceId});
 };
 
 handler.register = (request, reply) => {
