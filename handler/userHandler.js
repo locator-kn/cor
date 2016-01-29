@@ -51,7 +51,21 @@ handler.login = (request, reply) => {
 handler.logout = (request, reply) => {
     let deviceId = request.auth.credentials.device_id;
     request.auth.session.clear();
+
     reply({message: 'You are logged out'}).state('locator', {device_id: deviceId});
+
+    // set device to inactive
+    let pattern = util.clone(request.basicSenecaPattern);
+
+    pattern.cmd = 'unregister';
+    pattern.entity = 'device';
+
+    let senecaAct = util.setupSenecaPattern(pattern, {deviceId: deviceId}, basicPin);
+
+    request.server.pact(senecaAct)
+        .catch(err => {
+            console.log(err);
+        });
 };
 
 handler.register = (request, reply) => {
