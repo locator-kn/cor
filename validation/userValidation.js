@@ -8,7 +8,8 @@ let mongoIdFieldRequired = mongoIdField.required();
 validations.login = Joi.object().keys({
     mail: Joi.string().email().min(3).max(60).required()
         .description('Mail address'),
-    password: Joi.string().regex(/[a-zA-Z0-9@#$%_&!"§\/\(\)=\?\^]{3,30}/).required()
+    password: Joi.string().regex(/[a-zA-Z0-9@#$%_&!"§\/\(\)=\?\^]{3,30}/).required(),
+    pushToken: Joi.string().required()
 });
 
 validations.register = Joi.object().keys({
@@ -17,7 +18,8 @@ validations.register = Joi.object().keys({
     password: Joi.string().regex(/[a-zA-Z0-9@#$%_&!"§\/\(\)=\?\^]{3,30}/).required()
         .description('User set password'),
     name: Joi.string().required().description('User name'),
-    residence: Joi.string().required().description('User residence')
+    residence: Joi.string().required().description('User residence'),
+    pushToken: Joi.string().required()
 });
 
 validations.follow = Joi.object().keys({
