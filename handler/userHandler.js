@@ -10,16 +10,36 @@ const basicPin = {
 
 handler.login = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
+    let pattern = util.clone(request.basicSenecaPattern);
+    let user = request.payload;
+
+    if (request.auth.isAuthenticated) {
+        return reply({message: 'Dude, you are already registered and authenticated!'});
+    }
+
+
+    if (pattern.requesting_device_id === 'unknown') {
+        return reply(boom.preconditionFailed('Register your device!'));
+    } else {
+        user.requesting_device_id = pattern.requesting_device_id;
+    }
+
+    pattern.cmd = 'login';
+
+    let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
         .then(result => {
 
-            request.auth.session.set({
+            let cookie = {
                 _id: result._id,
-                mail: result.mail
-            });
-            reply(result);
+                mail: result.mail,
+                name: result.name,
+                device_id: user.requesting_device_id
+            };
+
+            request.auth.session.set(cookie);
+            return reply(result).unstate('locator');
         })
         .catch(() => {
             reply(boom.unauthorized());
