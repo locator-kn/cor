@@ -7,7 +7,8 @@ validations.register = Joi.object().keys({
     type: Joi.string().required().valid(['ios', 'android']),
     version: Joi.string().required(),
     deviceModel: Joi.string().required(),
-    pushToken: Joi.string().required()
+    pushToken: Joi.string().required(),
+    manufacturer: Joi.string().required()
 });
 
 
