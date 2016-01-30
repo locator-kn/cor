@@ -5,7 +5,7 @@ const slack = require('ms-utilities').slack;
 
 
 const util = require('../lib/util');
-
+//const google = require('../lib/googleutil')
 
 let handler = {};
 const basicPin = {
@@ -104,7 +104,7 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
             return reply(boom.create(response.statusCode, response.message, response.error));
         }
 
-
+        //    let cityParams = google.findNameOfPosition(response); //TODO: city params come from google place search
         let pattern = util.clone(request.basicSenecaPattern);
         pattern.cmd = 'addnewlocation';
 
@@ -123,6 +123,11 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
                 large: '/api/v2/locations/impression/image/' + response.images.large + '/' + response.images.name,
                 normal: '/api/v2/locations/impression/image/' + response.images.normal + '/' + response.images.name,
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
+            },
+            city:{
+                title: /*cityParams.title*/ 'here goes the city name',
+                place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ',
+                id: /*cityParams.id*/ 'ChIJWx8MOBv2mkcR0JnfpbdrHwQ'
             }
         };
         
