@@ -286,7 +286,7 @@ handler.getLocationByName = (request, reply) => {
 
     //google search for locations
  // let searchResults = google.findByTitle(request);
-//console.log(google.findNameOfPosition(request));
+console.log(google.findNameOfPosition(request));
     //this would be the final return. merging it with reply from ms-location but where to put this???
     //let res = JSON.parse('{"locator" : '+reply+', "google:" '+searchResults+'}');
 
