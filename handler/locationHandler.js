@@ -124,12 +124,12 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
                 normal: '/api/v2/locations/impression/image/' + response.images.normal + '/' + response.images.name,
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             },
-            city:{
+            city: {
                 title: /*cityParams.title*/ 'here goes the city name',
                 place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ'
             }
         };
-        
+
         let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
 
         request.server.pact(senecaAct)
