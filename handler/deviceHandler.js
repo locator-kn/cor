@@ -2,7 +2,8 @@
 const boom = require('boom');
 
 const util = require('../lib/util');
-const slack = require('ms-utilities').slack;
+const log = require('ms-utilities').logger;
+const helper = require('../lib/responseHelper');
 
 let handler = {};
 const basicPin = {
@@ -21,17 +22,15 @@ handler.register = (request, reply) => {
 
     // call microservice with pattern
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(result => {
 
             return reply({message: 'device registered, locator-cookie was set'})
                 .state('locator', {device_id: result.deviceId}).code(201);
         })
         .catch(err => {
-
-            reply(boom.badRequest(err));
-
-            slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'], 'Error registering device:');
-            slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'], err);
+            log.fatal(err, 'Error registering device');
+            reply(boom.badRequest());
         });
 
 };
