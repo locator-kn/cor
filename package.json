@@ -23,10 +23,12 @@
   "dependencies": {
     "bluebird": "^3.1.1",
     "boom": "^3.1.1",
+    "bunyan": "^1.5.1",
     "chairo": "^1.3.0",
     "dotenv": "^1.2.0",
     "glue": "^2.4.0",
     "good": "^6.4.0",
+    "good-bunyan": "^0.1.2",
     "good-console": "^5.2.0",
     "h2o2": "^5.0.0",
     "hapi": "^11.1.4",
