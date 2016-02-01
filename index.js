@@ -9,6 +9,8 @@ const Glue = require('glue');
 
 const util = require('./lib/util');
 
+const log = require('ms-utilities').logger;
+
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
@@ -61,7 +63,7 @@ var manifest = {
                                 name: 'locator',
                                 streams: [{
                                     type: 'rotating-file',
-                                    path: '/var/log/locator/cor.log',
+                                    path: '/var/log/locator/cor/cor.log',
                                     period: '1d',   // daily rotation
                                     count: 14        // keep 14 back copies
                                 }]
@@ -252,7 +254,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         if (err) {
             throw err;
         }
-        console.log('Server running at:', server.info.uri);
+        log.info('Server running at:', server.info.uri);
     });
 
 
