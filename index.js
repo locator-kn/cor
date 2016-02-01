@@ -28,18 +28,25 @@ var manifest = {
         port: process.env['API_PORT'] || 8000
     }],
     plugins: [{
+        // plugin for the microservice framework seneca
         'chairo': {}
     }, {
+        // server side rendering
         'inert': {}
     }, {
+        // server side rendering
         'vision': {}
     }, {
+        // documentation of API
         'hapi-swagger': {}
     }, {
+        // cookie plugin for authentication
         'hapi-auth-cookie': {}
     }, {
+        // proxy plugin
         'h2o2': {}
     }, {
+        // Logger plugin
         'good': [{
             options: {
                 requestPayload: true,
@@ -50,6 +57,7 @@ var manifest = {
             }
         }]
     }, {
+        // interactive debug console
         'tv': {}
     }]
 };
@@ -72,6 +80,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
+    // configure device cookie
     server.state('locator', {
         ttl: 24 * 60 * 60 * 1000,     // One day
         isSecure: false,
