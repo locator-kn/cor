@@ -31,16 +31,15 @@ handler.login = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
-        .then(result => {
-
-            let resp = helper.unwrap(result);
+        .then(helper.unwrap)
+        .then(resp => {
 
             if (!resp.isBoom) {
 
                 let cookie = {
-                    _id: result._id,
-                    mail: result.mail,
-                    name: result.name,
+                    _id: resp._id,
+                    mail: resp.mail,
+                    name: resp.name,
                     device_id: user.requesting_device_id
                 };
 
@@ -49,8 +48,6 @@ handler.login = (request, reply) => {
             }
 
             return reply(resp);
-
-
         })
         .catch(err => {
             log.fatal(err, 'Error logging in');
