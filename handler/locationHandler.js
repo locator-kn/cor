@@ -126,8 +126,7 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
             },
             city:{
                 title: /*cityParams.title*/ 'here goes the city name',
-                place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ',
-                id: /*cityParams.id*/ 'ChIJWx8MOBv2mkcR0JnfpbdrHwQ'
+                place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ'
             }
         };
         
