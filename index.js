@@ -53,6 +53,27 @@ var manifest = {
                 reporters: [{
                     reporter: require('good-console'),
                     events: {log: '*', response: '*', request: '*'}
+                }, {
+                    reporter: require('good-bunyan'),
+                    config: {
+                        logger: require('bunyan')
+                            .createLogger({
+                                name: 'locator',
+                                streams: [{
+                                    type: 'rotating-file',
+                                    path: '/var/log/locator/cor.log',
+                                    period: '1d',   // daily rotation
+                                    count: 14        // keep 14 back copies
+                                }]
+                            })
+                            .child({service: 'cor'}),
+                        levels: {
+                            log: 'info',
+                            response: 'info',
+                            request: 'info'
+                        }
+                    },
+                    events: {log: '*', response: '*', request: '*'}
                 }]
             }
         }]
