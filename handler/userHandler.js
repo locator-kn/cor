@@ -53,7 +53,7 @@ handler.login = (request, reply) => {
 
         })
         .catch(err => {
-            console.log('ERROR', err)
+            log.fatal(err, 'Error logging in');
             reply(boom.unauthorized());
         });
 
