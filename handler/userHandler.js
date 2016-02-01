@@ -3,6 +3,7 @@ const boom = require('boom');
 
 const util = require('../lib/util');
 const log = require('ms-utilities').logger;
+const helper = require('../lib/responseHelper');
 
 let handler = {};
 const basicPin = {
@@ -30,19 +31,26 @@ handler.login = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
-        .then(result => {
+        .then(helper.unwrap)
+        .then(resp => {
 
-            let cookie = {
-                _id: result._id,
-                mail: result.mail,
-                name: result.name,
-                device_id: user.requesting_device_id
-            };
+            if (!resp.isBoom) {
 
-            request.auth.session.set(cookie);
-            return reply(result).unstate('locator');
+                let cookie = {
+                    _id: resp._id,
+                    mail: resp.mail,
+                    name: resp.name,
+                    device_id: user.requesting_device_id
+                };
+
+                request.auth.session.set(cookie);
+                return reply(resp).unstate('locator');
+            }
+
+            return reply(resp);
         })
-        .catch(() => {
+        .catch(err => {
+            log.fatal(err, 'Error logging in');
             reply(boom.unauthorized());
         });
 
