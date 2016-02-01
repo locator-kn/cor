@@ -2,6 +2,7 @@
 const boom = require('boom');
 
 const util = require('../lib/util');
+const log = require('ms-utilities').logger;
 
 let handler = {};
 const basicPin = {
@@ -64,7 +65,7 @@ handler.logout = (request, reply) => {
 
     request.server.pact(senecaAct)
         .catch(err => {
-            console.log(err);
+            log.error(err, 'Error unregistering device');
         });
 };
 
