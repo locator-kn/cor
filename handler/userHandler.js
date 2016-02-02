@@ -124,22 +124,21 @@ handler.register = (request, reply) => {
 };
 
 handler.follow = (request, reply) => {
-    let userID = util.getUserId(request.auth);
 
-    request.basicSenecaPattern.cmd = 'follow';
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'follow';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
+    let senecaAct = util.setupSenecaPattern(pattern, {
         to_follow: request.params.toFollow,
-        user_id: userID
+        user_id: pattern.requesting_user_id
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(res => reply(helper.unwrap(res)))
         .catch(error => {
-            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
-            reply(boom.badRequest(errorMsg));
+            log.fatal(error, 'follow handler failed');
+            reply(boom.badRequest('sorry'));
         });
-
 };
 
 let getFollowingUsersByUserId = (request, reply, userId) => {
