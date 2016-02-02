@@ -5,6 +5,11 @@ const slack = require('ms-utilities').slack;
 
 
 const util = require('../lib/util');
+const helper = require('../lib/responseHelper');
+
+const log = require('ms-utilities').logger;
+
+
 //const google = require('../lib/googleutil')
 
 let handler = {};
@@ -56,19 +61,16 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
 
 handler.getLocationById = (request, reply) => {
 
-    request.basicSenecaPattern.cmd = 'locationById';
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'locationById';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
+    let senecaAct = util.setupSenecaPattern(pattern, request.params, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(resp => reply(helper.unwrap(resp)))
         .catch(error => {
-            if (error.message.includes('not found')) {
-                reply(boom.notFound(error));
-            }
-            else {
-                reply(boom.badRequest(error));
-            }
+            log.fatal('Error getting location by id', {err: error});
+            reply(boom.badRequest('sorry'));
         });
 
 };
