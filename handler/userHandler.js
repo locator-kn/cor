@@ -80,6 +80,7 @@ handler.logout = (request, reply) => {
 handler.register = (request, reply) => {
 
     if (request.auth.isAuthenticated) {
+        log.warn('Already authenticated user wants to register', {userid: request.auth.credentials._id});
         return reply({message: 'Dude, you are already registered and authenticated!'});
     }
 
@@ -98,10 +99,10 @@ handler.register = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(result => {
-            if (result.hasOwnProperty('exists')) {
-                reply(boom.conflict('user with this mail already exists'));
-            } else {
+
+            if (!result.isBoom) {
 
                 let cookie = {
                     mail: result.mail,
@@ -114,9 +115,10 @@ handler.register = (request, reply) => {
                 return reply(result).code(201).unstate('locator');
             }
 
+            return reply(result);
         })
         .catch(error => {
-            console.log(error);
+            log.fatal(error, 'User register handler failed');
             reply(boom.badRequest());
         });
 };
