@@ -2,6 +2,8 @@
 const boom = require('boom');
 
 const util = require('../lib/util');
+const log = require('ms-utilities').logger;
+const helper = require('../lib/responseHelper');
 
 let handler = {};
 const basicPin = {
@@ -10,18 +12,45 @@ const basicPin = {
 
 handler.login = (request, reply) => {
 
-    let senecaAct = util.setupSenecaPattern('login', request.payload, basicPin);
+    let pattern = util.clone(request.basicSenecaPattern);
+    let user = request.payload;
+
+    if (request.auth.isAuthenticated) {
+        return reply({message: 'Dude, you are already registered and authenticated!'});
+    }
+
+
+    if (pattern.requesting_device_id === 'unknown') {
+        return reply(boom.preconditionFailed('Register your device!'));
+    } else {
+        user.requesting_device_id = pattern.requesting_device_id;
+    }
+
+    pattern.cmd = 'login';
+
+    let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
-        .then(result => {
+        .then(helper.unwrap)
+        .then(resp => {
 
-            request.auth.session.set({
-                _id: result._id,
-                mail: result.mail
-            });
-            reply(result);
+            if (!resp.isBoom) {
+
+                let cookie = {
+                    _id: resp._id,
+                    mail: resp.mail,
+                    name: resp.name,
+                    device_id: user.requesting_device_id
+                };
+
+                request.auth.session.set(cookie);
+                return reply(resp).unstate('locator');
+            }
+
+            return reply(resp);
         })
-        .catch(() => {
+        .catch(err => {
+            log.fatal(err, 'Error logging in');
             reply(boom.unauthorized());
         });
 
@@ -31,14 +60,27 @@ handler.login = (request, reply) => {
 handler.logout = (request, reply) => {
     let deviceId = request.auth.credentials.device_id;
     request.auth.session.clear();
-    reply({
-        message: 'You are logged out'
-    }).state('locator', {device_id: deviceId});
+
+    reply({message: 'You are logged out'}).state('locator', {device_id: deviceId});
+
+    // set device to inactive
+    let pattern = util.clone(request.basicSenecaPattern);
+
+    pattern.cmd = 'unregister';
+    pattern.entity = 'device';
+
+    let senecaAct = util.setupSenecaPattern(pattern, {deviceId: deviceId}, basicPin);
+
+    request.server.pact(senecaAct)
+        .catch(err => {
+            log.error(err, 'Error unregistering device');
+        });
 };
 
 handler.register = (request, reply) => {
 
     if (request.auth.isAuthenticated) {
+        log.warn('Already authenticated user wants to register', {userid: request.auth.credentials._id});
         return reply({message: 'Dude, you are already registered and authenticated!'});
     }
 
@@ -57,56 +99,62 @@ handler.register = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
 
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(result => {
-            if (result.hasOwnProperty('exists')) {
-                reply(boom.conflict('user with this mail already exists'));
-            } else {
 
-                let cookie = result.sessionData;
-                cookie.device_id = user.requesting_device_id;
+            if (!result.isBoom) {
+
+                let cookie = {
+                    mail: result.mail,
+                    _id: result._id,
+                    name: result.name,
+                    device_id: user.requesting_device_id
+                };
 
                 request.auth.session.set(cookie);
-                reply(result.user).code(201).unstate('locator');
+                return reply(result).code(201).unstate('locator');
             }
 
+            return reply(result);
         })
         .catch(error => {
-            console.log(error);
+            log.fatal(error, 'User register handler failed');
             reply(boom.badRequest());
         });
 };
 
 handler.follow = (request, reply) => {
-    let userID = util.getUserId(request.auth);
 
-    request.basicSenecaPattern.cmd = 'follow';
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'follow';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
+    let senecaAct = util.setupSenecaPattern(pattern, {
         to_follow: request.params.toFollow,
-        user_id: userID
+        user_id: pattern.requesting_user_id
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(res => reply(helper.unwrap(res)))
         .catch(error => {
-            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
-            reply(boom.badRequest(errorMsg));
+            log.fatal(error, 'follow handler failed');
+            reply(boom.badRequest('sorry'));
         });
-
 };
 
 let getFollowingUsersByUserId = (request, reply, userId) => {
-    request.basicSenecaPattern.cmd = 'getfollowing';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'getfollowing';
+
+    let senecaAct = util.setupSenecaPattern(pattern, {
         user_id: userId
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(res => reply(helper.unwrap(res)))
         .catch(error => {
-            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
-            reply(boom.badRequest(errorMsg));
+            log.fatal('Error getting following user by id', error);
+            reply(boom.badRequest());
         });
 };
 
@@ -153,6 +201,13 @@ handler.getFollowerByUser = (request, reply) => {
 handler.getUserById = (request, reply, useRequestingUser) => {
     let options = {};
     let userId = request.params.userId;
+    let basicLocation;
+    let basicFollower;
+    let senecaActLocationCount;
+    let senecaActFollowerCount;
+
+    let basicUser = util.clone(request.basicSenecaPattern);
+
     if (typeof request.query.count === 'string') {
         options.countFollowers = request.query.count.includes('followers');
         options.countLocations = request.query.count.includes('locations');
@@ -165,36 +220,40 @@ handler.getUserById = (request, reply, useRequestingUser) => {
     let locationCountPromise = true;
     let followersCountPromise = true;
 
-    let basicUser = util.clone(request.basicSenecaPattern);
-    let basicLocation = util.clone(request.basicSenecaPattern);
-    let basicFollower = util.clone(request.basicSenecaPattern);
-
     basicUser.cmd = 'getUserById';
-
-    basicLocation.cmd = 'count';
-    basicLocation.entity = 'location';
-    basicLocation.by = 'userId';
-
-    basicFollower.cmd = 'count';
-    basicFollower.entity = 'follower';
-    basicFollower.by = 'userId';
 
     let senecaActUser = util.setupSenecaPattern(basicUser, {
         user_id: userId
     }, basicPin);
 
-    let senecaActLocationCount = util.setupSenecaPattern(basicLocation, {
-        user_id: userId
-    }, {role: 'location'});
-
-    let senecaActFollowerCount = util.setupSenecaPattern(basicFollower, {
-        user_id: userId
-    }, basicPin);
 
     if (options.countLocations) {
+        basicLocation = util.clone(request.basicSenecaPattern);
+
+        basicLocation.cmd = 'count';
+        basicLocation.entity = 'location';
+        basicLocation.by = 'userId';
+
+        senecaActLocationCount = util.setupSenecaPattern(basicLocation, {
+            user_id: userId
+        }, {role: 'location'});
+
+        // override bool with promise
         locationCountPromise = request.server.pact(senecaActLocationCount);
     }
+
     if (options.countFollowers) {
+        basicFollower = util.clone(request.basicSenecaPattern);
+
+        basicFollower.cmd = 'count';
+        basicFollower.entity = 'follower';
+        basicFollower.by = 'userId';
+
+        senecaActFollowerCount = util.setupSenecaPattern(basicFollower, {
+            user_id: userId
+        }, basicPin);
+
+        // override bool with promise
         followersCountPromise = request.server.pact(senecaActFollowerCount);
     }
 

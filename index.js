@@ -9,6 +9,8 @@ const Glue = require('glue');
 
 const util = require('./lib/util');
 
+const log = require('ms-utilities').logger;
+
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
@@ -28,28 +30,57 @@ var manifest = {
         port: process.env['API_PORT'] || 8000
     }],
     plugins: [{
+        // plugin for the microservice framework seneca
         'chairo': {}
     }, {
+        // server side rendering
         'inert': {}
     }, {
+        // server side rendering
         'vision': {}
     }, {
+        // documentation of API
         'hapi-swagger': {}
     }, {
+        // cookie plugin for authentication
         'hapi-auth-cookie': {}
     }, {
+        // proxy plugin
         'h2o2': {}
     }, {
+        // Logger plugin
         'good': [{
             options: {
                 requestPayload: true,
                 reporters: [{
                     reporter: require('good-console'),
                     events: {log: '*', response: '*', request: '*'}
+                }, {
+                    reporter: require('good-bunyan'),
+                    config: {
+                        logger: require('bunyan')
+                            .createLogger({
+                                name: 'locator',
+                                streams: [{
+                                    type: 'rotating-file',
+                                    path: '/var/log/locator/cor/cor.log',
+                                    period: '1d',   // daily rotation
+                                    count: 14        // keep 14 back copies
+                                }]
+                            })
+                            .child({service: 'cor'}),
+                        levels: {
+                            log: 'info',
+                            response: 'info',
+                            request: 'info'
+                        }
+                    },
+                    events: {log: '*', response: '*', request: '*'}
                 }]
             }
         }]
     }, {
+        // interactive debug console
         'tv': {}
     }]
 };
@@ -72,6 +103,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
+    // configure device cookie
     server.state('locator', {
         ttl: 24 * 60 * 60 * 1000,     // One day
         isSecure: false,
@@ -198,7 +230,67 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
+    server.route({
+        method: 'POST',
+        path: '/dev/login',
+        handler: (request, reply) => {
+            request.auth.session.set({
+                _id: '1a21603a300ae7e4b0d63f9c1780166c',
+                mail: 'SteffenGorenflo@gmail.com'
+            });
+            reply('authenticated');
+        },
+        config: {
+            auth: {
+                mode: 'try',
+                strategy: 'session'
+            },
+            tags: ['api']
+        }
+    });
 
+    server.route({
+        method: 'GET',
+        path: '/dev/logout',
+        handler: (request, reply) => {
+            request.auth.session.clear();
+            reply('bye bye');
+        },
+        config: {
+            tags: ['api']
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/dev/test',
+        handler: (request, reply) => {
+            reply({payload: request.payload, headers: request.headers});
+        },
+        config: {
+            tags: ['api']
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/dev/test/formData',
+        handler: (request, reply) => {
+            if (request.payload.file) {
+                delete request.payload.file._data;
+            }
+            reply({payload: request.payload, headers: request.headers});
+        },
+        config: {
+            tags: ['api'],
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data',
+                maxBytes: 1048576 * 6 // 6MB
+            }
+        }
+    });
 
 
     // configure seneca
@@ -222,7 +314,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         if (err) {
             throw err;
         }
-        console.log('Server running at:', server.info.uri);
+        log.info('Server running at:', server.info.uri);
     });
 
 

@@ -5,7 +5,12 @@ const slack = require('ms-utilities').slack;
 
 
 const util = require('../lib/util');
+const helper = require('../lib/responseHelper');
 const google = require('../lib/googleutil');
+
+const log = require('ms-utilities').logger;
+
+
 
 let handler = {};
 const basicPin = {
@@ -56,19 +61,16 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
 
 handler.getLocationById = (request, reply) => {
 
-    request.basicSenecaPattern.cmd = 'locationById';
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'locationById';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
+    let senecaAct = util.setupSenecaPattern(pattern, request.params, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(resp => reply(helper.unwrap(resp)))
         .catch(error => {
-            if (error.message.includes('not found')){
-                reply(boom.notFound(error));
-            }
-            else {
-                reply(boom.badRequest(error));
-            }
+            log.fatal('Error getting location by id', {err: error});
+            reply(boom.badRequest('sorry'));
         });
 
 };
@@ -104,7 +106,7 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
             return reply(boom.create(response.statusCode, response.message, response.error));
         }
 
-
+        //    let cityParams = google.findNameOfPosition(response); //TODO: city params come from google place search
         let pattern = util.clone(request.basicSenecaPattern);
         pattern.cmd = 'addnewlocation';
 
@@ -123,6 +125,10 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
                 large: '/api/v2/locations/impression/image/' + response.images.large + '/' + response.images.name,
                 normal: '/api/v2/locations/impression/image/' + response.images.normal + '/' + response.images.name,
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
+            },
+            city: {
+                title: /*cityParams.title*/ 'here goes the city name',
+                place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ'
             }
         };
 
