@@ -261,6 +261,17 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         }
     });
 
+    server.route({
+        method: 'GET',
+        path: '/dev/test',
+        handler: (request, reply) => {
+            reply({payload: request.payload, headers: request.headers});
+        },
+        config: {
+            tags: ['api']
+        }
+    });
+
 
     // configure seneca
     server.seneca
