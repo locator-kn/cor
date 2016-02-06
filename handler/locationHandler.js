@@ -89,7 +89,7 @@ handler.getLocationsNearby = (request, reply) => {
 
 };
 
-handler.createLocationAferImageUpload = (err, res, request, reply) => {
+handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
     if (err) {
         return reply(boom.badRequest(err));
