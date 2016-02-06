@@ -92,14 +92,16 @@ handler.getLocationsNearby = (request, reply) => {
 handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
     if (err) {
-        return reply(boom.badRequest(err));
+        log.fatal(err, 'Got error after image upload for location');
+        return reply(boom.badRequest());
     }
 
     // read response
     Wreck.read(res, {json: true}, (err, response) => {
 
         if (err) {
-            return reply(boom.badRequest(err));
+            log.fatal(err, 'ERROR: Unable to read response from ms-fileserve');
+            return reply(boom.badRequest());
         }
 
         if (response.statusCode >= 400) {
