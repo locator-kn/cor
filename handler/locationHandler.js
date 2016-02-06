@@ -41,7 +41,10 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
         let message = {
             location_id: request.params.locationId,
             user_id: util.getUserId(request.auth),
-            message: response // response from db after file upload
+            file: {
+                id: response._id,
+                name: response.filename
+            }
         };
 
 
