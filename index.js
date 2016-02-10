@@ -301,8 +301,9 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         }
 
         if (response.data && response.data.isJoi) {
-            log.fatal('Validation error', {response: response});
+            log.fatal('Validation error', {response: response, requestData: request.orig, path: request.path});
         }
+
 
         reply.continue();
     });
