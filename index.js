@@ -129,6 +129,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(reporter.routes);
     server.route(device.routes);
 
+    // TEMP/DEV ROUTES
     server.route({
         method: 'GET',
         path: '/my/bubblescreen',
@@ -293,6 +294,20 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
+    server.ext('onPreResponse', (request, reply) => {
+        const response = request.response;
+        if (!response.isBoom) {
+            return reply.continue();
+        }
+
+        if (response.data && response.data.isJoi) {
+            log.fatal('Validation error', {response: response});
+        }
+
+        reply.continue();
+    });
+
+
     // configure seneca
     server.seneca
         // set desired transport method
@@ -309,7 +324,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.decorate('server', 'pact', pact);
 
     // start the server
-    server.start((err) => {
+    server.start(err => {
 
         if (err) {
             throw err;
