@@ -288,5 +288,9 @@ handler.userImageUploadRespone = (err, res, request, reply) => {
     reply(boom.notImplemented('Wait for it'));
 };
 
+handler.userRegisterImageUploadRespone = (err, res, request, reply) => {
+    reply(boom.notImplemented('Wait for it'));
+};
+
 
 module.exports = handler;
