@@ -90,13 +90,15 @@ handler.getLocationById = (request, reply) => {
 
 handler.getLocationsNearby = (request, reply) => {
 
-    request.basicSenecaPattern.cmd = 'nearby';
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'nearby';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
+    let senecaAct = util.setupSenecaPattern(pattern, request.query, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(resp => reply(helper.unwrap(resp)))
         .catch(error => {
+            log.fatal('Error getting location nearby', {err: error});
             reply(boom.badRequest(error));
         });
 
