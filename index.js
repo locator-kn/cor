@@ -210,7 +210,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
                         console.timeEnd('retrieving recommendations');
                         return {
-                            messages: results[0],
+                            messages: results[0].data,
                             locations: results[1].data.results,
                             recommendations: res
                         };
