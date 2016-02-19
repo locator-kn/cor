@@ -38,6 +38,7 @@
     "inert": "^3.2.0",
     "joi": "^7.2.0",
     "ms-utilities": "^2.3.5",
+    "opbeat": "^3.5.2",
     "seneca": "^1.0.0",
     "seneca-rabbitmq-transport": "^0.2.1",
     "tv": "^5.0.2",

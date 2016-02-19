@@ -4,6 +4,11 @@ const path = require('path');
 const pwd = path.join(__dirname, '..', '/.env');
 require('dotenv').config({path: pwd});
 
+// init opbeat, secret and orga will be loaded from env
+require('opbeat').start({
+    appId: 'da7c1e68f2'
+});
+
 const Bluebird = require('bluebird');
 const Glue = require('glue');
 
