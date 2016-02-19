@@ -3,6 +3,7 @@ const boom = require('boom');
 
 const util = require('../lib/util');
 
+const helper = require('../lib/responseHelper');
 
 let handler = {};
 const basicPin = {
@@ -17,6 +18,7 @@ handler.getConversationById = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {conversation_id: conID}, basicPin);
 
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(reply)
         .catch(error => {
             if (error.cause.name === 'ValidationError') {
@@ -34,6 +36,7 @@ handler.getMyConversations = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {user_id: util.getUserId(request.auth)}, basicPin);
 
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(reply)
         .catch(error => {
             if (error.cause.name === 'ValidationError') {
@@ -57,6 +60,7 @@ handler.getMessagesByConversationId = (request, reply) => {
     }, basicPin);
 
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(reply)
         .catch(error => {
             if (error.cause.name === 'ValidationError') {
@@ -83,6 +87,7 @@ handler.postConversation = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, conversationData, basicPin);
 
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(reply)
         .catch(error => {
             if (error.cause.name === 'ValidationError') {
@@ -106,6 +111,7 @@ handler.postMessage = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, messageData, basicPin);
 
     request.server.pact(senecaAct)
+        .then(helper.unwrap)
         .then(reply)
         .catch(error => {
             if (error.cause.name === 'ValidationError') {
@@ -131,7 +137,8 @@ handler.ackConversation = (request, reply) => {
         }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(() => reply())
+        .then(helper.unwrap)
+        .then(reply)
         .catch(error => {
             if (error.cause.name === 'not found') {
                 return reply(boom.notFound(error.details.message));
