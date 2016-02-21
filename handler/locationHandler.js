@@ -106,9 +106,11 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
             return reply(boom.create(response.statusCode, response.message, response.error));
         }
 
-        //    let cityParams = google.findNameOfPosition(response); //TODO: city params come from google place search
         let pattern = util.clone(request.basicSenecaPattern);
         pattern.cmd = 'addnewlocation';
+
+        let cityParams= google.findNameOfPosition(response.location.long, response.location.lat,request,reply);
+
 
         let location = {
             user_id: request.basicSenecaPattern.requesting_user_id,
@@ -127,12 +129,13 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             },
             city: {
-                title: /*cityParams.title*/ 'here goes the city name',
+                title: cityParams.title,
                 place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ'
             }
         };
 
 
+/*
 
         let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
 
@@ -141,6 +144,7 @@ handler.createLocationAferImageUpload = (err, res, request, reply) => {
             .catch(error => {
                 reply(boom.badRequest(error));
             });
+*/
 
     });
 
