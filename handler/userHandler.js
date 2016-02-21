@@ -16,7 +16,7 @@ handler.login = (request, reply) => {
     let user = request.payload;
 
     if (request.auth.isAuthenticated) {
-        return reply({message: 'Dude, you are already registered and authenticated!'});
+        //return reply({message: 'Dude, you are already registered and authenticated!'});
     }
 
 
@@ -285,6 +285,10 @@ handler.protected = (request, reply) => {
 
 
 handler.userImageUploadRespone = (err, res, request, reply) => {
+    reply(boom.notImplemented('Wait for it'));
+};
+
+handler.userRegisterImageUploadRespone = (err, res, request, reply) => {
     reply(boom.notImplemented('Wait for it'));
 };
 

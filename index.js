@@ -4,6 +4,11 @@ const path = require('path');
 const pwd = path.join(__dirname, '..', '/.env');
 require('dotenv').config({path: pwd});
 
+// init opbeat, secret and orga will be loaded from env
+require('opbeat').start({
+    appId: 'da7c1e68f2'
+});
+
 const Bluebird = require('bluebird');
 const Glue = require('glue');
 
@@ -129,6 +134,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(reporter.routes);
     server.route(device.routes);
 
+    // TEMP/DEV ROUTES
     server.route({
         method: 'GET',
         path: '/my/bubblescreen',
@@ -204,8 +210,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
                         console.timeEnd('retrieving recommendations');
                         return {
-                            messages: results[0],
-                            locations: results[1].results,
+                            messages: results[0].data,
+                            locations: results[1].data.results,
                             recommendations: res
                         };
                     });
@@ -235,7 +241,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         path: '/dev/login',
         handler: (request, reply) => {
             request.auth.session.set({
-                _id: '1a21603a300ae7e4b0d63f9c1780166c',
+                _id: '569e4a83a6e5bb503b838309',
                 mail: 'SteffenGorenflo@gmail.com'
             });
             reply('authenticated');
@@ -293,6 +299,21 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
+    server.ext('onPreResponse', (request, reply) => {
+        const response = request.response;
+        if (!response.isBoom) {
+            return reply.continue();
+        }
+
+        if (response.data && response.data.isJoi) {
+            log.fatal('Validation error', {response: response, requestData: request.orig, path: request.path});
+        }
+
+
+        reply.continue();
+    });
+
+
     // configure seneca
     server.seneca
         // set desired transport method
@@ -309,7 +330,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.decorate('server', 'pact', pact);
 
     // start the server
-    server.start((err) => {
+    server.start(err => {
 
         if (err) {
             throw err;

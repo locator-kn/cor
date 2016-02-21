@@ -1,8 +1,6 @@
 'use strict';
 const boom = require('boom');
 const Wreck = require('wreck');
-const slack = require('ms-utilities').slack;
-
 
 const util = require('../lib/util');
 const helper = require('../lib/responseHelper');
@@ -20,41 +18,56 @@ const basicPin = {
 let genericFileResponseHandler = (err, res, request, reply, type) => {
 
     if (err) {
-        return reply(boom.badRequest(err));
+        log.fatal(err, 'Got error after image upload for location');
+        return reply(boom.badRequest());
     }
 
     // read response
     Wreck.read(res, {json: true}, (err, response) => {
         if (err) {
-            return reply(boom.badRequest(err));
+            log.fatal(err, 'ERROR: Unable to read response from ms-fileserve');
+            return reply(boom.badRequest());
         }
 
         if (response.statusCode >= 400) {
             return reply(boom.create(response.statusCode, response.message, response.error));
         }
 
-        let userId = util.getUserId(request.auth);
-        let senecaAct = util.setupSenecaPattern({cmd: 'addimpression', type: type}, {
+
+        let pattern = util.clone(request.basicSenecaPattern);
+        pattern.cmd = 'addimpression';
+        pattern.type = type;
+
+        let message = {
             location_id: request.params.locationId,
-            user_id: userId,
-            message: response // response from db after file upload
-        }, basicPin);
+            user_id: util.getUserId(request.auth),
+            file: {
+                id: response._id,
+                name: response.filename
+            }
+        };
+
+
+        let senecaAct = util.setupSenecaPattern(pattern, message, basicPin);
 
         request.server.pact(senecaAct)
-            .then(reply)
-            .catch(error => {
-                if (error.message.includes('Invalid id')) {
+            .then(helper.unwrap)
+            .then(res => {
 
+                reply(res);
+
+                if (res.isBoom) {
                     // remove the uploaded image again by making an internal DELETE request
                     Wreck.delete('http://localhost:3453/file/' + response._id, (err) => {
                         if (err) {
-                            slack.sendSlackError(process.env['SLACK_ERROR_CHANNEL'],
-                                'Error Deleting file type ' + type + '. Because of: ' + err);
+                            log.error(err, 'Error Deleting file type ' + type, {id: response._id});
                         }
                     });
-                    return reply(boom.notFound('location_id'));
                 }
-                reply(boom.badImplementation(error));
+            })
+            .catch(error => {
+                log.fatal(error, 'Error adding impression to location');
+                return reply(boom.badRequest());
             });
     });
 };
@@ -77,29 +90,33 @@ handler.getLocationById = (request, reply) => {
 
 handler.getLocationsNearby = (request, reply) => {
 
-    request.basicSenecaPattern.cmd = 'nearby';
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'nearby';
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
+    let senecaAct = util.setupSenecaPattern(pattern, request.query, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(resp => reply(helper.unwrap(resp)))
         .catch(error => {
+            log.fatal('Error getting location nearby', {err: error});
             reply(boom.badRequest(error));
         });
 
 };
 
-handler.createLocationAferImageUpload = (err, res, request, reply) => {
+handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
     if (err) {
-        return reply(boom.badRequest(err));
+        log.fatal(err, 'Got error after image upload for location');
+        return reply(boom.badRequest());
     }
 
     // read response
     Wreck.read(res, {json: true}, (err, response) => {
 
         if (err) {
-            return reply(boom.badRequest(err));
+            log.fatal(err, 'ERROR: Unable to read response from ms-fileserve');
+            return reply(boom.badRequest());
         }
 
         if (response.statusCode >= 400) {

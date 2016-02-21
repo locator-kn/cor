@@ -25,8 +25,13 @@ handler.register = (request, reply) => {
         .then(helper.unwrap)
         .then(result => {
 
-            return reply({message: 'device registered, locator-cookie was set'})
-                .state('locator', {device_id: result.deviceId}).code(201);
+            if (!result.isBoom) {
+
+                return reply({message: 'device registered, locator-cookie was set'})
+                    .state('locator', {device_id: result.deviceId}).code(201);
+            }
+
+            return reply(result);
         })
         .catch(err => {
             log.fatal(err, 'Error registering device');
