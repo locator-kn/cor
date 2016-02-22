@@ -6,7 +6,8 @@ require('dotenv').config({path: pwd});
 
 // init opbeat, secret and orga will be loaded from env
 require('opbeat').start({
-    appId: 'da7c1e68f2'
+    appId: 'da7c1e68f2',
+    active: process.env['NODE_ENV'] === 'production'
 });
 
 const Bluebird = require('bluebird');
