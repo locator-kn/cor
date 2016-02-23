@@ -9,7 +9,6 @@ const google = require('../lib/googleutil');
 const log = require('ms-utilities').logger;
 
 
-
 let handler = {};
 const basicPin = {
     role: 'location'
@@ -126,7 +125,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
         let pattern = util.clone(request.basicSenecaPattern);
         pattern.cmd = 'addnewlocation';
 
-        let cityParams= google.findNameOfPosition(response.location.long, response.location.lat,request,reply);
+        let cityParams = google.findNameOfPosition(response.location.long, response.location.lat, request, reply);
 
 
         let location = {
@@ -152,16 +151,16 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
         };
 
 
-/*
+        /*
 
-        let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
+         let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
 
-        request.server.pact(senecaAct)
-            .then(reply)
-            .catch(error => {
-                reply(boom.badRequest(error));
-            });
-*/
+         request.server.pact(senecaAct)
+         .then(reply)
+         .catch(error => {
+         reply(boom.badRequest(error));
+         });
+         */
 
     });
 
@@ -309,24 +308,36 @@ handler.postToggleFavorLocation = (request, reply) => {
         });
 };
 
-handler.getLocationByName = (request, reply) => {
+handler.getLocationByName = (request, reply, ans) => {
 
     //google search for locations
 
-    google.findByTitle(request,reply);//TODO:this has to be merged with the db results
+    let gFinds = google.findByTitle(request);//TODO:this has to be merged with the db results
 
-    /*
+
     let senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
 
-    request.server.pact(senecaAct)
-        .then(reply)
+    let dbPromise = request.server.pact(senecaAct);
+
+    Promise.all([dbPromise, gFinds])
+        .then(value => {
+            console.log(value);
+            let dbLocations = value[0];
+            let googleLocations = value[1];
+
+            let result = {
+                google: googleLocations,
+                locator: dbLocations
+            };
+            reply(result);
+        })
         .catch(error => {
             reply(boom.badRequest(error));
-        });*/
+        });
 };
 
 handler.postUpdateLocation = (request, reply) => {
-    return reply(boom.notImplemented ('todo'));
+    return reply(boom.notImplemented('todo'));
 };
 
 handler.imageUploadRespone = (err, res, request, reply) => {
