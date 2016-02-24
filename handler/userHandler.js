@@ -123,6 +123,11 @@ handler.register = (request, reply) => {
         });
 };
 
+
+handler.changePwd = (request,reply)=>{
+
+};
+
 handler.follow = (request, reply) => {
 
     let pattern = util.clone(request.basicSenecaPattern);
