@@ -165,7 +165,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
             .then(location => {
                 let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
 
-                return request.server.pact(senecaAct)
+                return request.server.pact(senecaAct);
             })
             .then(reply)
             .catch(error => {
