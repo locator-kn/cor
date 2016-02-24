@@ -125,6 +125,12 @@ handler.register = (request, reply) => {
 
 
 handler.changePwd = (request,reply)=>{
+    let pattern = util.clone(request.basicSenecaPattern);
+
+    if (!request.auth.isAuthenticated) {
+        log.warn('Unauthenticated user wants to change password', {userid: request.auth.credentials._id});
+        return reply({message: 'Please login first!'});
+    }
 
 };
 
