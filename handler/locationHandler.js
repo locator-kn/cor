@@ -4,11 +4,10 @@ const Wreck = require('wreck');
 
 const util = require('../lib/util');
 const helper = require('../lib/responseHelper');
+const google = require('../lib/googleutil');
 
 const log = require('ms-utilities').logger;
 
-
-//const google = require('../lib/googleutil')
 
 let handler = {};
 const basicPin = {
@@ -123,7 +122,6 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
             return reply(boom.create(response.statusCode, response.message, response.error));
         }
 
-        //    let cityParams = google.findNameOfPosition(response); //TODO: city params come from google place search
         let pattern = util.clone(request.basicSenecaPattern);
         pattern.cmd = 'addnewlocation';
 
@@ -144,19 +142,36 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             },
             city: {
-                title: /*cityParams.title*/ 'here goes the city name',
-                place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ'
+                title: '',
+                place_id: ''
             }
         };
 
-        let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
+        google.findNameOfPosition(response.location.long, response.location.lat)
+            .then(cParam => {
 
-        request.server.pact(senecaAct)
+                location.city.title = cParam.title;
+                location.city.place_id = cParam.place_id;
+                return location;
+
+
+
+            })
+            .catch(error => {
+                //TODO: logging
+                console.log(error);
+              return location;
+            })
+            .then(location => {
+                let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
+
+                return request.server.pact(senecaAct)
+            })
             .then(reply)
             .catch(error => {
                 reply(boom.badRequest(error));
-            });
 
+            });
     });
 
 };
@@ -305,17 +320,34 @@ handler.postToggleFavorLocation = (request, reply) => {
 
 handler.getLocationByName = (request, reply) => {
 
+    //google search for locations
+
+    let gFinds = google.findByTitle(request);
+
+
     let senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
 
-    request.server.pact(senecaAct)
-        .then(reply)
+    let dbPromise = request.server.pact(senecaAct);
+
+    Promise.all([dbPromise, gFinds])
+        .then(value => {
+
+            let dbLocations = value[0];
+            let googleLocations = value[1];
+
+            let result = {
+                google: googleLocations,
+                locator: dbLocations
+            };
+            reply(result);
+        })
         .catch(error => {
             reply(boom.badRequest(error));
         });
 };
 
 handler.postUpdateLocation = (request, reply) => {
-    return reply(boom.notImplemented ('todo'));
+    return reply(boom.notImplemented('todo'));
 };
 
 handler.imageUploadRespone = (err, res, request, reply) => {
