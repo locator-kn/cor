@@ -125,8 +125,10 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
         let pattern = util.clone(request.basicSenecaPattern);
         pattern.cmd = 'addnewlocation';
 
-        let cityParams = google.findNameOfPosition(response.location.long, response.location.lat, request, reply);
+       let cityParams = google.findNameOfPosition(response.location.long, response.location.lat);
 
+
+        cityParams.then(cParam =>{
 
         let location = {
             user_id: request.basicSenecaPattern.requesting_user_id,
@@ -145,13 +147,10 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             },
             city: {
-                title: cityParams.title,
-                place_id: /*cityParams.placeId*/ 'hIJWx8MOBv2mkcR0JnfpbdrHwQ'
+                title: cParam.title,
+                place_id: cParam.place_id
             }
         };
-
-
-        /*
 
          let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
 
@@ -160,8 +159,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
          .catch(error => {
          reply(boom.badRequest(error));
          });
-         */
-
+        });
     });
 
 };
@@ -308,11 +306,11 @@ handler.postToggleFavorLocation = (request, reply) => {
         });
 };
 
-handler.getLocationByName = (request, reply, ans) => {
+handler.getLocationByName = (request, reply) => {
 
     //google search for locations
 
-    let gFinds = google.findByTitle(request);//TODO:this has to be merged with the db results
+    let gFinds = google.findByTitle(request);
 
 
     let senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
@@ -321,7 +319,7 @@ handler.getLocationByName = (request, reply, ans) => {
 
     Promise.all([dbPromise, gFinds])
         .then(value => {
-            console.log(value);
+
             let dbLocations = value[0];
             let googleLocations = value[1];
 
