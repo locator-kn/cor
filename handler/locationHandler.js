@@ -125,11 +125,6 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
         let pattern = util.clone(request.basicSenecaPattern);
         pattern.cmd = 'addnewlocation';
 
-       let cityParams = google.findNameOfPosition(response.location.long, response.location.lat);
-
-
-        cityParams.then(cParam =>{
-
         let location = {
             user_id: request.basicSenecaPattern.requesting_user_id,
             title: response.location.title,
@@ -147,19 +142,36 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             },
             city: {
-                title: cParam.title,
-                place_id: cParam.place_id
+                title: '',
+                place_id: ''
             }
         };
 
-         let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
+        google.findNameOfPosition(response.location.long, response.location.lat)
+            .then(cParam => {
 
-         request.server.pact(senecaAct)
-         .then(reply)
-         .catch(error => {
-         reply(boom.badRequest(error));
-         });
-        });
+                location.city.title = cParam.title;
+                location.city.place_id = cParam.place_id;
+                return location;
+
+
+
+            })
+            .catch(error => {
+                //TODO: logging
+                console.log(error);
+              return location;
+            })
+            .then(location => {
+                let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
+
+                return request.server.pact(senecaAct)
+            })
+            .then(reply)
+            .catch(error => {
+                reply(boom.badRequest(error));
+
+            });
     });
 
 };
