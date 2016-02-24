@@ -124,14 +124,22 @@ handler.register = (request, reply) => {
 };
 
 
-handler.changePwd = (request,reply)=>{
-    let pattern = util.clone(request.basicSenecaPattern);
+handler.changePwd = (request, reply)=> {
 
     if (!request.auth.isAuthenticated) {
         log.warn('Unauthenticated user wants to change password', {userid: request.auth.credentials._id});
         return reply({message: 'Please login first!'});
     }
 
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'changePwd';
+    request.server.pact(senecaAct)
+        .then(helper.unwrap)
+        .then(reply)
+        .catch(err => {
+            log.fatal(err, 'error in changing password');
+            reply(boom.badRequest());
+        });
 };
 
 handler.follow = (request, reply) => {
