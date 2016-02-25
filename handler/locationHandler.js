@@ -128,7 +128,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
         let location = {
             user_id: request.basicSenecaPattern.requesting_user_id,
             title: response.location.title,
-            categories: response.location.categories || [], // TODO
+            categories: response.location.categories,
             favorites: [],
             public: true,
             geotag: {
@@ -149,26 +149,22 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
         google.findNameOfPosition(response.location.long, response.location.lat)
             .then(cParam => {
-
                 location.city.title = cParam.title;
                 location.city.place_id = cParam.place_id;
                 return location;
-
-
-
             })
             .catch(error => {
-                //TODO: logging
-                console.log(error);
-              return location;
+                log.warn(error);
+                return location;
             })
             .then(location => {
                 let senecaAct = util.setupSenecaPattern(pattern, location, basicPin);
 
-                return request.server.pact(senecaAct)
+                return request.server.pact(senecaAct);
             })
-            .then(reply)
+            .then(res => reply(helper.unwrap(res)))
             .catch(error => {
+                log.fatal(error, 'add new location handler failed');
                 reply(boom.badRequest(error));
 
             });
