@@ -126,15 +126,11 @@ handler.register = (request, reply) => {
 
 handler.changePwd = (request, reply)=> {
 
-    if (!request.auth.isAuthenticated) {
-        log.warn('Unauthenticated user wants to change password', {userid: request.auth.credentials._id});
-        return reply({message: 'Please login first!'});
-    }
     console.log('handler change pwd');
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'changePwd';
 
-    let senecaAct = util.setupSenecaPattern(pattern, request.params, basicPin);
+    let senecaAct = util.setupSenecaPattern(pattern, request.payload, basicPin);
     request.server.pact(senecaAct)
         .then(helper.unwrap)
         .then(reply)
