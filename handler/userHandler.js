@@ -123,7 +123,10 @@ handler.changePwd = (request, reply)=> {
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'changePwd';
 
-    let senecaAct = util.setupSenecaPattern(pattern, request.payload, basicPin);
+    let message = request.payload;
+    message.user_id = request.basicSenecaPattern.requesting_user_id;
+
+    let senecaAct = util.setupSenecaPattern(pattern, message, basicPin);
     request.server.pact(senecaAct)
         .then(helper.unwrap)
         .then(reply)
