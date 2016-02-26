@@ -46,7 +46,7 @@
     "tv": "^5.0.2",
     "vision": "^4.0.1",
     "wreck": "^7.0.0",
-    "facebook-node": "^0.0.3"
+    "fbgraph": "1.1.0"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
