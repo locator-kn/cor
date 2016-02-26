@@ -300,6 +300,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
+    // log errors before response is sent back to user
     server.ext('onPreResponse', (request, reply) => {
         const response = request.response;
         if (!response.isBoom) {
@@ -309,7 +310,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         // log 500 code
         if (response.output.statusCode === 500) {
             log.fatal('Server Error', {
-                error: response.output.payload,
+                error: util.clone(response.output.payload),
                 requestData: request.orig,
                 path: request.path
             });
