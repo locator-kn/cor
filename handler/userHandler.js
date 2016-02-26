@@ -50,11 +50,7 @@ handler.login = (request, reply) => {
 
             return reply(resp);
         })
-        .catch(err => {
-            log.fatal(err, 'Error logging in');
-            reply(boom.unauthorized());
-        });
-
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.fbLogin = (request, reply) =>{
@@ -140,10 +136,24 @@ handler.register = (request, reply) => {
 
             return reply(result);
         })
-        .catch(error => {
-            log.fatal(error, 'User register handler failed');
-            reply(boom.badRequest());
-        });
+        .catch(error => reply(boom.badImplementation(error)));
+};
+
+
+handler.changePwd = (request, reply)=> {
+
+    console.log('handler change pwd');
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'changePwd';
+
+    let message = request.payload;
+    message.user_id = request.basicSenecaPattern.requesting_user_id;
+
+    let senecaAct = util.setupSenecaPattern(pattern, message, basicPin);
+    request.server.pact(senecaAct)
+        .then(helper.unwrap)
+        .then(reply)
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.follow = (request, reply) => {
@@ -158,10 +168,7 @@ handler.follow = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(res => reply(helper.unwrap(res)))
-        .catch(error => {
-            log.fatal(error, 'follow handler failed');
-            reply(boom.badRequest('sorry'));
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 let getFollowingUsersByUserId = (request, reply, userId) => {
@@ -175,10 +182,7 @@ let getFollowingUsersByUserId = (request, reply, userId) => {
 
     request.server.pact(senecaAct)
         .then(res => reply(helper.unwrap(res)))
-        .catch(error => {
-            log.fatal('Error getting following user by id', error);
-            reply(boom.badRequest());
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.getMyFollowing = (request, reply) => {
@@ -203,11 +207,8 @@ let getFollowerByUserId = (request, reply, userId) => {
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
-        .catch(error => {
-            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
-            reply(boom.badRequest(errorMsg));
-        });
+        .then(res => reply(helper.unwrap(res)))
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.getMyFollower = (request, reply) => {
@@ -282,24 +283,20 @@ handler.getUserById = (request, reply, useRequestingUser) => {
 
     Promise.all([request.server.pact(senecaActUser), locationCountPromise, followersCountPromise])
         .then(result => {
-            let reponse = result[0];
-            if (reponse) {
+            let user = helper.unwrap(result[0]);
+
+            if (!user.isBoom) {
                 if (options.countLocations) {
-                    reponse.location_count = result[1].count || 0;
+                    user.location_count = result[1].count || 0;
                 }
                 if (options.countFollowers) {
-                    reponse.follower_count = result[2].count || 0;
+                    user.follower_count = result[2].count || 0;
                 }
             }
-            if (!reponse) {
-                reponse = boom.notFound();
-            }
-            reply(reponse);
+
+            return reply(user);
         })
-        .catch(error => {
-            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
-            reply(boom.badRequest(errorMsg));
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.protected = (request, reply) => {

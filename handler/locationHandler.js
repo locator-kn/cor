@@ -64,10 +64,7 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
                     });
                 }
             })
-            .catch(error => {
-                log.fatal(error, 'Error adding impression to location');
-                return reply(boom.badRequest());
-            });
+            .catch(error => reply(boom.badImplementation(error)));
     });
 };
 
@@ -80,11 +77,7 @@ handler.getLocationById = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(resp => reply(helper.unwrap(resp)))
-        .catch(error => {
-            log.fatal('Error getting location by id', {err: error});
-            reply(boom.badRequest('sorry'));
-        });
-
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.getLocationsNearby = (request, reply) => {
@@ -96,11 +89,7 @@ handler.getLocationsNearby = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(resp => reply(helper.unwrap(resp)))
-        .catch(error => {
-            log.fatal('Error getting location nearby', {err: error});
-            reply(boom.badRequest(error));
-        });
-
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.createLocationAfterImageUpload = (err, res, request, reply) => {
@@ -163,11 +152,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 return request.server.pact(senecaAct);
             })
             .then(res => reply(helper.unwrap(res)))
-            .catch(error => {
-                log.fatal(error, 'add new location handler failed');
-                reply(boom.badRequest(error));
-
-            });
+            .catch(error => reply(boom.badImplementation(error)));
     });
 
 };
