@@ -167,11 +167,8 @@ let getFollowerByUserId = (request, reply, userId) => {
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
-        .catch(error => {
-            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
-            reply(boom.badRequest(errorMsg));
-        });
+        .then(res => reply(helper.unwrap(res)))
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.getMyFollower = (request, reply) => {
