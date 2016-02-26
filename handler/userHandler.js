@@ -1,6 +1,7 @@
 'use strict';
 const boom = require('boom');
-
+//var FB = require('facebook-node');
+const fb = require('fbgraph');
 const util = require('../lib/util');
 const log = require('ms-utilities').logger;
 const helper = require('../lib/responseHelper');
@@ -53,6 +54,28 @@ handler.login = (request, reply) => {
             log.fatal(err, 'Error logging in');
             reply(boom.unauthorized());
         });
+
+};
+
+handler.fbLogin = (request, reply) =>{
+
+    var access_token = request.payload.accessToken;
+
+    fb.setAccessToken(access_token);
+
+    fb.get('/me', (err, fb_user) => {
+      /* i should get something like this:
+      *  mail: _user.email.toLowerCase(),
+       name: _user.first_name,
+       surname: _user.last_name,
+       strategy: strategy,
+      *see https://github.com/locator-kn/ark-authentication/blob/master/src/plugin.ts#L323
+      * */
+
+    console.log(fb_user, reply);//for jshint
+
+
+    });
 
 };
 
