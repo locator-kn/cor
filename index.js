@@ -308,11 +308,14 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
         // log 500 code
         if (response.output.statusCode === 500) {
-            return log.fatal('Server Error', {
+            log.fatal('Server Error', {
                 error: response.output.payload,
                 requestData: request.orig,
                 path: request.path
             });
+
+            // delete error message
+            response.output.payload.message = '';
         }
 
 

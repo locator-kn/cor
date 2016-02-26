@@ -51,7 +51,7 @@ handler.login = (request, reply) => {
         })
         .catch(err => {
             log.fatal(err, 'Error logging in');
-            reply(boom.unauthorized());
+            reply(boom.badImplementation(err));
         });
 
 };
@@ -119,7 +119,7 @@ handler.register = (request, reply) => {
         })
         .catch(error => {
             log.fatal(error, 'User register handler failed');
-            reply(boom.badRequest());
+            reply(boom.badImplementation(error));
         });
 };
 
@@ -137,7 +137,7 @@ handler.follow = (request, reply) => {
         .then(res => reply(helper.unwrap(res)))
         .catch(error => {
             log.fatal(error, 'follow handler failed');
-            reply(boom.badRequest('sorry'));
+            reply(boom.badImplementation(error));
         });
 };
 
@@ -154,7 +154,7 @@ let getFollowingUsersByUserId = (request, reply, userId) => {
         .then(res => reply(helper.unwrap(res)))
         .catch(error => {
             log.fatal('Error getting following user by id', error);
-            reply(boom.badRequest());
+            reply(boom.badImplementation(error));
         });
 };
 
