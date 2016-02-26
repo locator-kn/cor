@@ -20,7 +20,6 @@ const log = require('ms-utilities').logger;
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
-const file = require('./lib/file');
 const messenger = require('./lib/messenger');
 const reporter = require('./lib/reporter');
 const device = require('./lib/device');
@@ -130,7 +129,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     // Add the API routes
     server.route(user.routes);
     server.route(location.routes);
-    server.route(file.routes);
     server.route(messenger.routes);
     server.route(reporter.routes);
     server.route(device.routes);
@@ -300,16 +298,34 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     });
 
 
+    // log errors before response is sent back to user
     server.ext('onPreResponse', (request, reply) => {
         const response = request.response;
         if (!response.isBoom) {
             return reply.continue();
         }
 
-        if (response.data && response.data.isJoi) {
-            log.fatal('Validation error', {response: response, requestData: request.orig, path: request.path});
+        // log 500 code
+        if (response.output.statusCode === 500) {
+            log.fatal('Server Error', {
+                error: util.clone(response.output.payload),
+                requestData: request.orig,
+                path: request.path
+            });
+
+            // delete error message
+            response.output.payload.message = '';
         }
 
+
+        // log joi validation error
+        if (response.data && response.data.isJoi) {
+            log.fatal('Validation error', {
+                response: response,
+                requestData: request.orig,
+                path: request.path
+            });
+        }
 
         reply.continue();
     });

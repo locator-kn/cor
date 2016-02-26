@@ -2,7 +2,6 @@
 const boom = require('boom');
 
 const util = require('../lib/util');
-const log = require('ms-utilities').logger;
 const helper = require('../lib/responseHelper');
 
 let handler = {};
@@ -33,10 +32,7 @@ handler.register = (request, reply) => {
 
             return reply(result);
         })
-        .catch(err => {
-            log.fatal(err, 'Error registering device');
-            reply(boom.badRequest());
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 
 };
 
