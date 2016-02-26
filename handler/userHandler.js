@@ -243,24 +243,20 @@ handler.getUserById = (request, reply, useRequestingUser) => {
 
     Promise.all([request.server.pact(senecaActUser), locationCountPromise, followersCountPromise])
         .then(result => {
-            let reponse = result[0];
-            if (reponse) {
+            let user = helper.unwrap(result[0]);
+
+            if (!user.isBoom) {
                 if (options.countLocations) {
-                    reponse.location_count = result[1].count || 0;
+                    user.location_count = result[1].count || 0;
                 }
                 if (options.countFollowers) {
-                    reponse.follower_count = result[2].count || 0;
+                    user.follower_count = result[2].count || 0;
                 }
             }
-            if (!reponse) {
-                reponse = boom.notFound();
-            }
-            reply(reponse);
+
+            return reply(user);
         })
-        .catch(error => {
-            let errorMsg = error.cause.details.message ? error.cause.details.message : 'unknown';
-            reply(boom.badRequest(errorMsg));
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.protected = (request, reply) => {
