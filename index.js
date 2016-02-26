@@ -20,7 +20,6 @@ const log = require('ms-utilities').logger;
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
-const file = require('./lib/file');
 const messenger = require('./lib/messenger');
 const reporter = require('./lib/reporter');
 const device = require('./lib/device');
@@ -130,7 +129,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     // Add the API routes
     server.route(user.routes);
     server.route(location.routes);
-    server.route(file.routes);
     server.route(messenger.routes);
     server.route(reporter.routes);
     server.route(device.routes);
