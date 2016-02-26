@@ -130,10 +130,7 @@ handler.changePwd = (request, reply)=> {
     request.server.pact(senecaAct)
         .then(helper.unwrap)
         .then(reply)
-        .catch(err => {
-            log.fatal(err, 'error in changing password');
-            reply(boom.badRequest());
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.follow = (request, reply) => {
