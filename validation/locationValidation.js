@@ -25,7 +25,7 @@ validations.locationId = Joi.object().keys({
 });
 
 validations.locationByName = Joi.object().keys({
-    locationName: Joi.string().required(),
+    locationName: Joi.string().optional(),
     long: Joi.number().default(9.169753789901733),
     lat: Joi.number().default(47.66868204997508)
 });
