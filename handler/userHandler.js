@@ -49,11 +49,7 @@ handler.login = (request, reply) => {
 
             return reply(resp);
         })
-        .catch(err => {
-            log.fatal(err, 'Error logging in');
-            reply(boom.badImplementation(err));
-        });
-
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 
@@ -117,10 +113,7 @@ handler.register = (request, reply) => {
 
             return reply(result);
         })
-        .catch(error => {
-            log.fatal(error, 'User register handler failed');
-            reply(boom.badImplementation(error));
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.follow = (request, reply) => {
@@ -135,10 +128,7 @@ handler.follow = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(res => reply(helper.unwrap(res)))
-        .catch(error => {
-            log.fatal(error, 'follow handler failed');
-            reply(boom.badImplementation(error));
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 let getFollowingUsersByUserId = (request, reply, userId) => {
@@ -152,10 +142,7 @@ let getFollowingUsersByUserId = (request, reply, userId) => {
 
     request.server.pact(senecaAct)
         .then(res => reply(helper.unwrap(res)))
-        .catch(error => {
-            log.fatal('Error getting following user by id', error);
-            reply(boom.badImplementation(error));
-        });
+        .catch(error => reply(boom.badImplementation(error)));
 };
 
 handler.getMyFollowing = (request, reply) => {
