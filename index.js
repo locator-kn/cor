@@ -68,7 +68,7 @@ var manifest = {
                                 name: 'locator',
                                 streams: [{
                                     type: 'rotating-file',
-                                    path: '/var/log/locator/cor/cor.log',
+                                    path: process.env['PATH_LOGFILE_ERROR'] ,
                                     period: '1d',   // daily rotation
                                     count: 14        // keep 14 back copies
                                 }]
