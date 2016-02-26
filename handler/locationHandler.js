@@ -332,16 +332,17 @@ handler.getLocationByName = (request, reply) => {
     let gFinds;
     let senecaAct;
 
-if (request.params.locationName) {
-    //google search for locations
-    gFinds = google.findByTitle(request);
+    if (request.params.locationName) {
 
-    senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
-}
-    else{
-    gFinds = google.searchNearbyPlaces(request);
-    senecaAct = util.setupSenecaPattern('nearby',request.params,basicPin);
-}
+        gFinds = google.findByTitle(request);
+
+        senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
+    }
+    else {
+
+        gFinds = google.searchNearbyPlaces(request);
+        senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
+    }
 
     let dbPromise = request.server.pact(senecaAct);
 
