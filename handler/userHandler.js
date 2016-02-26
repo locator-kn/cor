@@ -116,6 +116,26 @@ handler.register = (request, reply) => {
         .catch(error => reply(boom.badImplementation(error)));
 };
 
+
+handler.changePwd = (request, reply)=> {
+
+    console.log('handler change pwd');
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'changePwd';
+
+    let message = request.payload;
+    message.user_id = request.basicSenecaPattern.requesting_user_id;
+
+    let senecaAct = util.setupSenecaPattern(pattern, message, basicPin);
+    request.server.pact(senecaAct)
+        .then(helper.unwrap)
+        .then(reply)
+        .catch(err => {
+            log.fatal(err, 'error in changing password');
+            reply(boom.badRequest());
+        });
+};
+
 handler.follow = (request, reply) => {
 
     let pattern = util.clone(request.basicSenecaPattern);

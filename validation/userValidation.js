@@ -20,6 +20,11 @@ validations.register = Joi.object().keys({
     residence: Joi.string().required().description('User residence')
 });
 
+validations.updatePwd = Joi.object().keys({
+    old_password: Joi.string().regex(/[a-zA-Z0-9@#$%_&!"§\/\(\)=\?\^]{3,30}/).required().description('enter old password'),
+    new_password: Joi.string().regex(/[a-zA-Z0-9@#$%_&!"§\/\(\)=\?\^]{3,30}/).required().description('enter new password')
+});
+
 validations.follow = Joi.object().keys({
     toFollow: mongoIdFieldRequired
 });
