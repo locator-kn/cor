@@ -332,18 +332,21 @@ handler.getLocationByName = (request, reply) => {
     let gFinds;
     let senecaAct;
 
-    if (request.query.locationName) {
+    let name = request.query.locationName;
+    let long = request.query.long;
+    let lat = request.query.lat;
 
-        gFinds = google.findByTitle(request);
-
+    if (name) {
+    //    gFinds = google.findByTitle(request);
         senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
         console.log(request.query);
     }
     else {
-
-        gFinds = google.searchNearbyPlaces(request);
+     //   gFinds = google.searchNearbyPlaces(request);
         senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
     }
+
+    gFinds = google.locationSearch(name,lat, long);
 
     let dbPromise = request.server.pact(senecaAct);
 
