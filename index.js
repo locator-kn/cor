@@ -68,7 +68,7 @@ var manifest = {
                                 name: 'locator',
                                 streams: [{
                                     type: 'rotating-file',
-                                    path: '/var/log/locator/cor/cor.log',
+                                    path: process.env['PATH_LOGFILE_COR'] + 'cor.log' ,
                                     period: '1d',   // daily rotation
                                     count: 14        // keep 14 back copies
                                 }]
@@ -337,6 +337,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the service is listening to
         .client({type: 'tcp', port: 7003, host: 'localhost', pin: 'role:messenger,cmd:*'})
+        .client({type: 'tcp', port: 7005, host: 'localhost', pin: 'role:mailer,cmd:*'})
+        .client({type: 'tcp', port: 7004, host: 'localhost', pin: 'role:notifications,cmd:*'})
         .client({type: 'tcp', port: 7002, host: 'localhost', pin: 'role:user,cmd:*'})
         .client({type: 'tcp', port: 7001, host: 'localhost', pin: 'role:location,cmd:*'})
         .client({type: 'tcp', port: 7010, host: 'localhost', pin: 'role:reporter,cmd:*'});

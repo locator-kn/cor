@@ -330,12 +330,19 @@ handler.postUnfavorLocation = (request, reply) => {
 
 handler.getLocationByName = (request, reply) => {
 
-    //google search for locations
+    let senecaAct;
+    let name = request.query.locationName;
+    let long = request.query.long;
+    let lat = request.query.lat;
 
-    let gFinds = google.findByTitle(request);
+    if (name) {
+        senecaAct = util.setupSenecaPattern('locationbyname', {locationName: request.query.locationName}, basicPin);
+    }
+    else {
+        senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
+    }
 
-
-    let senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
+    let gFinds = google.locationSearch(name, lat, long);
 
     let dbPromise = request.server.pact(senecaAct);
 
