@@ -331,13 +331,12 @@ handler.postUnfavorLocation = (request, reply) => {
 handler.getLocationByName = (request, reply) => {
 
     let senecaAct;
-
     let name = request.query.locationName;
     let long = request.query.long;
     let lat = request.query.lat;
 
     if (name) {
-        senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
+        senecaAct = util.setupSenecaPattern('locationbyname', {locationName: request.query.locationName}, basicPin);
         console.log(request.query);
     }
     else {
