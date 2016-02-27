@@ -343,7 +343,7 @@ handler.getLocationByName = (request, reply) => {
         gFinds = google.searchNearbyPlaces(request);
         senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
     }
-
+//TODO: Error handling in case google throws error.
     let dbPromise = request.server.pact(senecaAct);
 
     Promise.all([dbPromise, gFinds])
