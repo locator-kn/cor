@@ -337,7 +337,7 @@ handler.getLocationByName = (request, reply) => {
         gFinds = google.findByTitle(request);
 
         senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
-        console.log(request.query)
+        console.log(request.query);
     }
     else {
 
