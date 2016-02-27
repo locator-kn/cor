@@ -332,18 +332,19 @@ handler.getLocationByName = (request, reply) => {
     let gFinds;
     let senecaAct;
 
-    if (request.params.locationName) {
+    if (request.query.locationName) {
 
         gFinds = google.findByTitle(request);
 
-        senecaAct = util.setupSenecaPattern('locationbyname', request.params, basicPin);
+        senecaAct = util.setupSenecaPattern('locationbyname', request.query, basicPin);
+        console.log(request.query)
     }
     else {
 
         gFinds = google.searchNearbyPlaces(request);
         senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
     }
-//TODO: Error handling in case google throws error.
+
     let dbPromise = request.server.pact(senecaAct);
 
     Promise.all([dbPromise, gFinds])
