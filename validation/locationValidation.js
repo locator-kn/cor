@@ -30,7 +30,8 @@ validations.locationByName = Joi.object().keys({
 
 validations.coordinates = Joi.object().keys({
     long: Joi.number().default(9.169753789901733),
-    lat: Joi.number().default(47.66868204997508)
+    lat: Joi.number().default(47.66868204997508),
+    locationName: Joi.string()
 });
 
 validations.userIDLocations = Joi.object().keys({
