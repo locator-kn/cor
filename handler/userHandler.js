@@ -134,16 +134,41 @@ handler.changePwd = (request, reply)=> {
 
 handler.forgetPassword = (request, reply)=> {
 
-    request.basicSenecaPattern.cmd = 'forgetPassword';
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'forgetPassword';
+
+    let mailPattern = util.clone(request.basicSenecaPattern);
+    mailPattern.cmd = 'send';
+    mailPattern.subject = 'pwforget';
+
     let user = {
         user_id: request.basicSenecaPattern.requesting_user_id
     };
 
-    let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, user, basicPin);
+    let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
     request.server.pact(senecaAct)
         .then(helper.unwrap)
-        .then(reply)
-        .catch(error => reply(boom.badImplementation(error)));
+        .catch(error => reply(boom.badImplementation(error)))
+        .then(value => {
+
+            // reply to client
+            reply({ok: true});
+
+            // send mail to user
+            let senecaMailAct = util.setupSenecaPattern(
+                mailPattern,
+                {
+                    user_id: user.user_id,
+                    new_password: value.new_password
+                },
+                {
+                    role: 'mailer'
+                });
+
+            return request.server.pact(senecaMailAct);
+
+        })
+        .catch(err => log.fatal('Error sending Mail', {error: err}));
 };
 
 handler.follow = (request, reply) => {
