@@ -354,7 +354,7 @@ handler.getLocationByName = (request, reply) => {
 
             let result = {
                 google: googleLocations,
-                locator: dbLocations
+                locator: dbLocations.data.results
             };
             reply(result);
         })
