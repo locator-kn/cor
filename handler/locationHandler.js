@@ -337,7 +337,6 @@ handler.getLocationByName = (request, reply) => {
 
     if (name) {
         senecaAct = util.setupSenecaPattern('locationbyname', {locationName: request.query.locationName}, basicPin);
-        console.log(request.query);
     }
     else {
         senecaAct = util.setupSenecaPattern('nearby', request.query, basicPin);
