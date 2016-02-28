@@ -56,7 +56,7 @@ handler.fbLogin = (request, reply) => {
 
 
     let pattern = util.clone(request.basicSenecaPattern);
-    let user = request.payload;
+   // let user = request.payload;
 /*
     if (pattern.requesting_device_id === 'unknown') {
         return reply(boom.preconditionFailed('Register your device!'));
@@ -69,7 +69,7 @@ handler.fbLogin = (request, reply) => {
 
     fb.setAccessToken(access_token);
 
-    fb.get('/me?fields=email,first_name', (err, fb_user) => {
+    fb.get('/me?fields=email,first_name,friends', (err, fb_user) => {
 
 
       /*  let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
@@ -95,6 +95,7 @@ handler.fbLogin = (request, reply) => {
             })
             .catch(error => reply(boom.badImplementation(error)));*/
         console.log(fb_user);
+        reply({});
     });
 
 
