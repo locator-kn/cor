@@ -33,6 +33,12 @@ validations.userId = Joi.object().keys({
     userId: mongoIdFieldRequired
 });
 
+
+validations.userMail = Joi.object().keys({
+    mail: Joi.string().email().min(3).max(60).required()
+        .description('Mail address')
+});
+
 validations.count = Joi.object().keys({
     count: Joi.string().valid(['locations', 'followers', 'locations,followers', 'followers,locations'])
 });
