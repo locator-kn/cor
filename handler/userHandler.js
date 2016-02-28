@@ -1,6 +1,5 @@
 'use strict';
 const boom = require('boom');
-//var FB = require('facebook-node');
 const fb = require('fbgraph');
 const util = require('../lib/util');
 const log = require('ms-utilities').logger;
@@ -55,21 +54,44 @@ handler.login = (request, reply) => {
 
 handler.fbLogin = (request, reply) => {
 
-    let access_token = request.payload.token;
+    if (pattern.requesting_device_id === 'unknown') {
+        return reply(boom.preconditionFailed('Register your device!'));
+    } else {
+        user.requesting_device_id = pattern.requesting_device_id;
+    }
 
+    let access_token = request.payload.token;
+    pattern.cmd = 'fbLogin';
 
     fb.setAccessToken(access_token);
 
     fb.get('/me', (err, fb_user) => {
-        /* i should get something like this:
-         *  mail: fb_user.email.toLowerCase(),
-         name: fb_user.first_name,
-         *see https://github.com/locator-kn/ark-authentication/blob/master/src/plugin.ts#L323
-         *
-         */
-        console.log(fb_user);
 
-        reply({});
+        let pattern = util.clone(request.basicSenecaPattern);
+        let user = fb_user;
+        console.log(user);
+        let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
+
+        request.server.pact(senecaAct)
+            .then(helper.unwrap)
+            .then(resp => {
+
+                if (!resp.isBoom) {
+
+                    let cookie = {
+                        _id: resp._id,
+                        mail: resp.mail,
+                        name: resp.name,
+                        device_id: user.requesting_device_id
+                    };
+
+                    request.auth.session.set(cookie);
+                    return reply(resp).unstate('locator');
+                }
+
+                return reply(resp);
+            })
+            .catch(error => reply(boom.badImplementation(error)));
     });
 
 };
