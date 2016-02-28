@@ -142,7 +142,7 @@ handler.forgetPassword = (request, reply)=> {
     mailPattern.subject = 'pwforget';
 
     let user = {
-        user_id: request.basicSenecaPattern.requesting_user_id
+        mail: request.payload.mail
     };
 
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
@@ -158,7 +158,7 @@ handler.forgetPassword = (request, reply)=> {
             let senecaMailAct = util.setupSenecaPattern(
                 mailPattern,
                 {
-                    user_id: user.user_id,
+                    mail: user.mail,
                     new_password: value.new_password
                 },
                 {
