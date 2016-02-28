@@ -136,6 +136,9 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
             }
         };
 
+        let locationId;
+        let userId;
+
         google.findNameOfPosition(response.location.long, response.location.lat)
             .then(cParam => {
                 location.city.title = cParam.title;
@@ -151,8 +154,29 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
                 return request.server.pact(senecaAct);
             })
-            .then(res => reply(helper.unwrap(res)))
-            .catch(error => reply(boom.badImplementation(error)));
+            .then(res => {
+                reply(helper.unwrap(res));
+                locationId = res._id;
+                userId = res.user_id;
+            })
+            .catch(error => reply(boom.badImplementation(error)))
+            .then(() => {
+
+                // send pushes
+                let pushPattern = util.clone(request.basicSenecaPattern);
+                pushPattern.cmd = 'notify';
+                pushPattern.entity = 'newLocation';
+
+                let pushAct = util.setupSenecaPattern(pushPattern,
+                    {
+                        location_id: locationId,
+                        user_id: userId
+                    },
+                    {role: 'notifications'});
+
+                return request.server.pact(pushAct);
+            })
+            .catch(err => log.warn({error: err}, 'Error sending push'));
     });
 
 };
