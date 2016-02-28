@@ -53,24 +53,26 @@ handler.login = (request, reply) => {
 };
 
 handler.fbLogin = (request, reply) => {
+
+
     let pattern = util.clone(request.basicSenecaPattern);
     let user = request.payload;
-
+/*
     if (pattern.requesting_device_id === 'unknown') {
         return reply(boom.preconditionFailed('Register your device!'));
     } else {
         user.requesting_device_id = pattern.requesting_device_id;
-    }
+    }*/
 
     let access_token = request.payload.token;
     pattern.cmd = 'fbLogin';
 
     fb.setAccessToken(access_token);
 
-    fb.get('/me', (err, fb_user) => {
+    fb.get('/me?fields=email,first_name', (err, fb_user) => {
 
 
-        let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
+      /*  let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
 
         request.server.pact(senecaAct)
             .then(helper.unwrap)
@@ -91,8 +93,11 @@ handler.fbLogin = (request, reply) => {
 
                 return reply(resp);
             })
-            .catch(error => reply(boom.badImplementation(error)));
+            .catch(error => reply(boom.badImplementation(error)));*/
+        console.log(fb_user);
     });
+
+
 
 };
 
