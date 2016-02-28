@@ -53,38 +53,23 @@ handler.login = (request, reply) => {
         .catch(error => reply(boom.badImplementation(error)));
 };
 
-handler.fbLogin = (request, reply) =>{
+handler.fbLogin = (request, reply) => {
 
-    let access_token = request.payload.accessToken;
+    let access_token = request.payload.token;
 
-    //----------this part is just for testing---------------
-  /*  var FB = require('facebook-node');
 
-    FB.api('oauth/access_token', {
-        client_id: process.env['FACEBOOK_CLIENT_ID'],
-        client_secret: process.env['FACEBOOK_CLIENT_SECRET'],
-        grant_type: 'client_credentials'
-    }, function (res) {
-        if(!res || res.error) {
-            console.log(!res ? 'error occurred' : res.error);
-            return;
-        }
-
-        var accessToken = fb.setAccessToken(res.access_token);
-    });
-    *///---------------------------------------------------------
-   fb.setAccessToken(access_token);
+    fb.setAccessToken(access_token);
 
     fb.get('/me', (err, fb_user) => {
-      /* i should get something like this:
-      *  mail: fb_user.email.toLowerCase(),
-       name: fb_user.first_name,
-      *see https://github.com/locator-kn/ark-authentication/blob/master/src/plugin.ts#L323
-      * */
+        /* i should get something like this:
+         *  mail: fb_user.email.toLowerCase(),
+         name: fb_user.first_name,
+         *see https://github.com/locator-kn/ark-authentication/blob/master/src/plugin.ts#L323
+         *
+         */
+        console.log(fb_user);
 
-    console.log(fb_user);//for jshint
-
-    reply({});
+        reply({});
     });
 
 };
