@@ -162,6 +162,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
             .catch(error => reply(boom.badImplementation(error)))
             .then(() => {
 
+                return; // don't send pushes for now
                 // send pushes
                 let pushPattern = util.clone(request.basicSenecaPattern);
                 pushPattern.cmd = 'notify';
