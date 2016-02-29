@@ -66,7 +66,7 @@ handler.fbLogin = (request, reply) => {
         user.requesting_device_id = pattern.requesting_device_id;
     }
 
-    fb.get('/me?fields=email,first_name', (err, fb_user) => {
+    fb.get('/me?fields=id,email,name', (err, fb_user) => {
 
         let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
 
