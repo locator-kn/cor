@@ -53,26 +53,22 @@ handler.login = (request, reply) => {
 };
 
 handler.fbLogin = (request, reply) => {
-
+    let access_token = request.payload.token;
+    fb.setAccessToken(access_token);
 
     let pattern = util.clone(request.basicSenecaPattern);
-   // let user = request.payload;
-/*
+    pattern.cmd = 'fbLogin';
+    let user = request.payload;
+
     if (pattern.requesting_device_id === 'unknown') {
         return reply(boom.preconditionFailed('Register your device!'));
     } else {
         user.requesting_device_id = pattern.requesting_device_id;
-    }*/
+    }
 
-    let access_token = request.payload.token;
-    pattern.cmd = 'fbLogin';
+    fb.get('/me?fields=email,first_name', (err, fb_user) => {
 
-    fb.setAccessToken(access_token);
-
-    fb.get('/me?fields=email,first_name,friends', (err, fb_user) => {
-
-
-      /*  let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
+        let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
 
         request.server.pact(senecaAct)
             .then(helper.unwrap)
@@ -82,22 +78,19 @@ handler.fbLogin = (request, reply) => {
 
                     let cookie = {
                         _id: resp._id,
-                        mail: resp.mail,
+                        mail: resp.mail || resp.fbId,
                         name: resp.name,
                         device_id: user.requesting_device_id
                     };
 
                     request.auth.session.set(cookie);
+
                     return reply(resp).unstate('locator');
                 }
-
                 return reply(resp);
             })
-            .catch(error => reply(boom.badImplementation(error)));*/
-        console.log(fb_user);
-        reply({});
+            .catch(error => reply(boom.badImplementation(error)));
     });
-
 
 
 };
