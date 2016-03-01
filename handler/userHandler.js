@@ -1,6 +1,6 @@
 'use strict';
 const boom = require('boom');
-
+const fb = require('fbgraph');
 const util = require('../lib/util');
 const log = require('ms-utilities').logger;
 const helper = require('../lib/responseHelper');
@@ -50,6 +50,49 @@ handler.login = (request, reply) => {
             return reply(resp);
         })
         .catch(error => reply(boom.badImplementation(error)));
+};
+
+handler.fbLogin = (request, reply) => {
+    let access_token = request.payload.token;
+    fb.setAccessToken(access_token);
+
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'fbLogin';
+
+
+    if (pattern.requesting_device_id === 'unknown') {
+        return reply(boom.preconditionFailed('Register your device!'));
+    }
+
+    fb.get('/me?fields=id,email,name', (err, fb_user) => {
+
+        fb_user.requesting_device_id = pattern.requesting_device_id;
+
+        let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
+
+        request.server.pact(senecaAct)
+            .then(helper.unwrap)
+            .then(resp => {
+
+                if (!resp.isBoom) {
+
+                    let cookie = {
+                        _id: resp._id,
+                        mail: resp.mail || resp.fbId,
+                        name: resp.name,
+                        device_id: fb_user.requesting_device_id
+                    };
+
+                    request.auth.session.set(cookie);
+
+                    return reply(resp).unstate('locator');
+                }
+                return reply(resp);
+            })
+            .catch(error => reply(boom.badImplementation(error)));
+    });
+
+
 };
 
 
