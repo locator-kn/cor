@@ -142,7 +142,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
         google.findNameOfPosition2(response.location.long, response.location.lat)
             .then(cParam => {
                 location.city.title = cParam.title;
-               // location.city.place_id = cParam.place_id;
+                location.city.place_id = cParam.place_id;
 
                 return location;
             })
@@ -409,8 +409,5 @@ handler.audioUploadRespone = (err, res, request, reply) => {
     genericFileResponseHandler(err, res, request, reply, 'audio');
 };
 
-handler.loc = (request,reply) => {
-    reply(google.findNameOfPosition2(request.long,request.lat));
-};
 
 module.exports = handler;
