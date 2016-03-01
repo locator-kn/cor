@@ -391,15 +391,19 @@ handler.getLocationByName = (request, reply) => {
             let googleLocations = value[1];
 
             let result = {
-                google: googleLocations,
-                locator: dbLocations.data.results
-            };
+                    google: googleLocations,
+                    locator: dbLocations
+                };
+
             reply(result);
-        })
-        .catch(error => {
+        }
+    )
+        .
+        catch(error => {
             reply(boom.badRequest(error));
         });
-};
+}
+;
 
 handler.postUpdateLocation = (request, reply) => {
     return reply(boom.notImplemented('todo'));
