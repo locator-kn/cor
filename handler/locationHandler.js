@@ -154,15 +154,25 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
                 return request.server.pact(senecaAct);
             })
-            .then(res => {
+            .then(helper.unwrap)
+            .then(location => {
 
                 // reply to client
-                reply(helper.unwrap(res));
-                locationId = res._id;
-                userId = res.user_id;
+                reply(location);
+
+                if (!location.isBoom) {
+                    locationId = location._id;
+                    userId = location.user_id;
+                }
+
             })
             .catch(error => reply(boom.badImplementation(error)))
             .then(() => {
+
+                // dont send push if not defined
+                if (!userId || !locationId) {
+                    return;
+                }
 
                 // send push notifications
                 let pushPattern = util.clone(request.basicSenecaPattern);
