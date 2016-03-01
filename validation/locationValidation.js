@@ -57,5 +57,8 @@ validations.imageImpressionId = Joi.object().keys({
 
 });
 
-
+validations.loc = Joi.object().keys({
+    lat: Joi.string().required(),
+    long: Joi.string().required()
+});
 module.exports = validations;
