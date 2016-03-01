@@ -155,28 +155,40 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
                 return request.server.pact(senecaAct);
             })
-            .then(res => {
-                reply(helper.unwrap(res));
-                locationId = res._id;
-                userId = res.user_id;
+            .then(helper.unwrap)
+            .then(location => {
+
+                // reply to client (could be an error)
+                reply(location);
+
+                if (!location.isBoom) {
+                    locationId = location._id;
+                    userId = location.user_id;
+                }
+
             })
             .catch(error => reply(boom.badImplementation(error)))
             .then(() => {
 
-                return; // don't send pushes for now
-                // send pushes
-              /*  let pushPattern = util.clone(request.basicSenecaPattern);
+                // dont send push if not defined
+                if (!userId || !locationId) {
+                    return;
+                }
+
+                // send push notifications
+                let pushPattern = util.clone(request.basicSenecaPattern);
                 pushPattern.cmd = 'notify';
                 pushPattern.entity = 'newLocation';
 
                 let pushAct = util.setupSenecaPattern(pushPattern,
                     {
                         location_id: locationId,
-                        user_id: userId
+                        user_id: userId,
+                        user_name: request.auth.credentials.name
                     },
                     {role: 'notifications'});
 
-                return request.server.pact(pushAct);*/
+                return request.server.pact(pushAct);
             })
             .catch(err => log.warn({error: err}, 'Error sending push'));
     });
