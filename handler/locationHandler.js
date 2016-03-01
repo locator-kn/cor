@@ -155,6 +155,8 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 return request.server.pact(senecaAct);
             })
             .then(res => {
+
+                // reply to client
                 reply(helper.unwrap(res));
                 locationId = res._id;
                 userId = res.user_id;
@@ -162,8 +164,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
             .catch(error => reply(boom.badImplementation(error)))
             .then(() => {
 
-                return; // don't send pushes for now
-                // send pushes
+                // send push notifications
                 let pushPattern = util.clone(request.basicSenecaPattern);
                 pushPattern.cmd = 'notify';
                 pushPattern.entity = 'newLocation';
@@ -171,7 +172,8 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 let pushAct = util.setupSenecaPattern(pushPattern,
                     {
                         location_id: locationId,
-                        user_id: userId
+                        user_id: userId,
+                        user_name: request.auth.credentials.name
                     },
                     {role: 'notifications'});
 
