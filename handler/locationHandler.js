@@ -165,7 +165,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
 
                 return; // don't send pushes for now
                 // send pushes
-                let pushPattern = util.clone(request.basicSenecaPattern);
+              /*  let pushPattern = util.clone(request.basicSenecaPattern);
                 pushPattern.cmd = 'notify';
                 pushPattern.entity = 'newLocation';
 
@@ -176,7 +176,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                     },
                     {role: 'notifications'});
 
-                return request.server.pact(pushAct);
+                return request.server.pact(pushAct);*/
             })
             .catch(err => log.warn({error: err}, 'Error sending push'));
     });
