@@ -58,15 +58,15 @@ handler.fbLogin = (request, reply) => {
 
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'fbLogin';
-    let user = request.payload;
+
 
     if (pattern.requesting_device_id === 'unknown') {
         return reply(boom.preconditionFailed('Register your device!'));
-    } else {
-        user.requesting_device_id = pattern.requesting_device_id;
     }
 
     fb.get('/me?fields=id,email,name', (err, fb_user) => {
+
+        fb_user.requesting_device_id = pattern.requesting_device_id;
 
         let senecaAct = util.setupSenecaPattern(pattern, fb_user, basicPin);
 
@@ -80,7 +80,7 @@ handler.fbLogin = (request, reply) => {
                         _id: resp._id,
                         mail: resp.mail || resp.fbId,
                         name: resp.name,
-                        device_id: user.requesting_device_id
+                        device_id: fb_user.requesting_device_id
                     };
 
                     request.auth.session.set(cookie);
