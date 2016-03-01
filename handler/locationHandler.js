@@ -157,7 +157,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
             .then(helper.unwrap)
             .then(location => {
 
-                // reply to client
+                // reply to client (could be an error)
                 reply(location);
 
                 if (!location.isBoom) {
