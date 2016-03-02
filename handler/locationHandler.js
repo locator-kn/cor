@@ -384,11 +384,20 @@ handler.getLocationByName = (request, reply) => {
 
     let dbPromise = request.server.pact(senecaAct);
 
+    //request.server.pact(senecaAct)
+    //    .then(resp => (helper.unwrap(resp)))
+    //    .catch(error => reply(boom.badImplementation(error)));
+
     Promise.all([dbPromise, gFinds])
         .then(value => {
 
             let dbLocations = value[0];
             let googleLocations = value[1];
+
+            //because nearbysearch returns a different json structure
+            if (!name){
+                dbLocations = helper.unwrap(dbLocations).results;
+            }
 
             let result = {
                     google: googleLocations,
