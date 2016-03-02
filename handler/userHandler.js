@@ -220,7 +220,7 @@ handler.follow = (request, reply) => {
     pattern.cmd = 'follow';
 
     let senecaAct = util.setupSenecaPattern(pattern, {
-        to_follow: request.params.toFollow,
+        follow_id: request.params.follow_id,
         user_id: pattern.requesting_user_id
     }, basicPin);
 
@@ -234,7 +234,7 @@ handler.unfollow = (request,reply) =>{
     pattern.cmd = 'unfollow';
 
     let senecaAct = util.setupSenecaPattern(pattern, {
-        to_follow: request.params.toFollow,
+        follow_id: request.params.follow_id,
         user_id: pattern.requesting_user_id
     }, basicPin);
 

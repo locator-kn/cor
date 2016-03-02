@@ -30,7 +30,7 @@ validations.updatePwd = Joi.object().keys({
 });
 
 validations.follow = Joi.object().keys({
-    toFollow: mongoIdFieldRequired
+    follow_id: mongoIdFieldRequired
 });
 
 validations.userId = Joi.object().keys({
