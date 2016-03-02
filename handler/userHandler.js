@@ -229,6 +229,21 @@ handler.follow = (request, reply) => {
         .catch(error => reply(boom.badImplementation(error)));
 };
 
+handler.unfollow = (request,reply) =>{
+    let pattern = util.clone(request.basicSenecaPattern);
+    pattern.cmd = 'unfollow';
+
+    let senecaAct = util.setupSenecaPattern(pattern, {
+        to_unfollow: request.params.toFollow,
+        user_id: pattern.requesting_user_id
+    }, basicPin);
+
+    request.server.pact(senecaAct)
+        .then(res => reply(helper.unwrap(res)))
+        .catch(error => reply(boom.badImplementation(error)));
+
+};
+
 let getFollowingUsersByUserId = (request, reply, userId) => {
 
     let pattern = util.clone(request.basicSenecaPattern);
