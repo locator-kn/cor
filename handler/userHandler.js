@@ -16,7 +16,7 @@ handler.login = (request, reply) => {
     let user = request.payload;
 
     if (request.auth.isAuthenticated) {
-        //return reply({message: 'Dude, you are already registered and authenticated!'});
+        return handler.getUserById(request, reply, request.auth.credentials._id);
     }
 
 
