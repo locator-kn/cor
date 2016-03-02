@@ -139,36 +139,6 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         path: '/my/bubblescreen',
         handler: (request, reply) => {
 
-            // temp hack begin
-            let userId = request.basicSenecaPattern.requesting_user_id !== 'unknown' ? request.basicSenecaPattern.requesting_user_id : '569e4a83a6e5bb503b838308';
-            // temp hack end
-
-            let senecaActMessages = {
-                role: 'messenger',
-                cmd: 'latestmessages',
-                distict: 'conversation',
-                data: {
-                    'user_id': userId,
-                    'query': {
-                        count: 3
-                    }
-                }
-            };
-
-            let senecaActRecommendations = {
-                role: 'reporter',
-                cmd: 'recommendationForPerson',
-                data: {
-                    namespace: 'locations',
-                    user_id: userId,
-                    actions: {
-                        views: 1,
-                        likes: 1,
-                        addimpression: 1
-                    }
-                }
-            };
-
             let senecaActLocations = {
                 cmd: 'nearby',
                 data: {
@@ -180,42 +150,11 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 role: 'location'
             };
 
-            console.time('retrieving messages, locations and recommendations(ids)');
-            let messages = request.server.pact(senecaActMessages);
-            let locations = request.server.pact(senecaActLocations);
-            let recommendations = request.server.pact(senecaActRecommendations);
-
-            Promise.all([messages, locations, recommendations])
+            request.server.pact(senecaActLocations)
                 .then(results => {
-                    console.timeEnd('retrieving messages, locations and recommendations(ids)');
-                    let promises = [];
-                    console.time('retrieving recommendations');
-                    for (let i = 0; i < 3; i++) {
-                        if (results[2].recommendations[i]) {
-                            let senecaActLocationById = {
-                                cmd: 'locationById',
-                                role: 'location',
-                                requesting_user_id: userId,
-                                data: {
-                                    locationId: results[2].recommendations[i].thing
-                                }
-                            };
-                            promises.push(request.server.pact(senecaActLocationById));
-
-                            console.log('[', userId, ']: recommended location_id', results[2].recommendations[i].thing);
-                        }
-                    }
-                    return Promise.all(promises).then(res => {
-
-                        console.timeEnd('retrieving recommendations');
-                        return {
-                            messages: results[0].data,
-                            locations: results[1].data.results,
-                            recommendations: res
-                        };
-                    });
-
-
+                    return {
+                        locations: results[1].data.results
+                    };
                 })
                 .then(data => reply(data).ttl(30000))
                 .catch(reply);
@@ -305,7 +244,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             requestData: request.orig,
             path: request.path
         });
-        
+
     });
 
 
