@@ -161,7 +161,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             request.server.pact(senecaActLocations)
                 .then(results => {
                     return {
-                        locations: results[1].data.results
+                        locations: results[1].data
                     };
                 })
                 .then(data => reply(data).ttl(30000))
