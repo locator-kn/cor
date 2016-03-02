@@ -46,7 +46,8 @@
     "tv": "^5.0.2",
     "vision": "^4.0.1",
     "wreck": "^7.0.0",
-    "fbgraph": "1.1.0"
+    "fbgraph": "1.1.0",
+    "geopoint": "1.0.1"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
