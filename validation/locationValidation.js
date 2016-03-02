@@ -56,6 +56,4 @@ validations.imageImpressionId = Joi.object().keys({
     imageId: Joi.string().required()
 
 });
-
-
 module.exports = validations;
