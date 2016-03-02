@@ -139,10 +139,11 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
         let locationId;
         let userId;
 
-        google.findNameOfPosition(response.location.long, response.location.lat)
+        google.findNameOfPosition2(response.location.long, response.location.lat)
             .then(cParam => {
                 location.city.title = cParam.title;
                 location.city.place_id = cParam.place_id;
+
                 return location;
             })
             .catch(error => {
@@ -383,22 +384,26 @@ handler.getLocationByName = (request, reply) => {
 
     let dbPromise = request.server.pact(senecaAct);
 
+
     Promise.all([dbPromise, gFinds])
         .then(value => {
 
-            let dbLocations = value[0];
+            let dbLocations = helper.unwrap(value[0]);
             let googleLocations = value[1];
 
             let result = {
-                google: googleLocations,
-                locator: dbLocations.data.results
-            };
+                    google: googleLocations,
+                    locator: dbLocations
+                };
+
             reply(result);
-        })
+        }
+    )
         .catch(error => {
             reply(boom.badRequest(error));
         });
-};
+}
+;
 
 handler.postUpdateLocation = (request, reply) => {
     return reply(boom.notImplemented('todo'));

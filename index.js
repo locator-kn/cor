@@ -16,7 +16,7 @@ const Glue = require('glue');
 const util = require('./lib/util');
 
 const log = require('ms-utilities').logger;
-const ipUtil = require('ms-utilities').ip;
+//const ipUtil = require('ms-utilities').ip;
 
 // API
 const user = require('./lib/user');
@@ -139,14 +139,14 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         method: 'GET',
         path: '/my/bubblescreen',
         handler: (request, reply) => {
-
+            /*
             ipUtil.get(request.info.address, (err, res) => {
                 if(err) {
                     return console.error(err);
                 }
                 console.log('test:', res);
             });
-
+            */
             let senecaActLocations = {
                 cmd: 'nearby',
                 data: {
@@ -161,7 +161,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             request.server.pact(senecaActLocations)
                 .then(results => {
                     return {
-                        locations: results[1].data.results
+                        locations: results.data
                     };
                 })
                 .then(data => reply(data).ttl(30000))
@@ -187,8 +187,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         path: '/dev/login',
         handler: (request, reply) => {
             request.auth.session.set({
-                _id: '569e4a83a6e5bb503b838309',
-                mail: 'SteffenGorenflo@gmail.com'
+                _id: '56d6c4d01ed655f545a98271',
+                mail: 'timi@gmail.com'
             });
             reply('authenticated');
         },
