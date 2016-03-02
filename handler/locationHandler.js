@@ -388,13 +388,8 @@ handler.getLocationByName = (request, reply) => {
     Promise.all([dbPromise, gFinds])
         .then(value => {
 
-            let dbLocations = value[0];
+            let dbLocations = helper.unwrap(value[0]);
             let googleLocations = value[1];
-
-            //because nearbysearch returns a different json structure
-            if (!name){
-                dbLocations = helper.unwrap(dbLocations).results;
-            }
 
             let result = {
                     google: googleLocations,
