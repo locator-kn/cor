@@ -187,7 +187,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         path: '/dev/login',
         handler: (request, reply) => {
             request.auth.session.set({
-                _id: 'user_id',
+                _id: '56d6c4d01ed655f545a98271',
                 mail: 'timi@gmail.com'
             });
             reply('authenticated');
