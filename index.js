@@ -139,14 +139,14 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         method: 'GET',
         path: '/my/bubblescreen',
         handler: (request, reply) => {
-
+            /*
             ipUtil.get(request.info.address, (err, res) => {
                 if(err) {
                     return console.error(err);
                 }
                 console.log('test:', res);
             });
-
+            */
             let senecaActLocations = {
                 cmd: 'nearby',
                 data: {
