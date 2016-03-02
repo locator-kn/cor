@@ -16,7 +16,7 @@ const Glue = require('glue');
 const util = require('./lib/util');
 
 const log = require('ms-utilities').logger;
-const ipUtil = require('ms-utilities').ip;
+//const ipUtil = require('ms-utilities').ip;
 
 // API
 const user = require('./lib/user');
