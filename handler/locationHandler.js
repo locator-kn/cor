@@ -384,9 +384,6 @@ handler.getLocationByName = (request, reply) => {
 
     let dbPromise = request.server.pact(senecaAct);
 
-    //request.server.pact(senecaAct)
-    //    .then(resp => (helper.unwrap(resp)))
-    //    .catch(error => reply(boom.badImplementation(error)));
 
     Promise.all([dbPromise, gFinds])
         .then(value => {
@@ -407,8 +404,7 @@ handler.getLocationByName = (request, reply) => {
             reply(result);
         }
     )
-        .
-        catch(error => {
+        .catch(error => {
             reply(boom.badRequest(error));
         });
 }
