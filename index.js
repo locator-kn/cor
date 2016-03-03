@@ -264,8 +264,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         }
 
         // log joi validation error
-        if (response.output.statusCode >= 400 &&
-            response.output.statusCode < 500) {
+        if (response.output.statusCode === 400) {
 
             log.fatal('Client error', {
                 response: response,
