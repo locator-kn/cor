@@ -140,13 +140,13 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         path: '/my/bubblescreen',
         handler: (request, reply) => {
             /*
-            ipUtil.get(request.info.address, (err, res) => {
-                if(err) {
-                    return console.error(err);
-                }
-                console.log('test:', res);
-            });
-            */
+             ipUtil.get(request.info.address, (err, res) => {
+             if(err) {
+             return console.error(err);
+             }
+             console.log('test:', res);
+             });
+             */
             let senecaActLocations = {
                 cmd: 'nearby',
                 data: {
@@ -264,8 +264,9 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         }
 
         // log joi validation error
-        if (response.data && response.data.isJoi) {
-            log.fatal('Validation error', {
+        if (response.output.statusCode === 400) {
+
+            log.fatal('Client error', {
                 response: response,
                 requestData: request.orig,
                 path: request.path
