@@ -240,7 +240,7 @@ handler.getSchoenhierNearby = (request, reply) => {
     let senecaAct = util.setupSenecaPattern('nearbyschoenhier', request.query, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(resp => reply(helper.unwrap(resp)))
         .catch(error => {
             reply(boom.badRequest(error));
         });

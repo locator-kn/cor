@@ -1,5 +1,6 @@
 'use strict';
 const boom = require('boom');
+const Wreck = require('wreck');
 const fb = require('fbgraph');
 const util = require('../lib/util');
 const log = require('ms-utilities').logger;
@@ -229,7 +230,7 @@ handler.follow = (request, reply) => {
         .catch(error => reply(boom.badImplementation(error)));
 };
 
-handler.unfollow = (request,reply) =>{
+handler.unfollow = (request, reply) => {
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'unfollow';
 
@@ -378,7 +379,55 @@ handler.protected = (request, reply) => {
 
 
 handler.userImageUploadRespone = (err, res, request, reply) => {
-    reply(boom.notImplemented('Wait for it'));
+
+    if (err) {
+        log.fatal(err, 'Got error after image upload for location');
+        return reply(boom.badRequest());
+    }
+
+    // read response
+    Wreck.read(res, {json: true}, (err, response) => {
+        if (err) {
+            log.fatal(err, 'ERROR: Unable to read response from ms-fileserve');
+            return reply(boom.badRequest());
+        }
+
+        if (response.statusCode >= 400) {
+            return reply(boom.create(response.statusCode, response.message, response.error));
+        }
+
+        let pattern = util.clone(request.basicSenecaPattern);
+        pattern.cmd = 'add';
+        pattern.entity = 'image';
+
+        let message = {
+            user_id: util.getUserId(request.auth),
+            images: {
+                normal: '/api/v2/users/image/' + response.images.normal + '/' + response.name,
+                small: '/api/v2/users/image/' + response.images.small + '/' + response.name
+            }
+        };
+
+
+        let senecaAct = util.setupSenecaPattern(pattern, message, basicPin);
+
+        request.server.pact(senecaAct)
+            .then(helper.unwrap)
+            .then(res => {
+
+                reply(res);
+
+                if (res.isBoom) {
+                    // remove the uploaded image again by making an internal DELETE request
+                    Wreck.delete('http://localhost:3453/file/' + response._id, (err) => {
+                        if (err) {
+                            log.error(err, 'Error Deleting file type ', {id: response._id});
+                        }
+                    });
+                }
+            })
+            .catch(error => reply(boom.badImplementation(error)));
+    });
 };
 
 handler.userRegisterImageUploadRespone = (err, res, request, reply) => {
