@@ -119,8 +119,22 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     // decorate request object with user id and device id
     server.ext('onPostAuth', (request, reply) => {
+
+        if (request.auth.isAuthenticated) {
+            let userId = util.getUserId(request.auth);
+            request.basicSenecaPattern = {
+                requesting_user_id: userId
+            };
+
+            if (!userId) {
+                log.fatal('No user id found in cookie, despite user is authenticated', {
+                    requestData: request.orig,
+                    path: request.path
+                });
+            }
+        }
+
         request.basicSenecaPattern = {
-            requesting_user_id: util.getUserId(request.auth),
             requesting_device_id: util.getDeviceId(request.state),
             cmd: ''
         };
