@@ -230,7 +230,24 @@ handler.follow = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(res => reply(helper.unwrap(res)))
-        .catch(error => reply(boom.badImplementation(error)));
+        .catch(error => reply(boom.badImplementation(error)))
+        .then(()=> {
+
+            let followerPattern = util.clone(request.basicSenecaPattern);
+
+            followerPattern.cmd = 'notify';
+            followerPattern.entity = 'newFollower';
+
+            let senecaAct2 = util.setupSenecaPattern(followerPattern, {
+                follow_id: request.params.follow_id,
+                user_id: pattern.requesting_user_id
+            }, basicPin);
+
+            return request.server.pact(senecaAct2)
+
+        }).catch(err => log.warn({error: err}, 'Error sending push'));
+
+
 };
 
 handler.unfollow = (request, reply) => {
