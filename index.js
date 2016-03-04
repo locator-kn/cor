@@ -129,7 +129,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             if (!userId) {
                 log.fatal('No user id found in cookie, despite user is authenticated', {
                     requestData: request.orig,
-                    path: request.path
+                    path: request.path,
+                    cookie: request.auth.credentials // TODO test purpose
                 });
             }
         }
