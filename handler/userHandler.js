@@ -17,7 +17,8 @@ handler.login = (request, reply) => {
     let user = request.payload;
 
     if (request.auth.isAuthenticated) {
-        return handler.getUserById(request, reply, request.basicSenecaPattern.requesting_user_id);
+        let userId = pattern.requesting_user_id || request.auth.credentials._id;
+        return handler.getUserById(request, reply, userId);
     }
 
 
