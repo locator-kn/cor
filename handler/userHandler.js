@@ -241,7 +241,7 @@ handler.follow = (request, reply) => {
             let senecaAct2 = util.setupSenecaPattern(followerPattern, {
                 follow_id: request.params.follow_id,
                 user_id: pattern.requesting_user_id
-            }, basicPin);
+            },  {role: 'notifications'});
 
             return request.server.pact(senecaAct2);
 
