@@ -232,7 +232,7 @@ handler.follow = (request, reply) => {
         .then(res => reply(helper.unwrap(res)))
         .catch(error => reply(boom.badImplementation(error)))
         .then(()=> {
-
+            //push
             let followerPattern = util.clone(request.basicSenecaPattern);
 
             followerPattern.cmd = 'notify';
@@ -243,7 +243,7 @@ handler.follow = (request, reply) => {
                 user_id: pattern.requesting_user_id
             }, basicPin);
 
-            return request.server.pact(senecaAct2)
+            return request.server.pact(senecaAct2);
 
         }).catch(err => log.warn({error: err}, 'Error sending push'));
 
