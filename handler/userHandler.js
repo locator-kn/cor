@@ -319,6 +319,10 @@ handler.getUserById = (request, reply, useRequestingUser) => {
         userId = request.basicSenecaPattern.requesting_user_id;
     }
 
+    if (!userId || userId === 'unknown') {
+        return reply(boom.badRequest('No user id found in cookie (or param)'));
+    }
+
     let locationCountPromise = true;
     let followersCountPromise = true;
 
