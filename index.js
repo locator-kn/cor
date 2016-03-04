@@ -119,11 +119,14 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     // decorate request object with user id and device id
     server.ext('onPostAuth', (request, reply) => {
+        
         request.basicSenecaPattern = {
             requesting_user_id: util.getUserId(request.auth),
             requesting_device_id: util.getDeviceId(request.state),
             cmd: ''
         };
+
+
         reply.continue();
     });
 

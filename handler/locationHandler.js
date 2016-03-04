@@ -215,7 +215,7 @@ handler.getAllLocationsByUserId = (request, reply) => {
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(resp => reply(helper.unwrap(resp)))
         .catch(error => {
             reply(boom.badRequest(error));
         });
@@ -300,7 +300,7 @@ handler.getFavoriteLocationsByUserId = (request, reply, optionalUserId) => {
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(resp => reply(helper.unwrap(resp)))
         .catch(error => {
             console.log(error);
             if (error.cause.details.message && error.cause.details.message === 'Invalid id') {

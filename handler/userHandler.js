@@ -17,7 +17,8 @@ handler.login = (request, reply) => {
     let user = request.payload;
 
     if (request.auth.isAuthenticated) {
-        return handler.getUserById(request, reply, request.auth.credentials._id);
+        let userId = pattern.requesting_user_id || request.auth.credentials._id;
+        return handler.getUserById(request, reply, userId);
     }
 
 
@@ -191,26 +192,29 @@ handler.forgetPassword = (request, reply)=> {
 
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
     request.server.pact(senecaAct)
-        .then(helper.unwrap)
         .catch(error => reply(boom.badImplementation(error)))
+        .then(helper.unwrap)
         .then(value => {
 
-            // reply to client
-            reply({ok: true});
+            if (!value.isBoom) {
+                // reply to client
+                reply({ok: true});
 
-            // send mail to user
-            let senecaMailAct = util.setupSenecaPattern(
-                mailPattern,
-                {
-                    mail: user.mail,
-                    new_password: value.new_password
-                },
-                {
-                    role: 'mailer'
-                });
+                // send mail to user
+                let senecaMailAct = util.setupSenecaPattern(
+                    mailPattern,
+                    {
+                        mail: user.mail,
+                        new_password: value.new_password
+                    },
+                    {
+                        role: 'mailer'
+                    });
 
-            return request.server.pact(senecaMailAct);
+                return request.server.pact(senecaMailAct);
+            }
 
+            reply(value);
         })
         .catch(err => log.fatal('Error sending Mail', {error: err}));
 };
@@ -313,6 +317,10 @@ handler.getUserById = (request, reply, useRequestingUser) => {
 
     if (useRequestingUser) {
         userId = request.basicSenecaPattern.requesting_user_id;
+    }
+
+    if (!userId || userId === 'unknown') {
+        return reply(boom.badRequest('No user id found in cookie (or param)'));
     }
 
     let locationCountPromise = true;
