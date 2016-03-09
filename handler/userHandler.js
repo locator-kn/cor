@@ -82,6 +82,7 @@ handler.fbLogin = (request, reply) => {
                         _id: resp._id,
                         mail: resp.mail || resp.fbId,
                         name: resp.name,
+                        strategy: 'facebook',
                         device_id: fb_user.requesting_device_id
                     };
 
@@ -166,6 +167,10 @@ handler.changePwd = (request, reply)=> {
 
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'changePwd';
+
+    if (request.auth.credentials.strategy === 'facebook') {
+        return reply(boom.badRequest('unable to change facebook pw'));
+    }
 
     let message = request.payload;
     message.user_id = request.basicSenecaPattern.requesting_user_id;
