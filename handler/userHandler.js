@@ -17,7 +17,8 @@ handler.login = (request, reply) => {
     let user = request.payload;
 
     if (request.auth.isAuthenticated) {
-        return handler.getUserById(request, reply, request.auth.credentials._id);
+        let userId = pattern.requesting_user_id || request.auth.credentials._id;
+        return handler.getUserById(request, reply, userId);
     }
 
 
@@ -81,6 +82,7 @@ handler.fbLogin = (request, reply) => {
                         _id: resp._id,
                         mail: resp.mail || resp.fbId,
                         name: resp.name,
+                        strategy: 'facebook',
                         device_id: fb_user.requesting_device_id
                     };
 
@@ -165,6 +167,10 @@ handler.changePwd = (request, reply)=> {
 
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'changePwd';
+
+    if (request.auth.credentials.strategy === 'facebook') {
+        return reply(boom.badRequest('unable to change facebook pw'));
+    }
 
     let message = request.payload;
     message.user_id = request.basicSenecaPattern.requesting_user_id;
@@ -333,6 +339,10 @@ handler.getUserById = (request, reply, useRequestingUser) => {
 
     if (useRequestingUser) {
         userId = request.basicSenecaPattern.requesting_user_id;
+    }
+
+    if (!userId || userId === 'unknown') {
+        return reply(boom.badRequest('No user id found in cookie (or param)'));
     }
 
     let locationCountPromise = true;

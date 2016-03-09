@@ -101,7 +101,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     // configure auth strategy
     server.auth.strategy('session', 'cookie', 'optional', {
         password: process.env['COOKIE_SECRET'],
-        ttl: 24 * 60 * 60 * 1000,
+        ttl: 24 * 60 * 60 * 1000 * 7,   // seven days
         keepAlive: true,
         cookie: 'locator_session',
         isSecure: false, //TODO
@@ -111,7 +111,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     // configure device cookie
     server.state('locator', {
-        ttl: 24 * 60 * 60 * 1000,     // One day
+        ttl: 24 * 60 * 60 * 1000 * 7,   // seven days
         isSecure: false,
         path: '/',
         encoding: 'base64json'
@@ -119,11 +119,14 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     // decorate request object with user id and device id
     server.ext('onPostAuth', (request, reply) => {
+
         request.basicSenecaPattern = {
             requesting_user_id: util.getUserId(request.auth),
             requesting_device_id: util.getDeviceId(request.state),
             cmd: ''
         };
+
+
         reply.continue();
     });
 
@@ -180,38 +183,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             }
         }
     });
-
-
-    server.route({
-        method: 'POST',
-        path: '/dev/login',
-        handler: (request, reply) => {
-            request.auth.session.set({
-                _id: '56d6c4d01ed655f545a98271',
-                mail: 'timi@gmail.com'
-            });
-            reply('authenticated');
-        },
-        config: {
-            auth: {
-                mode: 'try',
-                strategy: 'session'
-            },
-            tags: ['api']
-        }
-    });
-
-    server.route({
-        method: 'GET',
-        path: '/dev/logout',
-        handler: (request, reply) => {
-            request.auth.session.clear();
-            reply('bye bye');
-        },
-        config: {
-            tags: ['api']
-        }
-    });
+    
 
     server.route({
         method: 'POST',

@@ -17,7 +17,14 @@ handler.register = (request, reply) => {
     pattern.cmd = 'register';
     pattern.entity = 'device';
 
-    let senecaAct = util.setupSenecaPattern(pattern, request.payload, basicPin);
+    let device = request.payload;
+    let isAuthenticated = request.auth.isAuthenticated;
+
+    if (isAuthenticated) {
+        device.user_id = request.basicSenecaPattern.requesting_user_id;
+    }
+
+    let senecaAct = util.setupSenecaPattern(pattern, device, basicPin);
 
     // call microservice with pattern
     request.server.pact(senecaAct)
@@ -25,6 +32,16 @@ handler.register = (request, reply) => {
         .then(result => {
 
             if (!result.isBoom) {
+
+                if (isAuthenticated) {
+
+                    // set new device id to existing auth cookie
+                    let cookie = request.auth.credentials;
+                    cookie. device_id = result.device_id;
+
+                    request.auth.session.set(cookie);
+                    return reply({message: 'device registered, locator-cookie was set'}).code(201);
+                }
 
                 return reply({message: 'device registered, locator-cookie was set'})
                     .state('locator', {device_id: result.deviceId}).code(201);
