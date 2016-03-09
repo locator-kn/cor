@@ -183,38 +183,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
             }
         }
     });
-
-
-    server.route({
-        method: 'POST',
-        path: '/dev/login',
-        handler: (request, reply) => {
-            request.auth.session.set({
-                _id: '56d6c4d01ed655f545a98271',
-                mail: 'timi@gmail.com'
-            });
-            reply('authenticated');
-        },
-        config: {
-            auth: {
-                mode: 'try',
-                strategy: 'session'
-            },
-            tags: ['api']
-        }
-    });
-
-    server.route({
-        method: 'GET',
-        path: '/dev/logout',
-        handler: (request, reply) => {
-            request.auth.session.clear();
-            reply('bye bye');
-        },
-        config: {
-            tags: ['api']
-        }
-    });
+    
 
     server.route({
         method: 'POST',
