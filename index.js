@@ -156,7 +156,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                     long: request.query.long || 9.173626899719238,
                     lat: request.query.lat || 47.66972243634168,
                     maxDistance: request.query.maxDistance || 2,
-                    limit: request.query.limit || 3
+                    limit: request.query.limit || 30000
                 },
                 role: 'location'
             };
