@@ -353,7 +353,24 @@ let genericUnFavorLocation = (request, reply) => {
                 return reply(boom.notFound());
             }
             reply(boom.badImplementation(error));
-        });
+        }).then(()=> {
+            if ( request.basicSenecaPattern.cmd === 'favor') {
+                //push
+                let followerPattern = util.clone(request.basicSenecaPattern);
+
+                followerPattern.cmd = 'notify';
+                followerPattern.entity = 'newLocFollower';
+
+                let senecaAct2 = util.setupSenecaPattern(followerPattern, {
+                    favorator_id: userId,
+                    loc_id: request.params.locationId
+                }, {role: 'notifications'});
+
+                return request.server.pact(senecaAct2);
+            }
+            else{return;}
+
+        }).catch(err => log.warn({error: err}, 'Error sending push'));
 };
 
 handler.postFavorLocation = (request, reply) => {
