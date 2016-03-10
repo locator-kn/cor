@@ -327,7 +327,24 @@ handler.postToggleFavorLocation = (request, reply) => {
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(answer =>{
+            reply(answer);
+            console.log(answer);
+            if (answer.added){
+                let followerPattern = util.clone(request.basicSenecaPattern);
+
+                followerPattern.cmd = 'notify';
+                followerPattern.entity = 'newLocFollower';
+
+                let senecaAct2 = util.setupSenecaPattern(followerPattern, {
+                    favorator_id: userId,
+                    loc_id: request.params.locationId
+                }, {role: 'notifications'});
+
+                return request.server.pact(senecaAct2);
+            }
+        })
+        .then()
         .catch(error => {
             console.log(error);
             if (error.cause.details.message && error.cause.details.message === 'Invalid id') {
