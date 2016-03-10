@@ -61,6 +61,10 @@ handler.fbLogin = (request, reply) => {
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'fbLogin';
 
+    if (request.auth.isAuthenticated) {
+        let userId = request.auth.credentials._id || pattern.requesting_user_id;
+        return handler.getUserById(request, reply, userId);
+    }
 
     if (pattern.requesting_device_id === 'unknown') {
         return reply(boom.preconditionFailed('Register your device!'));
