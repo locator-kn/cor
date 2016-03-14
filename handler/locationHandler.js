@@ -14,6 +14,18 @@ const basicPin = {
     role: 'location'
 };
 
+const notifyUserForNewLike = (pushPattern, request) => {
+    pushPattern.cmd = 'notify';
+    pushPattern.entity = 'location';
+    pushPattern.action = 'newFavorator';
+
+    let senecaAct = util.setupSenecaPattern(pushPattern, {
+        loc_id: request.params.locationId,
+        favorator_id: request.basicSenecaPattern.requesting_user_id
+    }, {role: 'notifications'});
+    return request.server.pact(senecaAct);
+};
+
 let genericFileResponseHandler = (err, res, request, reply, type) => {
 
     if (err) {
@@ -360,17 +372,7 @@ handler.postFavorLocation = (request, reply) => {
     let pushPattern = util.clone(request.basicSenecaPattern);
     request.basicSenecaPattern.cmd = 'favor';
     genericUnFavorLocation(request, reply)
-        .then(() => {
-            pushPattern.cmd = 'notify';
-            pushPattern.entity = 'location';
-            pushPattern.action = 'newFavorator';
-
-            let senecaAct = util.setupSenecaPattern(pushPattern, {
-                loc_id: request.params.locationId,
-                favorator_id: request.basicSenecaPattern.requesting_user_id
-            }, {role: 'notifications'});
-            return request.server.pact(senecaAct);
-        })
+        .then(() => notifyUserForNewLike(pushPattern, request))
         .catch(err => log.warn('error happend', err));
 };
 
