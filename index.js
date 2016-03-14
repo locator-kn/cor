@@ -22,7 +22,7 @@ const log = require('ms-utilities').logger;
 const user = require('./lib/user');
 const location = require('./lib/location');
 const messenger = require('./lib/messenger');
-const reporter = require('./lib/reporter');
+//const reporter = require('./lib/reporter');
 const device = require('./lib/device');
 
 // TEMP
@@ -134,7 +134,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(user.routes);
     server.route(location.routes);
     server.route(messenger.routes);
-    server.route(reporter.routes);
+    //server.route(reporter.routes);
     server.route(device.routes);
 
     // TEMP/DEV ROUTES
