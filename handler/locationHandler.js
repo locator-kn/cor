@@ -371,7 +371,7 @@ handler.postFavorLocation = (request, reply) => {
             }, {role: 'notifications'});
             return request.pact(senecaAct);
         })
-        .catch(log.warn);
+        .catch(err => log.warn('error happend', err));
 };
 
 handler.postUnfavorLocation = (request, reply) => {
