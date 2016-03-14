@@ -345,7 +345,7 @@ let genericUnFavorLocation = (request, reply) => {
         user_id: userId
     }, basicPin);
 
-    request.server.pact(senecaAct)
+    return request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             console.log(error);
@@ -357,8 +357,21 @@ let genericUnFavorLocation = (request, reply) => {
 };
 
 handler.postFavorLocation = (request, reply) => {
+    let pushPattern = util.clone(request.basicSenecaPattern);
     request.basicSenecaPattern.cmd = 'favor';
-    genericUnFavorLocation(request, reply);
+    genericUnFavorLocation(request, reply)
+        .then(() => {
+            pushPattern.cmd = 'notify';
+            pushPattern.entity = 'location';
+            pushPattern.action = 'newFavorator';
+
+            let senecaAct = util.setupSenecaPattern(pushPattern, {
+                loc_id: request.params.locationId,
+                favorator_id: request.basicSenecaPattern.requesting_user_id
+            }, {role: 'notifications'});
+            return request.pact(senecaAct);
+        })
+        .catch(log.warn);
 };
 
 handler.postUnfavorLocation = (request, reply) => {
