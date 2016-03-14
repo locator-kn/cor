@@ -258,8 +258,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         .client({type: 'tcp', port: 7005, host: 'localhost', pin: 'role:mailer,cmd:*'})
         .client({type: 'tcp', port: 7004, host: 'localhost', pin: 'role:notifications,cmd:*'})
         .client({type: 'tcp', port: 7002, host: 'localhost', pin: 'role:user,cmd:*'})
-        .client({type: 'tcp', port: 7001, host: 'localhost', pin: 'role:location,cmd:*'})
-        .client({type: 'tcp', port: 7010, host: 'localhost', pin: 'role:reporter,cmd:*'});
+        .client({type: 'tcp', port: 7001, host: 'localhost', pin: 'role:location,cmd:*'});
+        //.client({type: 'tcp', port: 7010, host: 'localhost', pin: 'role:reporter,cmd:*'});
 
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
