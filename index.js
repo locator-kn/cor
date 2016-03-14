@@ -184,37 +184,38 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         }
     });
     
-
-    server.route({
-        method: 'POST',
-        path: '/dev/test',
-        handler: (request, reply) => {
-            reply({payload: request.payload, headers: request.headers});
-        },
-        config: {
-            tags: ['api']
-        }
-    });
-
-    server.route({
-        method: 'POST',
-        path: '/dev/test/formData',
-        handler: (request, reply) => {
-            if (request.payload.file) {
-                delete request.payload.file._data;
+    if(process.env['NODE_ENV'] !== 'production') {
+        server.route({
+            method: 'POST',
+            path: '/dev/test',
+            handler: (request, reply) => {
+                reply({payload: request.payload, headers: request.headers});
+            },
+            config: {
+                tags: ['api']
             }
-            reply({payload: request.payload, headers: request.headers});
-        },
-        config: {
-            tags: ['api'],
-            payload: {
-                output: 'stream',
-                parse: true,
-                allow: 'multipart/form-data',
-                maxBytes: 1048576 * 6 // 6MB
+        });
+
+        server.route({
+            method: 'POST',
+            path: '/dev/test/formData',
+            handler: (request, reply) => {
+                if (request.payload.file) {
+                    delete request.payload.file._data;
+                }
+                reply({payload: request.payload, headers: request.headers});
+            },
+            config: {
+                tags: ['api'],
+                payload: {
+                    output: 'stream',
+                    parse: true,
+                    allow: 'multipart/form-data',
+                    maxBytes: 1048576 * 6 // 6MB
+                }
             }
-        }
-    });
+        });
+    }
 
     server.on('request-error', (request, err) => {
 
