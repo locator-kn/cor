@@ -369,7 +369,7 @@ handler.postFavorLocation = (request, reply) => {
                 loc_id: request.params.locationId,
                 favorator_id: request.basicSenecaPattern.requesting_user_id
             }, {role: 'notifications'});
-            return request.pact(senecaAct);
+            return request.server.pact(senecaAct);
         })
         .catch(err => log.warn('error happend', err));
 };
