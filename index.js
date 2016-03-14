@@ -21,7 +21,7 @@ const log = require('ms-utilities').logger;
 // API
 const user = require('./lib/user');
 const location = require('./lib/location');
-const messenger = require('./lib/messenger');
+//const messenger = require('./lib/messenger');
 //const reporter = require('./lib/reporter');
 const device = require('./lib/device');
 
@@ -133,7 +133,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     // Add the API routes
     server.route(user.routes);
     server.route(location.routes);
-    server.route(messenger.routes);
+    //server.route(messenger.routes);
     //server.route(reporter.routes);
     server.route(device.routes);
 
@@ -254,7 +254,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         // set desired transport method
         //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
         // announce a microservice with pin and transport type the service is listening to
-        .client({type: 'tcp', port: 7003, host: 'localhost', pin: 'role:messenger,cmd:*'})
+        //.client({type: 'tcp', port: 7003, host: 'localhost', pin: 'role:messenger,cmd:*'})
         .client({type: 'tcp', port: 7005, host: 'localhost', pin: 'role:mailer,cmd:*'})
         .client({type: 'tcp', port: 7004, host: 'localhost', pin: 'role:notifications,cmd:*'})
         .client({type: 'tcp', port: 7002, host: 'localhost', pin: 'role:user,cmd:*'})
