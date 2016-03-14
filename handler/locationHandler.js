@@ -330,6 +330,8 @@ handler.getMyFavoriteLocations = (request, reply) => {
 };
 
 handler.postToggleFavorLocation = (request, reply) => {
+    let pushPattern = util.clone(request.basicSenecaPattern);
+
     request.basicSenecaPattern.cmd = 'toggleFavor';
     let userId = request.basicSenecaPattern.requesting_user_id;
 
@@ -339,7 +341,15 @@ handler.postToggleFavorLocation = (request, reply) => {
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(response => {
+            reply(response);
+            return response;
+        })
+        .then(response => {
+            if (response.added) {
+                return notifyUserForNewLike(pushPattern, request);
+            }
+        })
         .catch(error => {
             console.log(error);
             if (error.cause.details.message && error.cause.details.message === 'Invalid id') {
