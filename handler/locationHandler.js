@@ -387,18 +387,16 @@ handler.getLocationByName = (request, reply) => {
 
     Promise.all([dbPromise, gFinds])
         .then(value => {
-
             let dbLocations = helper.unwrap(value[0]);
             let googleLocations = value[1];
 
             let result = {
-                    google: googleLocations,
-                    locator: dbLocations
-                };
+                google: googleLocations,
+                locator: dbLocations
+            };
 
             reply(result);
-        }
-    )
+        })
         .catch(error => {
             reply(boom.badRequest(error));
         });
