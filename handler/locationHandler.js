@@ -6,8 +6,9 @@ const util = require('../lib/util');
 const helper = require('../lib/responseHelper');
 const google = require('../lib/googleutil');
 
-const log = require('ms-utilities').logger;
-
+const utilities = require('ms-utilities');
+const log = utilities.logger;
+const slack = utilities.slack;
 
 let handler = {};
 const basicPin = {
@@ -177,6 +178,10 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                     locationId = location._id;
                     userId = location.user_id;
                 }
+
+                slack.sendSlackInfo(process.env['SLACK'], 'Neue Location erstellt mit Titel ' + location.title +
+                    ' und  Bild: https://locator-app.com' +location.images.xlarge );
+
 
             })
             .catch(error => reply(boom.badImplementation(error)))
