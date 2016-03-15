@@ -162,7 +162,7 @@ handler.register = (request, reply) => {
                 request.auth.session.set(cookie);
                 reply(result).code(201).unstate('locator');
 
-                slack.sendSlackError(process.env['SLACK'], 'Neuer Benutzer registriert ' + result.name);
+                slack.sendSlackInfo(process.env['SLACK'], 'Neuer Benutzer registriert ' + result.name);
             }
 
             return reply(result);

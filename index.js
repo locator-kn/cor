@@ -228,6 +228,9 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     });
 
+    slack.sendSlackInfo(process.env['SLACK'], 'Neuer Benutzer registriert ');
+
+
 
     // log errors before response is sent back to user
     server.ext('onPreResponse', (request, reply) => {
