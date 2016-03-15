@@ -241,6 +241,16 @@ handler.follow = (request, reply) => {
     request.server.pact(senecaAct)
         .then(res => reply(helper.unwrap(res)))
         .catch(error => reply(boom.badImplementation(error)));
+
+    let notificationAct = util.clone(senecaAct);
+    notificationAct.cmd = 'notify';
+    notificationAct.role = 'notifications';
+    notificationAct.entity = 'newFollower';
+
+
+    request.server.pact(notificationAct)
+        .catch(error => reply(boom.badImplementation(error)));
+
 };
 
 handler.unfollow = (request, reply) => {
