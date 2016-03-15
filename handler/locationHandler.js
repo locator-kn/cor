@@ -68,6 +68,9 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
 
                 reply(res);
 
+                slack.sendSlackInfo(process.env['SLACK'], 'Neue Impression vom typ ' + type);
+
+
                 if (res.isBoom) {
                     // remove the uploaded image again by making an internal DELETE request
                     Wreck.delete('http://localhost:3453/file/' + response._id, (err) => {
@@ -180,7 +183,7 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 }
 
                 slack.sendSlackInfo(process.env['SLACK'], 'Neue Location erstellt mit Titel ' + location.title +
-                    ' und  Bild: https://locator-app.com' +location.images.xlarge );
+                    ' und  Bild: https://locator-app.com' + location.images.xlarge);
 
 
             })
@@ -299,6 +302,9 @@ handler.postTextImpression = (request, reply) => {
 
     request.server.pact(senecaAct)
         .then(reply)
+        .then(() => {
+            slack.sendSlackInfo(process.env['SLACK'], 'Neue Text Impression hinzugefügt: ' + request.payload.data);
+        })
         .catch(error => {
             if (error.message.includes('Invalid id.')) {
                 return reply(boom.notFound('location_id'));
