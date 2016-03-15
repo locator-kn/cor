@@ -14,6 +14,18 @@ const basicPin = {
     role: 'location'
 };
 
+const notifyUserForNewLike = (pushPattern, request) => {
+    pushPattern.cmd = 'notify';
+    pushPattern.entity = 'location';
+    pushPattern.action = 'newFavorator';
+
+    let senecaAct = util.setupSenecaPattern(pushPattern, {
+        loc_id: request.params.locationId,
+        favorator_id: request.basicSenecaPattern.requesting_user_id
+    }, {role: 'notifications'});
+    return request.server.pact(senecaAct);
+};
+
 let genericFileResponseHandler = (err, res, request, reply, type) => {
 
     if (err) {
@@ -318,6 +330,8 @@ handler.getMyFavoriteLocations = (request, reply) => {
 };
 
 handler.postToggleFavorLocation = (request, reply) => {
+    let pushPattern = util.clone(request.basicSenecaPattern);
+
     request.basicSenecaPattern.cmd = 'toggleFavor';
     let userId = request.basicSenecaPattern.requesting_user_id;
 
@@ -327,7 +341,15 @@ handler.postToggleFavorLocation = (request, reply) => {
     }, basicPin);
 
     request.server.pact(senecaAct)
-        .then(reply)
+        .then(response => {
+            reply(response);
+            return response;
+        })
+        .then(response => {
+            if (response.added) {
+                return notifyUserForNewLike(pushPattern, request);
+            }
+        })
         .catch(error => {
             console.log(error);
             if (error.cause.details.message && error.cause.details.message === 'Invalid id') {
@@ -345,7 +367,7 @@ let genericUnFavorLocation = (request, reply) => {
         user_id: userId
     }, basicPin);
 
-    request.server.pact(senecaAct)
+    return request.server.pact(senecaAct)
         .then(reply)
         .catch(error => {
             console.log(error);
@@ -357,8 +379,11 @@ let genericUnFavorLocation = (request, reply) => {
 };
 
 handler.postFavorLocation = (request, reply) => {
+    let pushPattern = util.clone(request.basicSenecaPattern);
     request.basicSenecaPattern.cmd = 'favor';
-    genericUnFavorLocation(request, reply);
+    genericUnFavorLocation(request, reply)
+        .then(() => notifyUserForNewLike(pushPattern, request))
+        .catch(err => log.warn('error happend', err));
 };
 
 handler.postUnfavorLocation = (request, reply) => {
@@ -387,18 +412,16 @@ handler.getLocationByName = (request, reply) => {
 
     Promise.all([dbPromise, gFinds])
         .then(value => {
-
             let dbLocations = helper.unwrap(value[0]);
             let googleLocations = value[1];
 
             let result = {
-                    google: googleLocations,
-                    locator: dbLocations
-                };
+                google: googleLocations,
+                locator: dbLocations
+            };
 
             reply(result);
-        }
-    )
+        })
         .catch(error => {
             reply(boom.badRequest(error));
         });
