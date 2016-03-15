@@ -3,7 +3,9 @@ const boom = require('boom');
 const Wreck = require('wreck');
 const fb = require('fbgraph');
 const util = require('../lib/util');
-const log = require('ms-utilities').logger;
+const utilities = require('ms-utilities');
+const log = utilities.logger;
+const slack = utilities.slack;
 const helper = require('../lib/responseHelper');
 
 let handler = {};
@@ -158,7 +160,9 @@ handler.register = (request, reply) => {
                 };
 
                 request.auth.session.set(cookie);
-                return reply(result).code(201).unstate('locator');
+                reply(result).code(201).unstate('locator');
+
+                slack.sendSlackError(process.env['SLACK'], 'Neuer Benutzer registriert ' + result.name);
             }
 
             return reply(result);
