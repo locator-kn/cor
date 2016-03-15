@@ -101,7 +101,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     // configure auth strategy
     server.auth.strategy('session', 'cookie', 'optional', {
         password: process.env['COOKIE_SECRET'],
-        ttl: 24 * 60 * 60 * 1000 * 7,   // seven days
+        ttl: 24 * 60 * 60 * 1000 * 365,   // 1 year
         keepAlive: true,
         cookie: 'locator_session',
         isSecure: false, //TODO
@@ -111,7 +111,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
     // configure device cookie
     server.state('locator', {
-        ttl: 24 * 60 * 60 * 1000 * 7,   // seven days
+        ttl: 24 * 60 * 60 * 1000 * 365,   // 1 year
         isSecure: false,
         path: '/',
         encoding: 'base64json'
