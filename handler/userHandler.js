@@ -205,7 +205,6 @@ handler.forgetPassword = (request, reply)=> {
 
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
     request.server.pact(senecaAct)
-        .catch(error => reply(boom.badImplementation(error)))
         .then(helper.unwrap)
         .then(value => {
 
@@ -224,12 +223,15 @@ handler.forgetPassword = (request, reply)=> {
                         role: 'mailer'
                     });
 
-                return request.server.pact(senecaMailAct);
+                request.server.pact(senecaMailAct)
+                    .catch(err => log.fatal('Error sending Mail', {error: err}));
+
             }
 
             reply(value);
         })
-        .catch(err => log.fatal('Error sending Mail', {error: err}));
+        .catch(error => reply(boom.badImplementation(error)))
+
 };
 
 handler.follow = (request, reply) => {
