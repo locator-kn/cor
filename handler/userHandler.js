@@ -230,7 +230,7 @@ handler.forgetPassword = (request, reply)=> {
 
             reply(value);
         })
-        .catch(error => reply(boom.badImplementation(error)))
+        .catch(error => reply(boom.badImplementation(error)));
 
 };
 
@@ -255,7 +255,8 @@ handler.follow = (request, reply) => {
 
 
     request.server.pact(notificationAct)
-        .catch(error => reply(boom.badImplementation(error)));
+        .catch(error => log.error('Error sending push', {err: error}));
+
 
 };
 
