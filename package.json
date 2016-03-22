@@ -44,7 +44,7 @@
     "lodash": "^4.6.1",
     "ms-utilities": "^3.0.0",
     "opbeat": "^3.5.2",
-    "seneca": "^1.0.0",
+    "seneca": "^2.0.0",
     "seneca-rabbitmq-transport": "^0.2.1",
     "tv": "^5.0.2",
     "vision": "^4.0.1",
