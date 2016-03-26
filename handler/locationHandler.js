@@ -147,8 +147,8 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             },
             city: {
-                title: '',
-                place_id: ''
+                title: 'Unknown',
+                place_id: 'Unknown'
             }
         };
 
