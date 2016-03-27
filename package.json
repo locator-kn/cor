@@ -45,6 +45,8 @@
     "ms-utilities": "^3.0.0",
     "opbeat": "^3.5.2",
     "seneca": "^1.4.0",
+    "seneca-balance-client": "^0.4.0",
+    "seneca-mesh": "^0.7.0",
     "seneca-rabbitmq-transport": "^0.2.1",
     "tv": "^5.0.2",
     "vision": "^4.0.1",
