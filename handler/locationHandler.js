@@ -68,7 +68,7 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
 
                 reply(res);
 
-                slack.sendSlackInfo(process.env['SLACK'], 'Neue Impression vom typ ' + type);
+                slack.sendSlackInfo(process.env['SLACK'], 'Neue Impression vom typ ' + type + ': https://locator-app.com' + res.data);
 
 
                 if (res.isBoom) {
