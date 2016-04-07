@@ -26,7 +26,7 @@
     "bluebird": "^3.1.1",
     "boom": "^3.1.1",
     "bunyan": "^1.5.1",
-    "chairo": "^2.1.0",
+    "chairo": "^2.2.0",
     "dotenv": "^1.2.0",
     "fbgraph": "1.1.0",
     "geopoint": "^1.0.1",
