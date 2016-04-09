@@ -44,10 +44,9 @@
     "lodash": "^4.9.0",
     "ms-utilities": "^3.0.0",
     "opbeat": "^3.5.2",
-    "seneca": "^1.4.0",
     "seneca-balance-client": "^0.4.0",
     "seneca-mesh": "^0.7.0",
-    "seneca-rabbitmq-transport": "^0.2.1",
+    "seneca": "^2.0.0",
     "tv": "^5.0.2",
     "vision": "^4.0.1",
     "wreck": "^7.0.0"
@@ -55,8 +54,5 @@
   "devDependencies": {
     "jshint": "^2.9.1",
     "precommit-hook": "^3.0.0"
-  },
-  "pre-commit": [
-    "jshint"
-  ]
+  }
 }
