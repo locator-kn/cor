@@ -115,6 +115,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         isSecure: false,
         path: '/',
         encoding: 'base64json'
+        // TODO: set password and inspect API
     });
 
     // decorate request object with user id and device id
