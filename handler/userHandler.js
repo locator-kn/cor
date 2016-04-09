@@ -163,9 +163,10 @@ handler.register = (request, reply) => {
                 reply(result).code(201).unstate('locator');
 
                 slack.sendSlackInfo(process.env['SLACK'], 'Neuer Benutzer registriert ' + result.name);
+            } else {
+                reply(result);
             }
 
-            return reply(result);
         })
         .catch(error => reply(boom.badImplementation(error)));
 };

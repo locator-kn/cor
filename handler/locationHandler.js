@@ -68,7 +68,7 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
 
                 reply(res);
 
-                slack.sendSlackInfo(process.env['SLACK'], 'Neue Impression vom typ ' + type);
+                slack.sendSlackInfo(process.env['SLACK'], 'Neue Impression vom typ ' + type + ': https://locator-app.com' + res.data);
 
 
                 if (res.isBoom) {
@@ -147,8 +147,8 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
                 small: '/api/v2/locations/impression/image/' + response.images.small + '/' + response.images.name
             },
             city: {
-                title: '',
-                place_id: ''
+                title: 'Unknown',
+                place_id: 'Unknown'
             }
         };
 
