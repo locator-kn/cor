@@ -42,7 +42,7 @@
     "inert": "^3.2.0",
     "joi": "^7.2.0",
     "lodash": "^4.9.0",
-    "ms-utilities": "^3.0.0",
+    "ms-utilities": "^4.0.0",
     "opbeat": "^3.6.6",
     "seneca-balance-client": "^0.4.0",
     "seneca-mesh": "^0.7.0",
