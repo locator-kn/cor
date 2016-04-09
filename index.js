@@ -85,10 +85,13 @@ var manifest = {
                 }]
             }
         }]
-    }, {
-        // interactive debug console
-        'tv': {}
-    }]
+    }
+
+     /*   , {
+            // interactive debug console
+            'tv': {}
+        }*/
+    ]
 };
 
 // compose Server with plugins

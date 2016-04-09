@@ -47,7 +47,6 @@
     "seneca-balance-client": "^0.4.0",
     "seneca-mesh": "^0.7.0",
     "seneca": "^2.0.0",
-    "tv": "^5.0.2",
     "vision": "^4.0.1",
     "wreck": "^7.0.0"
   },
