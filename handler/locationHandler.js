@@ -41,7 +41,7 @@ module.exports = {
     getBubbleScreen
 };
 
-function getBubbleScreen(request,reply) {
+function getBubbleScreen(request, reply) {
     let senecaActLocations = {
         cmd: 'nearby',
         data: {
@@ -55,7 +55,7 @@ function getBubbleScreen(request,reply) {
 
     request.server.pact(senecaActLocations)
         .then(helper.unwrap)
-        .then(data => reply(data).ttl(30000))
+        .then(data => reply({locations: data}).ttl(30000))
         .catch(reply);
 }
 
