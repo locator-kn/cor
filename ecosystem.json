@@ -1,0 +1,77 @@
+{
+  "apps": [
+    {
+      "name": "cor",
+      "script": "cor/index.js",
+      "min_uptime": "5s",
+      "max_memory_restart": "350M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "vizion": false,
+      "log_date_format":""
+    },
+    {
+      "name": "ms-location",
+      "script": "ms-location/index.js",
+      "args" : ["--seneca.log=type:act"],
+      "min_uptime": "5s",
+      "max_memory_restart": "750M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "vizion": false,
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    },
+    {
+      "name": "ms-fileserve",
+      "script": "ms-fileserve/index.js",
+      "min_uptime": "5s",
+      "max_memory_restart": "500M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "vizion": false,
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    },
+    {
+      "name": "ms-user",
+      "script": "ms-user/index.js",
+      "min_uptime": "5s",
+      "max_memory_restart": "150M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "vizion": false,
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    },
+    {
+      "name": "ms-notifications",
+      "script": "ms-notifications/index.js",
+      "min_uptime": "5s",
+      "max_memory_restart": "150M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "vizion": false,
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    },
+    {
+      "name": "ms-mailer",
+      "script": "ms-mailer/index.js",
+      "min_uptime": "5s",
+      "max_memory_restart": "150M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "vizion": false,
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    }
+  ]
+}
