@@ -126,59 +126,11 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     server.route(location.routes);
     server.route(device.routes);
 
+    // Add develop/test routes only if not in production
     if (process.env['NODE_ENV'] !== 'production') {
-        // Add develop/test routes only if not in production
         server.route(develop.routes);
     }
-
-    // TEMP/DEV ROUTES
-    server.route({
-        method: 'GET',
-        path: '/my/bubblescreen',
-        handler: (request, reply) => {
-            /*
-             ipUtil.get(request.info.address, (err, res) => {
-             if(err) {
-             return console.error(err);
-             }
-             console.log('test:', res);
-             });
-             */
-            let senecaActLocations = {
-                cmd: 'nearby',
-                data: {
-                    long: request.query.long || 9.173626899719238,
-                    lat: request.query.lat || 47.66972243634168,
-                    maxDistance: request.query.maxDistance || 30000,
-                    limit: request.query.limit || 6
-                },
-                role: 'location'
-            };
-
-            request.server.pact(senecaActLocations)
-                .then(results => {
-                    return {
-                        locations: results.data
-                    };
-                })
-                .then(data => reply(data).ttl(30000))
-                .catch(reply);
-        },
-        config: {
-            description: 'Get data for bubblescreen',
-            notes: 'returns object with two arrays: messages and locations',
-            tags: ['api', 'bubblescreen', 'messages', 'locations'],
-            auth: {
-                mode: 'optional',
-                strategy: 'session'
-            },
-            validate: {
-                query: require('./validation/locationValidation').nearbyQueryOptional
-            }
-        }
-    });
-
-
+    
     server.on('request-error', (request, err) => {
 
         // log 500 code
