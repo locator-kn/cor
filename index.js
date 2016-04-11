@@ -59,9 +59,6 @@ var manifest = {
             options: {
                 requestPayload: true,
                 reporters: [{
-                    reporter: require('good-console'),
-                    events: {log: '*', response: '*', request: '*'}
-                }, {
                     reporter: require('good-bunyan'),
                     config: {
                         logger: require('bunyan')
@@ -72,6 +69,8 @@ var manifest = {
                                     path: process.env['PATH_LOGFILE_COR'] + 'cor.log',
                                     period: '1d',   // daily rotation
                                     count: 14        // keep 14 back copies
+                                }, {
+                                    stream: process.stdout
                                 }]
                             })
                             .child({service: 'cor'}),
