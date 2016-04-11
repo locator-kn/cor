@@ -12,25 +12,18 @@ require('opbeat').start({
 
 const Bluebird = require('bluebird');
 const Glue = require('glue');
-
 const util = require('./lib/util');
-
 const log = require('ms-utilities').logger;
-//const ipUtil = require('ms-utilities').ip;
 
-// API
+// Locator API
 const user = require('./lib/user');
 const location = require('./lib/location');
-//const messenger = require('./lib/messenger');
-//const reporter = require('./lib/reporter');
 const device = require('./lib/device');
-
-// TEMP
-const locationValidation = require('./validation/locationValidation');
+const develop = require('./lib/development');
 
 
 // declare  plugins
-var manifest = {
+let manifest = {
     connections: [{
         //host: process.env['API_HOST'] || 'localhost',
         port: process.env['API_PORT'] || 8000
@@ -85,13 +78,7 @@ var manifest = {
                 }]
             }
         }]
-    }
-
-     /*   , {
-            // interactive debug console
-            'tv': {}
-        }*/
-    ]
+    }]
 };
 
 // compose Server with plugins
@@ -137,9 +124,12 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     // Add the API routes
     server.route(user.routes);
     server.route(location.routes);
-    //server.route(messenger.routes);
-    //server.route(reporter.routes);
     server.route(device.routes);
+
+    if (process.env['NODE_ENV'] !== 'production') {
+        // Add develop/test routes only if not in production
+        server.route(develop.routes);
+    }
 
     // TEMP/DEV ROUTES
     server.route({
@@ -183,43 +173,11 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 strategy: 'session'
             },
             validate: {
-                query: locationValidation.nearbyQueryOptional
+                query: require('./validation/locationValidation').nearbyQueryOptional
             }
         }
     });
-    
-    if(process.env['NODE_ENV'] !== 'production') {
-        server.route({
-            method: 'POST',
-            path: '/dev/test',
-            handler: (request, reply) => {
-                reply({payload: request.payload, headers: request.headers});
-            },
-            config: {
-                tags: ['api']
-            }
-        });
 
-        server.route({
-            method: 'POST',
-            path: '/dev/test/formData',
-            handler: (request, reply) => {
-                if (request.payload.file) {
-                    delete request.payload.file._data;
-                }
-                reply({payload: request.payload, headers: request.headers});
-            },
-            config: {
-                tags: ['api'],
-                payload: {
-                    output: 'stream',
-                    parse: true,
-                    allow: 'multipart/form-data',
-                    maxBytes: 1048576 * 6 // 6MB
-                }
-            }
-        });
-    }
 
     server.on('request-error', (request, err) => {
 
@@ -255,19 +213,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
 
     // configure seneca
-    server.seneca
-        // set desired transport method
-        //.use(process.env['SENECA_TRANSPORT_METHOD'] + '-transport')
-        // announce a microservice with pin and transport type the service is listening to
-        //.client({type: 'tcp', port: 7003, host: 'localhost', pin: 'role:messenger,cmd:*'})
-        //.client({type: 'tcp', port: 7005, host: 'localhost', pin: 'role:mailer,cmd:*'})
-        //.client({type: 'tcp', port: 7004, host: 'localhost', pin: 'role:notifications,cmd:*'})
-        //.client({type: 'tcp', port: 7002, host: 'localhost', pin: 'role:user,cmd:*'})
-        //.client({type: 'tcp', port: 7001, host: 'localhost', pin: 'role:location,cmd:*'});
-
-        .use('mesh', {base: true, auto:true});
-
-        //.client({type: 'tcp', port: 7010, host: 'localhost', pin: 'role:reporter,cmd:*'});
+    server.seneca.use('mesh', {auto: true, pin: {role: 'cor'}});
 
     // promisify seneca.act
     let pact = Bluebird.promisify(server.seneca.act, {context: server.seneca});
