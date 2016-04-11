@@ -13,6 +13,18 @@
       "log_date_format":""
     },
     {
+      "name": "pharo",
+      "script": "pharos/base/index.js",
+      "min_uptime": "5s",
+      "max_memory_restart": "350M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "vizion": false,
+      "log_date_format":""
+    },
+    {
       "name": "ms-location",
       "script": "ms-location/index.js",
       "args" : ["--seneca.log=type:act"],
