@@ -75,6 +75,16 @@ let manifest = {
 Glue.compose(manifest, {relativeTo: __dirname})
     .then(server => {
 
+        // Add the API routes
+        server.route(user.routes);
+        server.route(location.routes);
+        server.route(device.routes);
+
+        // Add develop/test routes only if not in production
+        if (process.env['NODE_ENV'] !== 'production') {
+            server.route(develop.routes);
+        }
+
         // configure auth strategy
         server.auth.strategy('session', 'cookie', 'optional', {
             password: process.env['COOKIE_SECRET'],
@@ -137,16 +147,6 @@ Glue.compose(manifest, {relativeTo: __dirname})
             }
             reply.continue();
         });
-
-        // Add the API routes
-        server.route(user.routes);
-        server.route(location.routes);
-        server.route(device.routes);
-
-        // Add develop/test routes only if not in production
-        if (process.env['NODE_ENV'] !== 'production') {
-            server.route(develop.routes);
-        }
 
 
         // configure seneca
