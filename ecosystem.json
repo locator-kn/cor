@@ -14,7 +14,7 @@
     },
     {
       "name": "pharo",
-      "script": "pharos/base/index.js",
+      "script": "pharos/index.js",
       "min_uptime": "5s",
       "max_memory_restart": "350M",
       "watch": false,
