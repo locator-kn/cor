@@ -10,12 +10,37 @@ const utilities = require('ms-utilities');
 const log = utilities.logger;
 const slack = utilities.slack;
 
-let handler = {};
 const basicPin = {
     role: 'location'
 };
 
-const notifyUserForNewLike = (pushPattern, request) => {
+
+module.exports = {
+    audioUploadRespone,
+    videoUploadRespone,
+    imageUploadRespone,
+    postUpdateLocation,
+    getLocationByName,
+    postUnfavorLocation,
+    postFavorLocation,
+    genericUnFavorLocation,
+    postToggleFavorLocation,
+    getMyFavoriteLocations,
+    getFavoriteLocationsByUserId,
+    postTextImpression,
+    getLocationsStream,
+    getSchoenhierNearby,
+    postSchoenhier,
+    getAllLocationsByUserId,
+    notifyUserForNewLike,
+    genericFileResponseHandler,
+    getLocationById,
+    getLocationsNearby,
+    createLocationAfterImageUpload,
+    deleteLocation
+};
+
+function notifyUserForNewLike(pushPattern, request) {
     pushPattern.cmd = 'notify';
     pushPattern.entity = 'location';
     pushPattern.action = 'newFavorator';
@@ -25,9 +50,9 @@ const notifyUserForNewLike = (pushPattern, request) => {
         favorator_id: request.basicSenecaPattern.requesting_user_id
     }, {role: 'notifications'});
     return request.server.pact(senecaAct);
-};
+}
 
-let genericFileResponseHandler = (err, res, request, reply, type) => {
+function genericFileResponseHandler(err, res, request, reply, type) {
 
     if (err) {
         log.fatal(err, 'Got error after image upload for location');
@@ -82,9 +107,9 @@ let genericFileResponseHandler = (err, res, request, reply, type) => {
             })
             .catch(error => reply(boom.badImplementation(error)));
     });
-};
+}
 
-handler.getLocationById = (request, reply) => {
+function getLocationById(request, reply) {
 
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'locationById';
@@ -94,9 +119,9 @@ handler.getLocationById = (request, reply) => {
     request.server.pact(senecaAct)
         .then(resp => reply(helper.unwrap(resp)))
         .catch(error => reply(boom.badImplementation(error)));
-};
+}
 
-handler.getLocationsNearby = (request, reply) => {
+function getLocationsNearby(request, reply) {
 
     let pattern = util.clone(request.basicSenecaPattern);
     pattern.cmd = 'nearby';
@@ -106,9 +131,9 @@ handler.getLocationsNearby = (request, reply) => {
     request.server.pact(senecaAct)
         .then(resp => reply(helper.unwrap(resp)))
         .catch(error => reply(boom.badImplementation(error)));
-};
+}
 
-handler.createLocationAfterImageUpload = (err, res, request, reply) => {
+function createLocationAfterImageUpload(err, res, request, reply) {
 
     if (err) {
         log.fatal(err, 'Got error after image upload for location');
@@ -213,10 +238,9 @@ handler.createLocationAfterImageUpload = (err, res, request, reply) => {
             .catch(err => log.warn({error: err}, 'Error sending push'));
     });
 
-};
+}
 
-
-handler.deleteLocation = (request, reply) => {
+function deleteLocation(request, reply) {
     request.basicSenecaPattern.cmd = 'deletelocation';
 
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.query, basicPin);
@@ -227,9 +251,9 @@ handler.deleteLocation = (request, reply) => {
             reply(boom.badRequest(error));
         });
 
-};
+}
 
-handler.getAllLocationsByUserId = (request, reply) => {
+function getAllLocationsByUserId(request, reply) {
     request.basicSenecaPattern.cmd = 'getlocbyuserid';
 
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, request.params, basicPin);
@@ -239,10 +263,9 @@ handler.getAllLocationsByUserId = (request, reply) => {
         .catch(error => {
             reply(boom.badRequest(error));
         });
-};
+}
 
-
-handler.postSchoenhier = (request, reply) => {
+function postSchoenhier(request, reply) {
 
     let senecaAct = util.setupSenecaPattern('addschoenhier', request.payload, basicPin);
 
@@ -252,10 +275,9 @@ handler.postSchoenhier = (request, reply) => {
             reply(boom.badRequest(error));
         });
 
-};
+}
 
-
-handler.getSchoenhierNearby = (request, reply) => {
+function getSchoenhierNearby(request, reply) {
 
     let senecaAct = util.setupSenecaPattern('nearbyschoenhier', request.query, basicPin);
 
@@ -264,10 +286,9 @@ handler.getSchoenhierNearby = (request, reply) => {
         .catch(error => {
             reply(boom.badRequest(error));
         });
-};
+}
 
-
-handler.getLocationsStream = (request, reply) => {
+function getLocationsStream(request, reply) {
 
     let userId = util.getUserId(request.auth);
     let senecaAct = util.setupSenecaPattern('getlocationstream', {
@@ -284,9 +305,9 @@ handler.getLocationsStream = (request, reply) => {
             reply(boom.badImplementation(error));
         });
 
-};
+}
 
-handler.postTextImpression = (request, reply) => {
+function postTextImpression(request, reply) {
 
     let userId = request.basicSenecaPattern.requesting_user_id;
 
@@ -312,10 +333,9 @@ handler.postTextImpression = (request, reply) => {
             reply(boom.badImplementation(error));
         });
 
-};
+}
 
-
-handler.getFavoriteLocationsByUserId = (request, reply, optionalUserId) => {
+function getFavoriteLocationsByUserId(request, reply, optionalUserId) {
     let userId = optionalUserId || request.params.userId;
 
     let senecaAct = util.setupSenecaPattern('getfavoritelocationbyuserid', {
@@ -332,15 +352,14 @@ handler.getFavoriteLocationsByUserId = (request, reply, optionalUserId) => {
             reply(boom.badImplementation(error));
         });
 
-};
+}
 
-
-handler.getMyFavoriteLocations = (request, reply) => {
+function getMyFavoriteLocations(request, reply) {
 
     handler.getFavoriteLocationsByUserId(request, reply, request.basicSenecaPattern.requesting_user_id);
-};
+}
 
-handler.postToggleFavorLocation = (request, reply) => {
+function postToggleFavorLocation(request, reply) {
     let pushPattern = util.clone(request.basicSenecaPattern);
 
     request.basicSenecaPattern.cmd = 'toggleFavor';
@@ -368,9 +387,9 @@ handler.postToggleFavorLocation = (request, reply) => {
             }
             reply(boom.badImplementation(error));
         });
-};
+}
 
-let genericUnFavorLocation = (request, reply) => {
+function genericUnFavorLocation(request, reply) {
     let userId = request.basicSenecaPattern.requesting_user_id;
 
     let senecaAct = util.setupSenecaPattern(request.basicSenecaPattern, {
@@ -387,22 +406,22 @@ let genericUnFavorLocation = (request, reply) => {
             }
             reply(boom.badImplementation(error));
         });
-};
+}
 
-handler.postFavorLocation = (request, reply) => {
+function postFavorLocation(request, reply) {
     let pushPattern = util.clone(request.basicSenecaPattern);
     request.basicSenecaPattern.cmd = 'favor';
     genericUnFavorLocation(request, reply)
         .then(() => notifyUserForNewLike(pushPattern, request))
         .catch(err => log.warn('error happend', err));
-};
+}
 
-handler.postUnfavorLocation = (request, reply) => {
+function postUnfavorLocation(request, reply) {
     request.basicSenecaPattern.cmd = 'unfavor';
     genericUnFavorLocation(request, reply);
-};
+}
 
-handler.getLocationByName = (request, reply) => {
+function getLocationByName(request, reply) {
 
     let senecaAct;
     let name = request.query.locationName;
@@ -437,27 +456,23 @@ handler.getLocationByName = (request, reply) => {
             reply(boom.badRequest(error));
         });
 }
-;
 
-handler.postUpdateLocation = (request, reply) => {
+function postUpdateLocation(request, reply) {
     return reply(boom.notImplemented('todo'));
-};
+}
 
-handler.imageUploadRespone = (err, res, request, reply) => {
+function imageUploadRespone(err, res, request, reply) {
 
     genericFileResponseHandler(err, res, request, reply, 'image');
-};
+}
 
-
-handler.videoUploadRespone = (err, res, request, reply) => {
+function videoUploadRespone(err, res, request, reply) {
 
     genericFileResponseHandler(err, res, request, reply, 'video');
-};
+}
 
-handler.audioUploadRespone = (err, res, request, reply) => {
+function audioUploadRespone(err, res, request, reply) {
 
     genericFileResponseHandler(err, res, request, reply, 'audio');
-};
+}
 
-
-module.exports = handler;
