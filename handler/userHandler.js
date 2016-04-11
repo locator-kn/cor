@@ -163,9 +163,10 @@ handler.register = (request, reply) => {
                 reply(result).code(201).unstate('locator');
 
                 slack.sendSlackInfo(process.env['SLACK'], 'Neuer Benutzer registriert ' + result.name);
+            } else {
+                reply(result);
             }
 
-            return reply(result);
         })
         .catch(error => reply(boom.badImplementation(error)));
 };
@@ -205,7 +206,6 @@ handler.forgetPassword = (request, reply)=> {
 
     let senecaAct = util.setupSenecaPattern(pattern, user, basicPin);
     request.server.pact(senecaAct)
-        .catch(error => reply(boom.badImplementation(error)))
         .then(helper.unwrap)
         .then(value => {
 
@@ -224,12 +224,15 @@ handler.forgetPassword = (request, reply)=> {
                         role: 'mailer'
                     });
 
-                return request.server.pact(senecaMailAct);
+                request.server.pact(senecaMailAct)
+                    .catch(err => log.fatal('Error sending Mail', {error: err}));
+
             }
 
             reply(value);
         })
-        .catch(err => log.fatal('Error sending Mail', {error: err}));
+        .catch(error => reply(boom.badImplementation(error)));
+
 };
 
 handler.follow = (request, reply) => {
@@ -253,7 +256,8 @@ handler.follow = (request, reply) => {
 
 
     request.server.pact(notificationAct)
-        .catch(error => reply(boom.badImplementation(error)));
+        .catch(error => log.error('Error sending push', {err: error}));
+
 
 };
 
