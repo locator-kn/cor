@@ -227,9 +227,10 @@ handler.forgetPassword = (request, reply)=> {
                 request.server.pact(senecaMailAct)
                     .catch(err => log.fatal('Error sending Mail', {error: err}));
 
+            } else {
+                reply(value);
             }
 
-            reply(value);
         })
         .catch(error => reply(boom.badImplementation(error)));
 
