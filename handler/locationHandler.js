@@ -37,8 +37,27 @@ module.exports = {
     getLocationById,
     getLocationsNearby,
     createLocationAfterImageUpload,
-    deleteLocation
+    deleteLocation,
+    getBubbleScreen
 };
+
+function getBubbleScreen(request,reply) {
+    let senecaActLocations = {
+        cmd: 'nearby',
+        data: {
+            long: request.query.long || 9.173626899719238,
+            lat: request.query.lat || 47.66972243634168,
+            maxDistance: request.query.maxDistance || 30000,
+            limit: request.query.limit || 6
+        },
+        role: 'location'
+    };
+
+    request.server.pact(senecaActLocations)
+        .then(helper.unwrap)
+        .then(data => reply(data).ttl(30000))
+        .catch(reply);
+}
 
 function notifyUserForNewLike(pushPattern, request) {
     pushPattern.cmd = 'notify';
