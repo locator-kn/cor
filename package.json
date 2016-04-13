@@ -46,7 +46,7 @@
     "opbeat": "^3.6.6",
     "seneca-balance-client": "^0.4.0",
     "seneca-mesh": "^0.7.0",
-    "seneca": "^2.0.0",
+    "seneca": "^2.0.1",
     "vision": "^4.1.0",
     "wreck": "^7.1.0"
   },
