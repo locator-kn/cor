@@ -112,8 +112,6 @@ function genericFileResponseHandler(err, res, request, reply, type) {
 
                 reply(res);
 
-                slack.sendSlackInfo(process.env['SLACK'], 'Neue Impression vom typ ' + type + ': https://locator-app.com' + res.data);
-
 
                 if (res.isBoom) {
                     // remove the uploaded image again by making an internal DELETE request
@@ -122,6 +120,32 @@ function genericFileResponseHandler(err, res, request, reply, type) {
                             log.error(err, 'Error Deleting file type ' + type, {id: response._id});
                         }
                     });
+
+                } else {
+
+                    slack.sendSlackInfo(process.env['SLACK'], 'Neue Impression vom typ ' + type + ': https://locator-app.com' + res.data);
+
+
+                    // dont send push if not defined
+                    if (!message.user_id || !message.location_id) {
+                        return;
+                    }
+
+                    // send push notifications
+                    let pushPattern = util.clone(request.basicSenecaPattern);
+                    pushPattern.cmd = 'notify';
+                    pushPattern.entity = 'newImpression';
+
+                    let pushAct = util.setupSenecaPattern(pushPattern,
+                        {
+                            location_id: message.location_id,
+                            user_id: message.user_id,
+                            user_name: request.auth.credentials.name,
+                            type: type
+                        },
+                        {role: 'notifications'});
+
+                    request.server.pact(pushAct);
                 }
             })
             .catch(error => reply(boom.badImplementation(error)));
