@@ -119,8 +119,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
         if (request.basicSenecaPattern.requesting_user_id ===
             '56e82bd502e5a70b4fccab84') {
-            console.log('hi timi ;-P');
-            return reply().redirect('http://www.youporn.com');
+            return reply().redirect('http://www.google.de');
         }
 
         reply.continue();
