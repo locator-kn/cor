@@ -354,7 +354,8 @@ handler.getUserById = (request, reply, useRequestingUser) => {
     let locationCountPromise = true;
     let followersCountPromise = true;
 
-    basicUser.cmd = 'getUserById';
+    basicUser.cmd = 'getUser';
+    basicUser.by = 'id';
 
     let senecaActUser = util.setupSenecaPattern(basicUser, {
         user_id: userId
