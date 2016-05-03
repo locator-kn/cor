@@ -405,6 +405,14 @@ handler.getUserById = (request, reply, useRequestingUser) => {
                 }
             }
 
+            // HACK: add default user images
+            if (!user.images) {
+                user.images = {
+                    normal: '/api/v2/users/image/57287555842f60f41a55341d/userprofilimage.jpg',
+                    small: '/api/v2/users/image/57287555842f60f41a55341c/userprofilimage.jpg'
+                };
+            }
+
             return reply(user);
         })
         .catch(error => reply(boom.badImplementation(error)));
