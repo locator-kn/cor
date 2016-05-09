@@ -35,7 +35,7 @@
     "good-bunyan": "^0.1.2",
     "good-console": "^5.2.0",
     "h2o2": "^5.0.0",
-    "hapi": "^13.3.0",
+    "hapi": "^13.4.0",
     "hapi-auth-cookie": "^3.1.0",
     "hapi-swagger": "^5.0.1",
     "hoek": "^4.0.0",
