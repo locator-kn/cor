@@ -37,7 +37,7 @@ handler.register = (request, reply) => {
 
                     // set new device id to existing auth cookie
                     let cookie = request.auth.credentials;
-                    cookie. device_id = result.device_id;
+                    cookie.device_id = result.device_id;
 
                     request.auth.session.set(cookie);
                     return reply({message: 'device registered, locator-cookie was set'}).code(201);
