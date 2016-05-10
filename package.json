@@ -44,7 +44,7 @@
     "lodash": "^4.11.1",
     "ms-utilities": "^4.0.0",
     "opbeat": "^3.6.7",
-    "seneca-balance-client": "^0.4.0",
+    "seneca-balance-client": "^0.5.0",
     "seneca-mesh": "^0.7.0",
     "seneca": "^2.0.1",
     "vision": "^4.1.0",
