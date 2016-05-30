@@ -11,9 +11,14 @@ require('opbeat').start({
 });
 
 const Bluebird = require('bluebird');
+const Joi = require('joi');
 const Glue = require('glue');
 const util = require('./lib/util');
-const log = require('ms-utilities').logger;
+
+// utility module
+const utilities = require('ms-utilities');
+const log = utilities.logger;
+const slack = utilities.slack;
 
 // Locator API
 const user = require('./lib/user');
@@ -26,7 +31,12 @@ const develop = require('./lib/development');
 let manifest = {
     connections: [{
         //host: process.env['API_HOST'] || 'localhost',
-        port: process.env['API_PORT'] || 8000
+        port: process.env['API_PORT'] || 8000, routes: {
+            cors: {
+                origin: ['*'],
+                credentials: true
+            }
+        }
     }],
     plugins: [{
         // plugin for the microservice framework seneca
@@ -134,7 +144,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
     if (process.env['NODE_ENV'] !== 'production') {
         server.route(develop.routes);
     }
-    
+
     server.on('request-error', (request, err) => {
 
         // log 500 code
@@ -167,6 +177,23 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
         reply.continue();
     });
 
+
+    server.route([{
+        method: 'POST',
+        path: '/report',
+        handler: (request, reply) => {
+            slack.sendSlackInfo(process.env['SLACK'], '!REPORT INCOMING!: ' + request.payload.report);
+            reply({ok: true});
+        },
+        config: {
+            tags: ['api'],
+            validate: {
+                payload: {
+                    report: Joi.string().required()
+                }
+            }
+        }
+    }]);
 
     // configure seneca
     server.seneca.use('mesh', {auto: true, pin: {role: 'cor'}});
