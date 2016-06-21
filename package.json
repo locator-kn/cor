@@ -24,7 +24,7 @@
   "homepage": "https://github.com/locator-kn/cor#readme",
   "dependencies": {
     "bluebird": "^3.3.5",
-    "boom": "^3.1.1",
+    "boom": "^3.2.2",
     "bunyan": "^1.8.1",
     "chairo": "^2.2.0",
     "dotenv": "^1.2.0",
