@@ -39,7 +39,7 @@
     "hapi-auth-cookie": "^3.1.0",
     "hapi-swagger": "^5.0.1",
     "hoek": "^3.0.4",
-    "inert": "^4.0.0",
+    "inert": "^4.0.1",
     "joi": "^8.0.5",
     "lodash": "^4.11.1",
     "ms-utilities": "^4.0.0",
