@@ -37,7 +37,7 @@
     "h2o2": "^5.0.0",
     "hapi": "^13.4.0",
     "hapi-auth-cookie": "^3.1.0",
-    "hapi-swagger": "^5.0.1",
+    "hapi-swagger": "^7.0.0",
     "hoek": "^3.0.4",
     "inert": "^4.0.0",
     "joi": "^8.0.5",
