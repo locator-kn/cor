@@ -45,7 +45,7 @@
     "ms-utilities": "^4.0.0",
     "opbeat": "^3.6.7",
     "seneca": "^2.0.1",
-    "seneca-balance-client": "^0.4.0",
+    "seneca-balance-client": "^0.6.0",
     "seneca-mesh": "^0.7.0",
     "vision": "^4.1.0",
     "wreck": "^7.2.0"
