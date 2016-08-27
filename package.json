@@ -30,7 +30,7 @@
     "dotenv": "^1.2.0",
     "fbgraph": "1.1.0",
     "geopoint": "^1.0.1",
-    "glue": "^2.4.0",
+    "glue": "^4.0.0",
     "good": "^6.4.0",
     "good-bunyan": "^0.1.2",
     "good-console": "^5.2.0",
