@@ -173,7 +173,7 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
                 stringifiedOutput = e.toString();
             }
             log.fatal('Client error', {
-                response: JSON.stringify(response),
+                response: response,
                 requestData: request.orig,
                 stringifiedOutput: stringifiedOutput,
                 path: request.path
