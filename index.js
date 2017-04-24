@@ -173,12 +173,10 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
         // log joi validation error
         if (response.output.statusCode === 400) {
-            const stringifiedOutput = stringify(response.output);
-
             log.fatal('Client error', {
                 response: response,
                 requestData: request.orig,
-                stringifiedOutput: stringifiedOutput,
+                stringifiedOutput: stringify(response.output),
                 path: request.path
             });
         }
