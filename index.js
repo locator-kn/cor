@@ -26,6 +26,13 @@ const location = require('./lib/location');
 const device = require('./lib/device');
 const develop = require('./lib/development');
 
+const stringify = obj => {
+    try {
+        return JSON.stringify(obj);
+    } catch(e) {
+        return  e.toString();
+    }
+}
 
 // declare  plugins
 let manifest = {
@@ -166,12 +173,8 @@ Glue.compose(manifest, {relativeTo: __dirname}, (err, server) => {
 
         // log joi validation error
         if (response.output.statusCode === 400) {
-            let stringifiedOutput;
-            try {
-                stringifiedOutput = JSON.stringify(response.output);
-            } catch(e) {
-                stringifiedOutput = e.toString();
-            }
+            const stringifiedOutput = stringify(response.output);
+
             log.fatal('Client error', {
                 response: response,
                 requestData: request.orig,
