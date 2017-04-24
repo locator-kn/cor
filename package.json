@@ -25,7 +25,7 @@
   "dependencies": {
     "bluebird": "^3.3.5",
     "boom": "^3.1.1",
-    "bunyan": "^1.8.1",
+    "bunyan": "^1.8.7",
     "chairo": "^2.2.0",
     "dotenv": "^1.2.0",
     "fbgraph": "1.1.0",
